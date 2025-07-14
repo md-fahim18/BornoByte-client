@@ -17,6 +17,9 @@ import React, { useState } from 'react';
 import useAdmin from '../../RoleHooks/useAdmin';
 import TopBar from './Topbar';
 import Sidebar from './Sidebar';
+import AdminDashboard from './AdminDash/adminDash';
+import AdminSidebar from './AdminDash/adminSide';
+import AdminTopbar from './AdminDash/adminTop';
 // import useTeacher from '../../RoleHooks/useTeacher'; // Future use
 
 // Component Imports (Replace with actual components)
@@ -64,8 +67,9 @@ const Dashboard = () => {
           {isAdmin && (
             <>
             admin sidebar
-             <TopBar></TopBar>
-             <Sidebar></Sidebar>
+             <AdminDashboard></AdminDashboard>
+              <AdminTopbar></AdminTopbar>
+              <AdminSidebar></AdminSidebar>
             </>
           )}
 
