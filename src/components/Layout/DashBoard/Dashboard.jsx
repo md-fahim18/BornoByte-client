@@ -30,12 +30,11 @@ const Dashboard = () => {
   const [isTeacher] = useTeacher(); // ✅ Role check
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-base-100 text-base-content">
       {/* Sidebar */}
-      <div className="w-64 bg-gray-800 text-white p-4">
-        <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
+      <div className="w-64 bg-base-200 border-r border-base-300 p-4">
+        <h1 className="text-xl font-bold mb-6 text-orange-500 tracking-wide">Dashboard</h1>
         <ul className="space-y-2">
-
           {/* Admin Sidebar */}
           {isAdmin && (
             <>
@@ -63,20 +62,23 @@ const Dashboard = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-8 bg-gray-100 dark:bg-gray-900">
-        <div className="hero min-h-[300px] mb-8">
-          <div className="hero-overlay bg-opacity-30"></div>
-          <div className="hero-content text-center text-neutral-content">
-            <h1 className="text-5xl font-bold text-orange-500 anton-regular">
-              {isAdmin ? 'Admin Dashboard' : isTeacher ? 'Teacher Dashboard' : 'User Dashboard'}
-            </h1>
+      <div className="flex-1 bg-base-100 dark:bg-gray-900 p-6 transition duration-300">
+        {/* Dashboard Hero Header */}
+        <div className="hero min-h-[180px] rounded-lg bg-base-200 text-center mb-8">
+          <div className="hero-content text-center">
+            <div>
+              <h1 className="text-4xl font-bold text-orange-500 mb-2">
+                {isAdmin ? 'Admin Dashboard' : isTeacher ? 'Teacher Dashboard' : 'User Dashboard'}
+              </h1>
+              <p className="text-base-content opacity-70">Welcome to your personalized control panel</p>
+            </div>
           </div>
         </div>
 
-        {/* Dashboard Body */}
+        {/* Role-Specific Main Content */}
         {isAdmin && <AdminDashboard />}
         {isTeacher && !isAdmin && <TeacherDashboard />}
-        {/* No user dashboard yet */}
+        {/* Regular user dashboard coming soon */}
       </div>
     </div>
   );
