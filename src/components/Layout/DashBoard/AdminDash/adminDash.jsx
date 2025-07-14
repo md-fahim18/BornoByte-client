@@ -1,70 +1,56 @@
+// src/components/Layout/DashBoard/AdminDash/AdminDashboard.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { FaUserShield } from "react-icons/fa";
+import { MdOutlineMail } from "react-icons/md";
+import { FiUsers } from "react-icons/fi";
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:3000/users") // Adjust if needed
-      .then((res) => setUsers(res.data))
-      .catch((err) => console.error("Error loading users:", err));
+    axios.get("http://localhost:3000/users").then((res) => {
+      setUsers(res.data);
+    });
   }, []);
 
-  const handleRoleChange = async (email, newRole) => {
-    try {
-      await axios.patch(`http://localhost:3000/users/update-role`, {
-        email,
-        role: newRole,
-      });
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.email === email ? { ...user, role: newRole } : user
-        )
-      );
-    } catch (error) {
-      console.error("Role update failed", error);
-    }
-  };
-
   return (
-    <div className="bg-base-100 text-base-content p-6 rounded-lg">
-      <h2 className="text-2xl font-bold mb-6">All Users</h2>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {users.map((user) => (
+    <div className="p-6 bg-base-100 min-h-screen text-base-content">
+      <h2 className="text-3xl font-semibold mb-6 text-center">All Registered Users</h2>
+      <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        {users.map((user, index) => (
           <div
-            key={user._id}
-            className="bg-base-200 p-5 rounded-xl shadow-md hover:shadow-xl transition"
+            key={index}
+            className="bg-base-200 rounded-xl p-6 shadow-md hover:shadow-xl transition-all duration-300"
           >
-            <div className="flex items-center gap-4 mb-4">
-              <img
-                src={
-                  user.avatar ||
-                  "https://i.ibb.co/5vZBq2c/default-avatar.png"
-                }
-                alt="avatar"
-                className="w-14 h-14 rounded-full object-cover border"
-              />
+            <div className="flex items-center gap-4">
+              <div className="avatar">
+                <div className="w-16 rounded-full ring ring-orange-400 ring-offset-base-100 ring-offset-2">
+                  <img
+                    src={`https://api.dicebear.com/7.x/thumbs/svg?seed=${user.email}`}
+                    alt="User Avatar"
+                  />
+                </div>
+              </div>
               <div>
-                <h3 className="font-semibold text-lg">{user.name || "Unnamed"}</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {user.email}
+                <h3 className="text-xl font-semibold flex items-center gap-1">
+                  <FaUserShield className="text-orange-400" /> {user.name}
+                </h3>
+                <p className="text-sm flex items-center gap-1 text-gray-500 dark:text-gray-400">
+                  <MdOutlineMail /> {user.email}
                 </p>
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Role
-              </label>
+            <div className="mt-4">
+              <label className="block text-sm font-medium mb-1">Role</label>
               <select
-                value={user.role}
-                onChange={(e) => handleRoleChange(user.email, e.target.value)}
                 className="select select-bordered w-full"
+                defaultValue={user.role}
               >
-                <option value="student">Student</option>
-                <option value="teacher">Teacher</option>
                 <option value="admin">Admin</option>
+                <option value="teacher">Teacher</option>
+                <option value="student">Student</option>
               </select>
             </div>
           </div>

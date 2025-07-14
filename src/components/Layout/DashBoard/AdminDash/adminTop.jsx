@@ -1,11 +1,14 @@
-import React from 'react';
+// src/components/Layout/DashBoard/AdminDash/AdminTopbar.jsx
+import React from "react";
+import { FiBell, FiUser } from "react-icons/fi";
 
 const AdminTopbar = () => {
   return (
-    <div className="bg-orange-500 text-white px-6 py-4 shadow-md">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold">Admin Control Panel</h2>
-        <span className="text-sm">bornoByte Admin</span>
+    <div className="navbar bg-base-100 shadow-sm text-base-content">
+      <div className="flex-1 px-4 font-semibold text-xl text-orange-500">BornoByte Admin</div>
+      <div className="flex gap-4 items-center px-4">
+        <FiBell className="text-xl hover:text-orange-500 cursor-pointer" />
+        <FiUser className="text-xl hover:text-orange-500 cursor-pointer" />
       </div>
     </div>
   );
