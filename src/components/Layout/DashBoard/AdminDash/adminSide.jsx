@@ -1,27 +1,19 @@
-// src/components/Layout/DashBoard/AdminDash/AdminSidebar.jsx
-import React from "react";
-import { Link } from "react-router-dom";
-import { FiHome, FiUsers, FiSettings } from "react-icons/fi";
+import React from 'react';
+import { FiHome, FiUsers, FiSettings } from 'react-icons/fi';
 
 const AdminSidebar = () => {
   return (
-    <div className="bg-base-200 h-screen p-4 shadow-lg text-base-content">
-      <h2 className="text-2xl font-bold mb-6 text-orange-500 text-center">Admin Panel</h2>
-      <ul className="space-y-4">
-        <li>
-          <Link to="/" className="flex items-center gap-2 hover:text-orange-500">
-            <FiHome /> Home
-          </Link>
+    <div className="w-64 min-h-screen bg-base-200 p-6 shadow-md">
+      <h2 className="text-xl font-bold text-amber-600 mb-6">Admin Panel</h2>
+      <ul className="space-y-4 text-base">
+        <li className="flex items-center gap-3 hover:text-amber-600 cursor-pointer">
+          <FiHome /> Home
         </li>
-        <li>
-          <Link to="/dashboard" className="flex items-center gap-2 hover:text-orange-500">
-            <FiUsers /> Users
-          </Link>
+        <li className="flex items-center gap-3 hover:text-amber-600 cursor-pointer">
+          <FiUsers /> Users
         </li>
-        <li>
-          <Link to="/dashboard/settings" className="flex items-center gap-2 hover:text-orange-500">
-            <FiSettings /> Settings
-          </Link>
+        <li className="flex items-center gap-3 hover:text-amber-600 cursor-pointer">
+          <FiSettings /> Settings
         </li>
       </ul>
     </div>
