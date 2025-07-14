@@ -1,23 +1,22 @@
-import { useEffect, useState } from "react";
-import { useAuth } from "../AuthProvider/AuthProvider"; // adjust if needed
+import { useQuery } from "@tanstack/react-query";
+import { useContext } from "react";
+import AuthContext from "../Auth/AuthContext";
+import useAxiosSecure from "../Auth/useAxiosSecure";
 
 const useTeacher = () => {
-  const { user } = useAuth(); // assumes your AuthProvider gives current user info
-  const [isTeacher, setIsTeacher] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const { user, loading } = useContext(AuthContext);
+  const [axiosSecure] = useAxiosSecure();
 
-  useEffect(() => {
-    if (user?.email) {
-      fetch(`http://localhost:3000/users/teacher/${user.email}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setIsTeacher(data.teacher);
-          setLoading(false);
-        });
+  const { data: isTeacher, isLoading: teacherLoading } = useQuery({
+    enabled: !loading && !!user?.email,
+    queryKey: ['isTeacher', user?.email],
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/users/teacher/${user.email}`);
+      return res.data.teacher;
     }
-  }, [user?.email]);
+  });
 
-  return [isTeacher, loading];
+  return [isTeacher, teacherLoading];
 };
 
 export default useTeacher;
