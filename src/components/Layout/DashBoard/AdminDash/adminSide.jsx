@@ -1,19 +1,17 @@
+// src/Layout/DashBoard/AdminDash/AdminSidebar.jsx
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-const AdminSidebar = ({ onTabChange }) => {
+const AdminSidebar = () => {
   return (
-    <aside className="w-64 bg-base-100 border-r border-gray-300 dark:border-gray-700 p-6">
-      <nav className="flex flex-col gap-4">
-        <button
-          className="btn btn-outline btn-sm"
-          onClick={() => onTabChange('users')}
-        >
-          👤 View Users
-        </button>
-        {/* Future: Add more nav items */}
-        {/* <button onClick={() => onTabChange('courses')}>Manage Courses</button> */}
-      </nav>
-    </aside>
+    <div className="p-4 space-y-4">
+      <h2 className="text-xl font-bold text-white">Admin Panel</h2>
+      <ul className="space-y-2">
+        <li><Link to="/" className="hover:text-amber-400">Home</Link></li>
+        <li><Link to="/dashboard" className="hover:text-amber-400">Dashboard</Link></li>
+        {/* Add more admin links here */}
+      </ul>
+    </div>
   );
 };
 

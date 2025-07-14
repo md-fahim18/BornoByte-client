@@ -1,26 +1,36 @@
-import React, { useState } from 'react';
-import AdminSidebar from './adminSide';
-import AdminTopbar from './adminTop';
-import AdminUsers from './adminUser';
+// src/Layout/DashBoard/AdminDash/AdminDashboard.jsx
+import React, { useEffect, useState } from 'react';
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState('users'); // Can expand later
+  const [users, setUsers] = useState([]);
+
+  // Fetch all users from MongoDB
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/users");
+        const data = await res.json();
+        setUsers(data);
+      } catch (err) {
+        console.error("Error fetching users", err);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   return (
-    <div className="flex flex-col w-full h-full bg-base-200">
-      {/* Top Navigation Bar */}
-      <AdminTopbar />
-
-      <div className="flex flex-1">
-        {/* Sidebar */}
-        <AdminSidebar onTabChange={setActiveTab} />
-
-        {/* Main Content */}
-        <div className="flex-1 p-6 overflow-y-auto">
-          {activeTab === 'users' && <AdminUsers />}
-          {/* Add more tabs like <ManageCourses />, <SiteStats /> etc. */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      {users.map((user, idx) => (
+        <div
+          key={idx}
+          className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 border border-gray-200 dark:border-gray-700"
+        >
+          <h2 className="text-lg font-semibold text-base-content mb-2">{user.name}</h2>
+          <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Email: {user.email}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-300">Role: <span className="font-bold">{user.role}</span></p>
         </div>
-      </div>
+      ))}
     </div>
   );
 };
