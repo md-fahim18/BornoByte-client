@@ -19,9 +19,9 @@ import TopBar from './Topbar';
 import Sidebar from './Sidebar';
 
 // ✅ Modular Admin Components
-import AdminDashboard from './AdminDash/AdminDashboard';
-import AdminTopbar from './AdminDash/AdminTopbar';
-import AdminSidebar from './AdminDash/AdminSidebar';
+import AdminDashboard from './AdminDash/adminDash';
+import AdminTopbar from './AdminDash/adminTop';
+import AdminSidebar from './AdminDash/adminSide';
 
 const Dashboard = () => {
   const [isAdmin] = useAdmin();
