@@ -1,19 +1,33 @@
-import React from 'react';
-import { FiHome, FiUsers, FiSettings } from 'react-icons/fi';
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import { FiHome, FiUsers, FiSettings } from "react-icons/fi";
 
 const AdminSidebar = () => {
+  const location = useLocation();
+
   return (
-    <div className="w-64 min-h-screen bg-base-200 p-6 shadow-md">
-      <h2 className="text-xl font-bold text-amber-600 mb-6">Admin Panel</h2>
-      <ul className="space-y-4 text-base">
-        <li className="flex items-center gap-3 hover:text-amber-600 cursor-pointer">
-          <FiHome /> Home
+    <div className="min-h-full bg-base-100 dark:bg-gray-900 border-r border-gray-300 dark:border-gray-700 p-5">
+      <h2 className="text-2xl font-bold text-amber-500 mb-6">Admin Panel</h2>
+      <ul className="space-y-4">
+        <li>
+          <Link
+            to="/"
+            className={`flex items-center gap-2 text-base-content hover:text-amber-500 transition ${
+              location.pathname === "/" && "font-semibold text-amber-600"
+            }`}
+          >
+            <FiHome /> Home
+          </Link>
         </li>
-        <li className="flex items-center gap-3 hover:text-amber-600 cursor-pointer">
-          <FiUsers /> Users
+        <li>
+          <a className="flex items-center gap-2 text-base-content hover:text-amber-500 transition">
+            <FiUsers /> Users
+          </a>
         </li>
-        <li className="flex items-center gap-3 hover:text-amber-600 cursor-pointer">
-          <FiSettings /> Settings
+        <li>
+          <a className="flex items-center gap-2 text-base-content hover:text-amber-500 transition">
+            <FiSettings /> Settings
+          </a>
         </li>
       </ul>
     </div>
