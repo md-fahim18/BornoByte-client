@@ -1,10 +1,9 @@
-// src/Layout/DashBoard/AdminDash/AdminTopbar.jsx
 import React from 'react';
 
 const AdminTopbar = () => {
   return (
-    <div className="bg-gray-800 text-white px-6 py-4 shadow">
-      <h1 className="text-xl font-semibold">Admin Dashboard Topbar</h1>
+    <div className="bg-white dark:bg-gray-800 shadow px-6 py-4">
+      <h2 className="text-2xl font-bold text-orange-500">Admin Panel - BornoByte</h2>
     </div>
   );
 };

@@ -68,8 +68,7 @@ const Dashboard = () => {
             <>
             admin sidebar
              <AdminDashboard></AdminDashboard>
-              <AdminTopbar></AdminTopbar>
-              <AdminSidebar></AdminSidebar>
+              
             </>
           )}
 
