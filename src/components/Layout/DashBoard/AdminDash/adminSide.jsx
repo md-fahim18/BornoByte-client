@@ -1,16 +1,18 @@
-// src/Layout/DashBoard/AdminDash/AdminSidebar.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 
 const AdminSidebar = () => {
   return (
-    <div className="p-4 space-y-4">
-      <h2 className="text-xl font-bold text-white">Admin Panel</h2>
-      <ul className="space-y-2">
-        <li><Link to="/" className="hover:text-amber-400">Home</Link></li>
-        <li><Link to="/dashboard" className="hover:text-amber-400">Dashboard</Link></li>
-        {/* Add more admin links here */}
-      </ul>
+    <div className="text-sm space-y-2">
+      <li>
+        <Link to="/dashboard" className="hover:bg-gray-700 p-2 rounded block">Dashboard Home</Link>
+      </li>
+      <li>
+        <Link to="/" className="hover:bg-gray-700 p-2 rounded block">Website Home</Link>
+      </li>
+      <li>
+        <Link to="/dashboard/users" className="hover:bg-gray-700 p-2 rounded block">Manage Users</Link>
+      </li>
     </div>
   );
 };

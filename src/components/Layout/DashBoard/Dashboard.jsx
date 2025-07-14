@@ -7,54 +7,24 @@
 //         <div>
 //             <TopBar></TopBar>
 //             <Sidebar></Sidebar>
-            
 //         </div>
 //     );
 // };
 
 // export default Dashboard;
-import React, { useState } from 'react';
+
+import React from 'react';
 import useAdmin from '../../RoleHooks/useAdmin';
 import TopBar from './Topbar';
 import Sidebar from './Sidebar';
-import AdminDashboard from './AdminDash/adminDash';
-import AdminSidebar from './AdminDash/adminSide';
-import AdminTopbar from './AdminDash/adminTop';
-// import useTeacher from '../../RoleHooks/useTeacher'; // Future use
 
-// Component Imports (Replace with actual components)
-
+// ✅ Modular Admin Components
+import AdminDashboard from './AdminDash/AdminDashboard';
+import AdminTopbar from './AdminDash/AdminTopbar';
+import AdminSidebar from './AdminDash/AdminSidebar';
 
 const Dashboard = () => {
   const [isAdmin] = useAdmin();
-  // const [isTeacher] = useTeacher(); // Future use
-//   const [activeComponent, setActiveComponent] = useState('dashboard');
-
-  // Component render function
-//   const renderComponent = () => {
-//     switch (activeComponent) {
-//       case 'hotQueries':
-//         return <HotQueries />;
-//       case 'userList':
-//         return <UserList />;
-//       case 'adminParcels':
-//         return <AdminParcels />;
-//       case 'deliveryManDashboard':
-//         return <DeliveryManDashboard />;
-//       case 'bookParcel':
-//         return <BookParcel />;
-//       case 'userParcels':
-//         return <UserParcels />;
-//       case 'myProfile':
-//         return <MyProfile onUpdateComplete={() => window.location.reload()} />;
-//       case 'addDeliveryMen':
-//         return <AddQueries />;
-//       case 'reviewList':
-//         return <ReviewList />;
-//       default:
-//         return <div>Welcome to the Dashboard!</div>;
-//     }
-//   };
 
   return (
     <div className="flex min-h-screen">
@@ -66,61 +36,44 @@ const Dashboard = () => {
           {/* Admin Sidebar */}
           {isAdmin && (
             <>
-            admin sidebar
-             <AdminDashboard></AdminDashboard>
-              <AdminTopbar></AdminTopbar>
-              <AdminSidebar></AdminSidebar>
+              {/* ✅ Admin Sidebar Component */}
+              <AdminSidebar />
             </>
           )}
-
-          {/* Teacher Sidebar (for future use) */}
-          {/* {isTeacher && (
-            <>
-              <li>
-                <button
-                  onClick={() => setActiveComponent('uploadAssignment')}
-                  className="w-full text-left hover:bg-gray-700 p-2 rounded"
-                >
-                  Upload Assignment
-                </button>
-              </li>
-            </>
-          )} */}
 
           {/* Regular User Sidebar */}
           {!isAdmin && (
             <>
-            user sidebar
-              <TopBar></TopBar>
-             <Sidebar></Sidebar>
+              {/* user sidebar */}
+              <Sidebar />
             </>
           )}
         </ul>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-8 bg-gray-100">
+      <div className="flex-1 bg-gray-100 dark:bg-gray-900 p-0">
+        {/* Top Bar */}
+        {isAdmin ? <AdminTopbar /> : <TopBar />}
+
+        {/* Admin Only Content */}
+        {isAdmin && (
+          <>
+            <AdminDashboard />
+          </>
+        )}
+
+        {/* Optional Hero for Dashboard Identity */}
         <div
-          className="hero min-h-[300px] mb-8"
-        //   style={{
-        //     backgroundImage: "url(https://i.ibb.co.com/JskSgXW/freepik-upload-43996.png)",
-        //   }}
+          className="hero min-h-[200px] mb-4"
         >
-          <div className="hero-overlay bg-opacity-30"></div>
+          <div className="hero-overlay bg-opacity-20"></div>
           <div className="hero-content text-center text-neutral-content">
-            <h1 className="text-5xl font-bold text-red-500 anton-regular">
-              {
-                isAdmin
-                  ? 'Admin Dashboard'
-                  // : isTeacher ? 'Teacher Dashboard' // Future condition
-                  : 'User Dashboard'
-              }
+            <h1 className="text-4xl font-bold text-orange-500 anton-regular">
+              {isAdmin ? 'Admin Dashboard' : 'User Dashboard'}
             </h1>
           </div>
         </div>
-
-        {/* Dynamic Component Render */}
-        {/* {renderComponent()} */}
       </div>
     </div>
   );
