@@ -15,16 +15,19 @@
 
 import React from 'react';
 import useAdmin from '../../RoleHooks/useAdmin';
+import useTeacher from '../../RoleHooks/useTeacher'; // ✅ Added
 import TopBar from './Topbar';
 import Sidebar from './Sidebar';
-
-// ✅ Modular Admin Components
 import AdminDashboard from './AdminDash/adminDash';
-import AdminTopbar from './AdminDash/adminTop';
 import AdminSidebar from './AdminDash/adminSide';
+import AdminTopbar from './AdminDash/adminTop';
+import TeacherDashboard from './TeacherDash/teacherDash';
+import TeacherSidebar from './TeacherDash/teacherSide';
+import TeacherTopbar from './TeacherDash/teacherTop';
 
 const Dashboard = () => {
   const [isAdmin] = useAdmin();
+  const [isTeacher] = useTeacher(); // ✅ Role check
 
   return (
     <div className="flex min-h-screen">
@@ -36,15 +39,23 @@ const Dashboard = () => {
           {/* Admin Sidebar */}
           {isAdmin && (
             <>
-              {/* ✅ Admin Sidebar Component */}
+              <AdminTopbar />
               <AdminSidebar />
             </>
           )}
 
-          {/* Regular User Sidebar */}
-          {!isAdmin && (
+          {/* Teacher Sidebar */}
+          {!isAdmin && isTeacher && (
             <>
-              {/* user sidebar */}
+              <TeacherTopbar />
+              <TeacherSidebar />
+            </>
+          )}
+
+          {/* Regular User Sidebar */}
+          {!isAdmin && !isTeacher && (
+            <>
+              <TopBar />
               <Sidebar />
             </>
           )}
@@ -52,28 +63,20 @@ const Dashboard = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 bg-gray-100 dark:bg-gray-900 p-0">
-        {/* Top Bar */}
-        {isAdmin ? <AdminTopbar /> : <TopBar />}
-
-        {/* Admin Only Content */}
-        {isAdmin && (
-          <>
-            <AdminDashboard />
-          </>
-        )}
-
-        {/* Optional Hero for Dashboard Identity */}
-        <div
-          className="hero min-h-[200px] mb-4"
-        >
-          <div className="hero-overlay bg-opacity-20"></div>
+      <div className="flex-1 p-8 bg-gray-100 dark:bg-gray-900">
+        <div className="hero min-h-[300px] mb-8">
+          <div className="hero-overlay bg-opacity-30"></div>
           <div className="hero-content text-center text-neutral-content">
-            <h1 className="text-4xl font-bold text-orange-500 anton-regular">
-              {isAdmin ? 'Admin Dashboard' : 'User Dashboard'}
+            <h1 className="text-5xl font-bold text-orange-500 anton-regular">
+              {isAdmin ? 'Admin Dashboard' : isTeacher ? 'Teacher Dashboard' : 'User Dashboard'}
             </h1>
           </div>
         </div>
+
+        {/* Dashboard Body */}
+        {isAdmin && <AdminDashboard />}
+        {isTeacher && !isAdmin && <TeacherDashboard />}
+        {/* No user dashboard yet */}
       </div>
     </div>
   );
