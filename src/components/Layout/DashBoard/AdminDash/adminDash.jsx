@@ -1,61 +1,61 @@
+// src/components/Layout/DashBoard/AdminDash/AdminDashboard.jsx
 import React, { useEffect, useState } from "react";
-import { FaUserCircle } from "react-icons/fa";
-import useAxiosSecure from "../../../Auth/useAxiosSecure"; // Update path as needed
+import axios from "axios";
+import { FaUserShield } from "react-icons/fa";
+import { MdOutlineMail } from "react-icons/md";
+import { FiUsers } from "react-icons/fi";
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
-  const [axiosSecure] = useAxiosSecure();
 
   useEffect(() => {
-    axiosSecure.get("/users").then((res) => {
+    axios.get("http://localhost:3000/users").then((res) => {
       setUsers(res.data);
     });
-  }, [axiosSecure]);
-
-  const handleRoleChange = (userId, newRole) => {
-    const updatedUsers = users.map((user) =>
-      user._id === userId ? { ...user, role: newRole } : user
-    );
-    setUsers(updatedUsers);
-    // Later: connect to backend to update role
-  };
+  }, []);
 
   return (
-    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 text-base-content">
-      {users.map((user) => (
-        <div
-          key={user._id}
-          className="bg-base-200 rounded-lg shadow-md p-5 hover:shadow-lg transition-transform hover:-translate-y-1"
-        >
-          <div className="flex items-center gap-4 mb-4">
-            {user.photoURL ? (
-              <img
-                src={user.photoURL}
-                alt="User"
-                className="w-14 h-14 rounded-full object-cover"
-              />
-            ) : (
-              <FaUserCircle className="w-14 h-14 text-gray-400" />
-            )}
-            <div>
-              <h3 className="font-semibold">{user.name || "Unknown User"}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
+    <div className="p-6 bg-base-100 min-h-screen text-base-content">
+      <h2 className="text-3xl font-semibold mb-6 text-center">All Registered Users</h2>
+      <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        {users.map((user, index) => (
+          <div
+            key={index}
+            className="bg-base-200 rounded-xl p-6 shadow-md hover:shadow-xl transition-all duration-300"
+          >
+            <div className="flex items-center gap-4">
+              <div className="avatar">
+                <div className="w-16 rounded-full ring ring-orange-400 ring-offset-base-100 ring-offset-2">
+                  <img
+                    src={`https://api.dicebear.com/7.x/thumbs/svg?seed=${user.email}`}
+                    alt="User Avatar"
+                  />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold flex items-center gap-1">
+                  <FaUserShield className="text-orange-400" /> {user.name}
+                </h3>
+                <p className="text-sm flex items-center gap-1 text-gray-500 dark:text-gray-400">
+                  <MdOutlineMail /> {user.email}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <label className="block text-sm font-medium mb-1">Role</label>
+              <select
+                className="select select-bordered w-full"
+                defaultValue={user.role}
+              >
+                <option value="admin">Admin</option>
+                <option value="teacher">Teacher</option>
+                <option value="student">Student</option>
+              </select>
             </div>
           </div>
-          <div>
-            <label className="text-sm font-medium">Role:</label>
-            <select
-              className="select select-sm mt-1 w-full bg-base-100 text-base-content border border-gray-300 dark:border-gray-600"
-              value={user.role}
-              onChange={(e) => handleRoleChange(user._id, e.target.value)}
-            >
-              <option value="student">Student</option>
-              <option value="teacher">Teacher</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };

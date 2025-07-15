@@ -1,38 +1,27 @@
+// src/components/Layout/DashBoard/AdminDash/AdminSidebar.jsx
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
-import { FiHome, FiUsers, FiSettings, FiBarChart2 } from "react-icons/fi";
+import { Link } from "react-router-dom";
+import { FiHome, FiUsers, FiSettings } from "react-icons/fi";
 
 const AdminSidebar = () => {
-  const location = useLocation();
-
   return (
-    <div className="min-h-full bg-base-100 dark:bg-gray-900 border-r border-base-300 dark:border-gray-700 p-5">
-      <h2 className="text-2xl font-bold text-amber-500 mb-6">Admin Panel</h2>
+    <div className="bg-base-200 h-screen p-4 shadow-lg text-base-content">
+      <h2 className="text-2xl font-bold mb-6 text-orange-500 text-center">Admin Panel</h2>
       <ul className="space-y-4">
         <li>
-          <Link
-            to="/"
-            className={`flex items-center gap-2 text-base-content hover:text-amber-500 transition ${
-              location.pathname === "/" && "font-semibold text-amber-600"
-            }`}
-          >
+          <Link to="/" className="flex items-center gap-2 hover:text-orange-500">
             <FiHome /> Home
           </Link>
         </li>
         <li>
-          <span className="flex items-center gap-2 text-base-content hover:text-amber-500 cursor-pointer transition">
+          <Link to="/dashboard" className="flex items-center gap-2 hover:text-orange-500">
             <FiUsers /> Users
-          </span>
+          </Link>
         </li>
         <li>
-          <span className="flex items-center gap-2 text-base-content hover:text-amber-500 cursor-pointer transition">
-            <FiBarChart2 /> Analytics
-          </span>
-        </li>
-        <li>
-          <span className="flex items-center gap-2 text-base-content hover:text-amber-500 cursor-pointer transition">
+          <Link to="/dashboard/settings" className="flex items-center gap-2 hover:text-orange-500">
             <FiSettings /> Settings
-          </span>
+          </Link>
         </li>
       </ul>
     </div>
