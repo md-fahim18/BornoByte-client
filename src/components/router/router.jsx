@@ -8,6 +8,7 @@ import Dashboard from "../Layout/DashBoard/Dashboard";
 import About from "../About Us/About"; // Adjust path as per your structure
 import PrivateRoute from "./PrivateRoute";
 import CourseDetails from "../CourseDetails/CourseDetails";
+import UpdateProfilePicture from "../Layout/DashBoard/UpdateProfilePicture";
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,14 @@ const router = createBrowserRouter([
     path: "/courses/:id",
     element: <CourseDetails></CourseDetails>,
   },
+  {
+    path: "/updateProfile",
+    element: (
+      <PrivateRoute>
+        <UpdateProfilePicture></UpdateProfilePicture>
+      </PrivateRoute>
+    ),
+  }
 ]);
 
 export default router;

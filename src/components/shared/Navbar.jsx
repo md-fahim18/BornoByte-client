@@ -135,6 +135,9 @@ const Navbar = () => {
                             <li>
                                 <Link to="/queries">Dashboard</Link> {/* Changed from "myqueries" to "queries" as per your first Navbar */}
                             </li>
+                              <li>
+                                <Link to="/updateProfile">Update Profile</Link> {/* Changed from "myqueries" to "queries" as per your first Navbar */}
+                            </li>
                             <li>
                                 <button onClick={handleLogOut}>Logout</button>
                             </li>
