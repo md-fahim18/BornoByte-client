@@ -7,11 +7,45 @@ import { MdOutlineMail } from "react-icons/md";
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
 
+
+
   useEffect(() => {
     axios.get("http://localhost:3000/users").then((res) => {
       setUsers(res.data);
     });
   }, []);
+
+  const handleRoleChange = (id, newRole) => {
+  axios.patch(`http://localhost:3000/users/role/${id}`, 
+  { role: newRole },
+  {
+    headers: {
+      authorization: `Bearer ${localStorage.getItem('access-token')}`
+    }
+  }
+)
+
+    .then((res) => {
+      if (res.data.modifiedCount > 0) {
+        alert("User role updated successfully");
+
+        // Update frontend state
+        setUsers((prev) =>
+          prev.map((user) =>
+            user._id === id ? { ...user, role: newRole } : user
+          )
+        );
+      }
+    })
+    .catch((err) => {
+      console.error("Failed to update role:", err);
+      alert("Role update failed");
+    });
+};
+
+
+
+
 
   return (
     <div className="p-6 pt-24 bg-base-100 min-h-screen text-base-content">
@@ -49,7 +83,7 @@ const AdminDashboard = () => {
             {/* Role Selector */}
             <div className="mt-4">
               <label className="block text-sm font-medium mb-1">Role</label>
-              <select
+              {/* <select
                 className="select select-bordered w-full"
                 defaultValue={user.role}
                 // You can add onChange handler here later
@@ -57,7 +91,17 @@ const AdminDashboard = () => {
                 <option value="admin">Admin</option>
                 <option value="teacher">Teacher</option>
                 <option value="student">Student</option>
-              </select>
+              </select> */}
+              <select
+  className="select select-bordered w-full"
+  value={user.role}
+  onChange={(e) => handleRoleChange(user._id, e.target.value)}
+>
+  <option value="admin">Admin</option>
+  <option value="teacher">Teacher</option>
+  <option value="student">Student</option>
+</select>
+
             </div>
           </div>
         ))}

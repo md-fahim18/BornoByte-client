@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import AuthContext from './AuthContext';
 
 import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 
 const Login = () => {
@@ -14,19 +15,44 @@ const Login = () => {
     const form = e.target;
     const email = form.email.value;
     const password = form.password.value;
-    loginUser(email,password)
-    .then((userCredential) => {
-      // Signed in 
-      const user = userCredential.user;
-      console.log('log in',user);
-      navigate(from);
-      // ...
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log(errorMessage);
-    });
+    // loginUser(email,password)
+    // .then((userCredential) => {
+    //   // Signed in 
+    //   const user = userCredential.user;
+    //   console.log('log in',user);
+    //   navigate(from);
+    //   // ...
+    // })
+    // .catch((error) => {
+    //   const errorCode = error.code;
+    //   const errorMessage = error.message;
+    //   console.log(errorMessage);
+    // });
+    loginUser(email, password)
+  .then((userCredential) => {
+    const user = userCredential.user;
+    console.log('log in', user);
+
+    // ✅ Step 2.1: JWT Token Request
+    axios.post('http://localhost:3000/jwt', { email: user.email })
+      .then(res => {
+        const token = res.data.token;
+        
+        // ✅ Step 2.2: Save token to localStorage
+        localStorage.setItem('access-token', token);
+
+        // ✅ Step 2.3: Redirect user
+        navigate(from);
+      })
+      .catch(err => {
+        console.error('JWT Error:', err.message);
+      });
+  })
+  .catch((error) => {
+    const errorMessage = error.message;
+    console.log(errorMessage);
+  });
+
 
   }
 
