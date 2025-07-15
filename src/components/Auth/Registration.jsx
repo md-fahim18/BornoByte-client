@@ -18,41 +18,103 @@ const Registration = () => {
     const fullName = `${firstName} ${lastName}`;
     const email = formData.email.value;
     const password = formData.password.value;
-    const photoURL = formData.photoURL.value;
+    // const photoURL = formData.photoURL.value;
+    const imageFile = formData.image.files[0];
+    const imageFormData = new FormData();
+    imageFormData.append("image", imageFile);
+    // Use the environment variable for the imgbb API key
+    const imgbbApiKey = import.meta.env.VITE_Image_hosting_key;
+
+    const imgbbUploadURL = `https://api.imgbb.com/1/upload?key=${imgbbApiKey}`;
+
     const phone = formData.phone.value;
     const address = formData.address.value;
     const institution = formData.institution.value;
     const department = formData.department.value;
     const session = formData.session.value;
 
-    createUser(email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        return updateProfile(user, {
-          displayName: fullName,
-          photoURL: photoURL,
+    // First, upload the image to imgbb
+fetch(imgbbUploadURL, {
+  method: "POST",
+  body: imageFormData,
+})
+  .then(res => res.json())
+  .then(imgResponse => {
+    if (imgResponse.success) {
+      const photoURL = imgResponse.data.url;
+
+      // ✅ Now create user in Firebase
+      createUser(email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          return updateProfile(user, {
+            displayName: fullName,
+            photoURL: photoURL,
+          });
+        })
+        .then(() => {
+          const userInfo = {
+            name: fullName,
+            email: email,
+            photo: photoURL,
+            phone,
+            address,
+            institution,
+            department,
+            session,
+            role: "student" // Default role
+          };
+
+          // ✅ Save to MongoDB
+          AxiosPublic().post('/users', userInfo)
+            .then(res => {
+              if (res.data.insertedId) {
+                alert("Registration Successful!");
+                navigate('/');
+              }
+            });
+        })
+        .catch(err => {
+          console.error("Firebase error:", err.message);
         });
-      })
-      .then(() => {
-        console.log("User profile updated successfully");
-        alert("Registration Successful!");
-        navigate('/');
-         const userInfo={
-             name : fullName,
-             email : email
-          }
-          //save user info to db
-          AxiosPublic().post('/users',userInfo)
-          .then(res=>{
-            if (res.data.insertedId) {
-              alert("Registration Successful!");
-              navigate('/'); // Redirect to home
-            }
-          })
-      })
-      .catch((error) => {
-        console.error("Registration Error:", error.message);
-      });
+    }
+  })
+  .catch(error => {
+    console.error("Image Upload Error:", error.message);
+  });
+
+
+
+    
+
+    // createUser(email, password)
+    //   .then((userCredential) => {
+    //     const user = userCredential.user;
+    //     return updateProfile(user, {
+    //       displayName: fullName,
+    //       photoURL: photoURL,
+    //     });
+    //   })
+    //   .then(() => {
+    //     console.log("User profile updated successfully");
+    //     alert("Registration Successful!");
+    //     navigate('/');
+    //      const userInfo={
+    //          name : fullName,
+    //          email : email
+    //       }
+    //       //save user info to db
+    //       AxiosPublic().post('/users',userInfo)
+    //       .then(res=>{
+    //         if (res.data.insertedId) {
+    //           alert("Registration Successful!");
+    //           navigate('/'); // Redirect to home
+    //         }
+    //       })
+    //   })
+    //   .catch((error) => {
+    //     console.error("Registration Error:", error.message);
+    //   });
   };
 
   return (
@@ -79,10 +141,15 @@ const Registration = () => {
               <label className="label"><span className="label-text">Password</span></label>
               <input type="password" name="password" placeholder="Your password" className="input input-bordered" required />
             </div>
-            <div className="form-control">
+            {/* <div className="form-control">
               <label className="label"><span className="label-text">Photo URL</span></label>
               <input type="url" name="photoURL" placeholder="Profile photo URL" className="input input-bordered" />
+            </div> */}
+            <div className="form-control">
+            <label className="label"><span className="label-text">Upload Profile Photo</span></label>
+            <input type="file" name="image" accept="image/*" className="file-input file-input-bordered w-full" required />
             </div>
+
             <div className="form-control">
               <label className="label"><span className="label-text">Phone Number</span></label>
               <input type="tel" name="phone" placeholder="Phone number" className="input input-bordered" required />
