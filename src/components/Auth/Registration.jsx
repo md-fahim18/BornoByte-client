@@ -66,13 +66,31 @@ fetch(imgbbUploadURL, {
           };
 
           // ✅ Save to MongoDB
-          AxiosPublic().post('/users', userInfo)
-            .then(res => {
-              if (res.data.insertedId) {
-                alert("Registration Successful!");
-                navigate('/');
-              }
-            });
+          // AxiosPublic().post('/users', userInfo)
+          //   .then(res => {
+          //     if (res.data.insertedId) {
+          //       alert("Registration Successful!");
+         
+          //       navigate('/');
+          //     }
+          //   });
+           // ✅ Save to MongoDB
+  AxiosPublic().post('/users', userInfo)
+    .then(res => {
+      if (res.data.insertedId) {
+        // ✅ Now request JWT
+        AxiosPublic().post('/jwt', { email: email })
+          .then(jwtRes => {
+            const token = jwtRes.data.token;
+            localStorage.setItem('access-token', token); // ✅ Store token in localStorage
+            alert("Registration Successful!");
+            navigate('/');
+          })
+          .catch(jwtErr => {
+            console.error("JWT Error:", jwtErr.message);
+          });
+      }
+    });
         })
         .catch(err => {
           console.error("Firebase error:", err.message);
