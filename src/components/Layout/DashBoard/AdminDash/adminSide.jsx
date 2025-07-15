@@ -5,8 +5,22 @@ import { FiHome, FiUsers, FiSettings } from "react-icons/fi";
 
 const AdminSidebar = () => {
   return (
-    <div className="bg-base-200 h-screen p-4 shadow-lg text-base-content">
-      <h2 className="text-2xl font-bold mb-6 text-orange-500 text-center">Admin Panel</h2>
+    <div
+  className="bg-base-200 text-base-content shadow-lg w-64 fixed left-0 top-16 h-[calc(100vh-4rem)] p-4 overflow-y-auto z-40"
+>
+
+      {/* 
+        top-16 (64px) => matches typical navbar height
+        h-[calc(100vh-4rem)] => full height minus topbar (if topbar is h-16)
+        overflow-y-auto => lets sidebar scroll independently
+        fixed + left-0 => sticks to the left
+      */}
+
+      <h2 className="text-2xl font-bold mb-6 text-orange-500 text-center mt-4">
+        Admin Panel
+      </h2>
+
+
       <ul className="space-y-4">
         <li>
           <Link to="/" className="flex items-center gap-2 hover:text-orange-500">
@@ -19,7 +33,10 @@ const AdminSidebar = () => {
           </Link>
         </li>
         <li>
-          <Link to="/dashboard/settings" className="flex items-center gap-2 hover:text-orange-500">
+          <Link
+            to="/dashboard/settings"
+            className="flex items-center gap-2 hover:text-orange-500"
+          >
             <FiSettings /> Settings
           </Link>
         </li>

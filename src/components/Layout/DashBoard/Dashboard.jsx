@@ -1,19 +1,6 @@
-// import React from 'react';
-// import Sidebar from './Sidebar';
-// import TopBar from './Topbar';
-// const Dashboard = () => {
-//     return (
-//         <div>
-//             <TopBar></TopBar>
-//             <Sidebar></Sidebar>
-//         </div>
-//     );
-// };
-// export default Dashboard;
-
 import React from 'react';
 import useAdmin from '../../RoleHooks/useAdmin';
-import useTeacher from '../../RoleHooks/useTeacher'; // ✅ Added teacher role hook
+import useTeacher from '../../RoleHooks/useTeacher';
 import TopBar from './Topbar';
 import Sidebar from './Sidebar';
 import AdminDashboard from './AdminDash/adminDash';
@@ -23,8 +10,8 @@ import TeacherDashboard from './TeacherDash/teacherDash';
 import TeacherSidebar from './TeacherDash/teacherSide';
 import TeacherTopbar from './TeacherDash/teacherTop';
 
-// ✅ Import user dashboard components
-import UserDashboard from './UserDash/userDash';
+// ✅ User role
+import UserDashboard from './UserDash/userDash.jsx';
 import UserSidebar from './UserDash/userSide';
 import UserTopbar from './UserDash/userTop';
 
@@ -32,25 +19,28 @@ const Dashboard = () => {
   const [isAdmin] = useAdmin();
   const [isTeacher] = useTeacher();
 
+  // Set layout adjustments if using fixed topbar/sidebar
+  const isFixed = true; // enable fixed layout globally
+  const topOffset = isFixed ? 'pt-16' : ''; // topbar height
+  const leftOffset = isFixed ? 'ml-64' : ''; // sidebar width
+
   return (
-    <div className="flex flex-col min-h-screen bg-base-100 text-base-content">
-      {/* Top Bar */}
+    <div className="bg-base-100 text-base-content min-h-screen">
+      {/* Top Bar (Fixed position handled inside each topbar component) */}
       {isAdmin && <AdminTopbar />}
       {!isAdmin && isTeacher && <TeacherTopbar />}
-      {!isAdmin && !isTeacher && <UserTopbar />} {/* ✅ User Topbar */}
+      {!isAdmin && !isTeacher && <UserTopbar />}
 
-      <div className="flex flex-1">
-        {/* Sidebar */}
-        {isAdmin && <AdminSidebar />}
-        {!isAdmin && isTeacher && <TeacherSidebar />}
-        {!isAdmin && !isTeacher && <UserSidebar />} {/* ✅ User Sidebar */}
+      {/* Sidebar (Fixed handled inside sidebar components) */}
+      {isAdmin && <AdminSidebar />}
+      {!isAdmin && isTeacher && <TeacherSidebar />}
+      {!isAdmin && !isTeacher && <UserSidebar />}
 
-        {/* Main Content */}
-        <div className="flex-1 p-6">
-          {isAdmin && <AdminDashboard />}
-          {isTeacher && !isAdmin && <TeacherDashboard />}
-          {!isAdmin && !isTeacher && <UserDashboard />} {/* ✅ User Dashboard */}
-        </div>
+      {/* Main Content */}
+      <div className={`p-6 ${topOffset} ${leftOffset}`}>
+        {isAdmin && <AdminDashboard />}
+        {isTeacher && !isAdmin && <TeacherDashboard />}
+        {!isAdmin && !isTeacher && <UserDashboard />}
       </div>
     </div>
   );
