@@ -6,6 +6,7 @@ import PendingCourses from './PendingCourses';
 const AddCourse = () => {
   const [formData, setFormData] = useState({
     title: '',
+    instructor: '',
     category: '',
     duration: '',
     price: '',
@@ -59,6 +60,7 @@ const AddCourse = () => {
 
       const courseData = {
         title: formData.title,
+        instructor: formData.instructor,
         thumbnail: imageUrl,
         category: formData.category,
         duration: formData.duration,
@@ -105,6 +107,7 @@ const AddCourse = () => {
       <h2 className="text-2xl font-bold mt-8 mb-4">Add New Course</h2>
       <form onSubmit={handleSubmit} className="grid gap-4">
         <input name="title" placeholder="Course Title" value={formData.title} onChange={handleChange} className="input input-bordered" required />
+        <input name="instructor" placeholder="Course Instructor" value={formData.instructor} onChange={handleChange} className="input input-bordered" required />
         
         <input type="file" accept="image/*" onChange={handleThumbnailChange} className="file-input file-input-bordered" required />
         
