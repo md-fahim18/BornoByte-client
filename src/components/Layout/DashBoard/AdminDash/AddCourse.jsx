@@ -111,7 +111,19 @@ const AddCourse = () => {
         
         <input type="file" accept="image/*" onChange={handleThumbnailChange} className="file-input file-input-bordered" required />
         
-        <input name="category" placeholder="Category (e.g., HSC)" value={formData.category} onChange={handleChange} className="input input-bordered" required />
+      <select
+  name="category"
+  value={formData.category}
+  onChange={handleChange}
+  className="select select-bordered"
+  required
+>
+  <option value="" disabled>Select Category</option>
+  <option value="SSC">SSC</option>
+  <option value="HSC">HSC</option>
+  <option value="Undergraduate">Undergraduate</option>
+</select>
+
         
         <input name="duration" placeholder="Duration (e.g., 3 Months)" value={formData.duration} onChange={handleChange} className="input input-bordered" required />
         
