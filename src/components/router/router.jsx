@@ -11,6 +11,8 @@ import CourseDetails from "../CourseDetails/CourseDetails";
 import UpdateProfilePicture from "../Layout/DashBoard/UpdateProfilePicture";
 import AddCourse from "../Layout/DashBoard/AdminDash/AddCourse";
 import AllCourses from "../AllCourses/AllCourses"; // ✅ Adjust path if needed
+import PendingCourses from "../Layout/DashBoard/AdminDash/PendingCourses";
+import ManageCourses from "../Layout/DashBoard/AdminDash/ManageCourse";
 
 
 const router = createBrowserRouter([
