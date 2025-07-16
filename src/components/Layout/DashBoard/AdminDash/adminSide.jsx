@@ -40,6 +40,15 @@ const AdminSidebar = () => {
             <FiSettings /> Settings
           </Link>
         </li>
+        <li>
+   <Link
+            to="/dashboard/add-course"
+            className="flex items-center gap-2 hover:text-orange-500"
+          >
+            <FiSettings /> Add Course
+          </Link>
+
+        </li>
       </ul>
     </div>
   );
