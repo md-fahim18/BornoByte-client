@@ -9,6 +9,7 @@ import About from "../About Us/About"; // Adjust path as per your structure
 import PrivateRoute from "./PrivateRoute";
 import CourseDetails from "../CourseDetails/CourseDetails";
 import UpdateProfilePicture from "../Layout/DashBoard/UpdateProfilePicture";
+import AddCourse from "../Layout/DashBoard/AdminDash/AddCourse";
 
 const router = createBrowserRouter([
   {
@@ -54,7 +55,15 @@ const router = createBrowserRouter([
         <UpdateProfilePicture></UpdateProfilePicture>
       </PrivateRoute>
     ),
-  }
+  },
+   {
+    path: "/dashboard/add-course",
+    element: (
+      <PrivateRoute>
+        <AddCourse></AddCourse>
+      </PrivateRoute>
+    ),
+  },
 ]);
 
 export default router;
