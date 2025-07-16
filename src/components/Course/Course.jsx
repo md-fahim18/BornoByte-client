@@ -24,7 +24,7 @@ const Course = ({ course }) => {
         </div>
 
         <div className="card-actions justify-between">
-          <Link to={`/courses/${id}`}>
+          <Link to={`/courses/${id}`} state={{ img: image }}>
             <button className="btn btn-outline btn-primary">Learn More</button>
           </Link>
           <button className="btn btn-primary">Enroll</button>
