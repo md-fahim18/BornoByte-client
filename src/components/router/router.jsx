@@ -64,30 +64,14 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
   },
-      {
-      path: "/dashboard/pending-courses",
-      element: (
-        <PrivateRoute>
-          <PendingCourses />
-        </PrivateRoute>
-      ),
-    },
-    {
-      path: "/dashboard/add-course",
-      element: (
-        <PrivateRoute>
-          <AddCourse />
-        </PrivateRoute>
-      ),
-    },
-    {
-      path: "/dashboard/manage-courses",
-      element: (
-        <PrivateRoute>
-          <ManageCourses />
-        </PrivateRoute>
-      ),
-    },
+   {
+    path: "/dashboard/add-course",
+    element: (
+      <PrivateRoute>
+        <AddCourse></AddCourse>
+      </PrivateRoute>
+    ),
+  },
 ]);
 
 export default router;

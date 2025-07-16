@@ -49,21 +49,6 @@ const AdminSidebar = () => {
           </Link>
 
         </li>
-                <li>
-          <Link to="/dashboard/pending-courses" className="flex items-center gap-2 hover:text-orange-500">
-            <MdOutlinePendingActions /> Approval Requests
-          </Link>
-        </li>
-        <li>
-          <Link to="/dashboard/add-course" className="flex items-center gap-2 hover:text-orange-500">
-            <MdLibraryAdd /> Add Course
-          </Link>
-        </li>
-        <li>
-          <Link to="/dashboard/manage-courses" className="flex items-center gap-2 hover:text-orange-500">
-            <MdManageAccounts /> Manage Courses
-          </Link>
-        </li>
       </ul>
     </div>
   );
