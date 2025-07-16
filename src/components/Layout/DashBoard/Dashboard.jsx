@@ -1,4 +1,6 @@
-import React from 'react';
+
+import React, { useState } from 'react';
+
 import useAdmin from '../../RoleHooks/useAdmin';
 import useTeacher from '../../RoleHooks/useTeacher';
 import TopBar from './Topbar';
@@ -10,6 +12,12 @@ import TeacherDashboard from './TeacherDash/teacherDash';
 import TeacherSidebar from './TeacherDash/teacherSide';
 import TeacherTopbar from './TeacherDash/teacherTop';
 
+//admin
+import AddCourse from './AdminDash/AddCourse.jsx';         // ✅ You already have this
+import PendingCourses from './AdminDash/PendingCourses.jsx'; // ✅ If not, adjust the path
+import ManageCourses from './AdminDash/ManageCourse.jsx';   // ✅ This is your management panel
+
+
 // ✅ User role
 import UserDashboard from './UserDash/userDash.jsx';
 import UserSidebar from './UserDash/userSide';
@@ -18,6 +26,8 @@ import UserTopbar from './UserDash/userTop';
 const Dashboard = () => {
   const [isAdmin] = useAdmin();
   const [isTeacher] = useTeacher();
+  const [adminTab, setAdminTab] = useState('users'); // default section
+
 
   // Set layout adjustments if using fixed topbar/sidebar
   const isFixed = true; // enable fixed layout globally
@@ -32,13 +42,21 @@ const Dashboard = () => {
       {!isAdmin && !isTeacher && <UserTopbar />}
 
       {/* Sidebar (Fixed handled inside sidebar components) */}
-      {isAdmin && <AdminSidebar />}
+      {isAdmin && <AdminSidebar setAdminTab={setAdminTab} />}
       {!isAdmin && isTeacher && <TeacherSidebar />}
       {!isAdmin && !isTeacher && <UserSidebar />}
 
       {/* Main Content */}
       <div className={`p-6 ${topOffset} ${leftOffset}`}>
-        {isAdmin && <AdminDashboard />}
+        {isAdmin && (
+          <>
+            {adminTab === 'users' && <AdminDashboard />}
+            {adminTab === 'add-course' && <AddCourse />}
+            {adminTab === 'pending' && <PendingCourses />}
+            {adminTab === 'manage' && <ManageCourses />}
+          </>
+        )}
+
         {isTeacher && !isAdmin && <TeacherDashboard />}
         {!isAdmin && !isTeacher && <UserDashboard />}
       </div>
