@@ -22,6 +22,7 @@ import ManageCourses from './AdminDash/ManageCourse.jsx';   // ✅ This is your 
 import UserDashboard from './UserDash/userDash.jsx';
 import UserSidebar from './UserDash/userSide';
 import UserTopbar from './UserDash/userTop';
+import AdminEnrollRequests from './AdminDash/AdminEnrollRequests.jsx';
 
 const Dashboard = () => {
   const [isAdmin] = useAdmin();
@@ -54,6 +55,7 @@ const Dashboard = () => {
             {adminTab === 'add-course' && <AddCourse />}
             {adminTab === 'pending' && <PendingCourses />}
             {adminTab === 'manage' && <ManageCourses />}
+             {adminTab === 'enrollReq' && <AdminEnrollRequests />}
           </>
         )}
 

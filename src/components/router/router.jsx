@@ -18,6 +18,7 @@ import PendingCourses from "../Layout/DashBoard/AdminDash/PendingCourses";
 import ManageCourses from "../Layout/DashBoard/AdminDash/ManageCourse";
 import CourseDetailsMain from "../CourseDetailsMain/CourseDetailsMain"; // ✅ updated import
 import UpdateCourse from "../Layout/DashBoard/AdminDash/UpdateCourse"; // ✅ updated import
+import EnrollForm from "../Layout/DashBoard/AdminDash/EnrollForm";
 
 
 
@@ -108,6 +109,15 @@ const router = createBrowserRouter([
     </PrivateRoute>
   )
 },
+{
+  path:"/enroll-form/:id", 
+  element: 
+    <PrivateRoute>
+      <EnrollForm />
+    </PrivateRoute>
+  
+
+}
 
 ]);
 
