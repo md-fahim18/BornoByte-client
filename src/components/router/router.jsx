@@ -13,6 +13,8 @@ import AddCourse from "../Layout/DashBoard/AdminDash/AddCourse";
 import AllCourses from "../AllCourses/AllCourses"; // ✅ Adjust path if needed
 import PendingCourses from "../Layout/DashBoard/AdminDash/PendingCourses";
 import ManageCourses from "../Layout/DashBoard/AdminDash/ManageCourse";
+import CourseDetailsMain from "../CourseDetailsMain/CourseDetailsMain"; // ✅ updated import
+
 
 
 const router = createBrowserRouter([
@@ -54,7 +56,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/courses/:id",
-    element: <CourseDetails></CourseDetails>,
+    element: <CourseDetailsMain /> 
   },
   {
     path: "/updateProfile",

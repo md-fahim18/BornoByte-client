@@ -1,76 +1,78 @@
-// src/components/CourseDetails/CourseDetails.jsx
+// src/CourseDetailsMain/CourseDetailsMain.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
-const CourseDetails = () => {
+const CourseDetailsMain = () => {
   const { id } = useParams();
   const [course, setCourse] = useState(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios
       .get(`http://localhost:3000/videos/${id}`)
-      .then((res) => setCourse(res.data))
-      .catch((err) => console.error("Course fetch error", err));
+      .then((res) => {
+        setCourse(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to load course:", err);
+        setError("Failed to load course details.");
+        setLoading(false);
+      });
   }, [id]);
 
-  if (!course) return <div className="p-8">Loading...</div>;
+  if (loading) return <p className="text-center text-lg">Loading...</p>;
+  if (error) return <p className="text-center text-red-500">{error}</p>;
+  if (!course) return <p className="text-center">Course not found</p>;
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10">
-      {/* Thumbnail and Title */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <img
-          src={course.thumbnail}
-          alt={course.title}
-          className="rounded shadow-lg w-full object-cover"
-        />
-        <div className="space-y-4">
-          <h2 className="text-3xl font-bold">{course.title}</h2>
-          <p className="text-gray-500 text-lg">by {course.instructor}</p>
-          <p className="text-sm bg-orange-200 px-3 py-1 inline-block rounded font-medium">
-            {course.category}
-          </p>
-          <p className="text-base text-gray-700">{course.duration} • {course.videos.length} lessons</p>
-          <p className="text-2xl font-bold text-orange-500">${course.price}</p>
+    <div className="p-6 max-w-5xl mx-auto">
+      <img
+        src={course.thumbnail}
+        alt={course.title}
+        className="w-full h-64 object-cover rounded-lg shadow"
+      />
+      <h1 className="text-3xl font-bold mt-4 mb-2 text-orange-500">
+        {course.title}
+      </h1>
+      <p className="text-gray-600">{course.category}</p>
+      <p className="text-sm text-gray-500">Instructor: {course.instructor}</p>
 
-          {/* Enroll Button */}
-          <button className="btn btn-primary">Enroll Now</button>
-        </div>
+      <div className="mt-6 space-y-3">
+        <h3 className="text-xl font-semibold">Course Overview</h3>
+        <p>{course.description || "No overview available."}</p>
+
+        <h3 className="text-xl font-semibold">Duration</h3>
+        <p>{course.duration}</p>
+
+        <h3 className="text-xl font-semibold">Videos</h3>
+        <ul className="list-disc ml-6">
+          {course.videos?.map((vid, idx) => (
+            <li key={idx}>
+              {vid.title} –{" "}
+              <a
+                href={vid.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 underline"
+              >
+                Watch
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <h3 className="text-xl font-semibold">Price</h3>
+        <p>{course.price === 0 ? "Free" : `৳${course.price}`}</p>
       </div>
 
-      {/* Overview and Content */}
-      <div className="mt-12 space-y-6">
-        <div>
-          <h3 className="text-xl font-semibold mb-2">Course Overview</h3>
-          <p className="text-gray-700">{course.overview || "No overview provided."}</p>
-        </div>
-
-        <div>
-          <h3 className="text-xl font-semibold mb-2">What You'll Learn</h3>
-          <ul className="list-disc list-inside space-y-1">
-            {course.videos?.map((v, i) => (
-              <li key={i}>{v.title}</li>
-            ))}
-          </ul>
-        </div>
-
-        {course.otherLink && (
-          <div>
-            <h3 className="text-xl font-semibold mb-2">Additional Resource</h3>
-            <a
-              href={course.otherLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 underline"
-            >
-              Visit Link
-            </a>
-          </div>
-        )}
-      </div>
+      <button className="btn btn-primary mt-6 w-full sm:w-auto">
+        Enroll Now
+      </button>
     </div>
   );
 };
 
-export default CourseDetails;
+export default CourseDetailsMain;
