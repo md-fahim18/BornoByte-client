@@ -11,7 +11,7 @@ import CourseDetails from "../CourseDetails/CourseDetails";
 import UpdateProfilePicture from "../Layout/DashBoard/UpdateProfilePicture";
 import AddCourse from "../Layout/DashBoard/AdminDash/AddCourse";
 import AllCourses from "../AllCourses/AllCourses"; // ✅ Adjust path if needed
-
+import ContactUs from "../ContactUs/ContactUs";
 
 const router = createBrowserRouter([
   {
@@ -30,7 +30,7 @@ const router = createBrowserRouter([
       },
       {
         path: "courses",
-        element: <AllCourses />
+        element: <AllCourses />,
       },
     ],
   },
@@ -41,6 +41,10 @@ const router = createBrowserRouter([
   {
     path: "register",
     element: <Registration></Registration>,
+  },
+  {
+    path: "contactUs",
+    element: <ContactUs></ContactUs>,
   },
   {
     path: "Dashboard",
@@ -62,7 +66,7 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
   },
-   {
+  {
     path: "/dashboard/add-course",
     element: (
       <PrivateRoute>
