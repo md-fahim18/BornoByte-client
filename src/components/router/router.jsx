@@ -20,9 +20,6 @@ import CourseDetailsMain from "../CourseDetailsMain/CourseDetailsMain"; // ✅ u
 import UpdateCourse from "../Layout/DashBoard/AdminDash/UpdateCourse"; // ✅ updated import
 import EnrollForm from "../Layout/DashBoard/AdminDash/EnrollForm";
 
-
-
-
 const router = createBrowserRouter([
   {
     path: "/",
@@ -66,7 +63,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/courses/:id",
-    element: <CourseDetailsMain /> 
+    element: <CourseDetailsMain />,
   },
   {
     path: "/updateProfile",
@@ -85,7 +82,6 @@ const router = createBrowserRouter([
     ),
   },
   {
-
     path: "/dashboard/add-course",
     element: (
       <PrivateRoute>
