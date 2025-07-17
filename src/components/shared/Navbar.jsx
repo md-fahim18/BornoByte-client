@@ -27,37 +27,29 @@ const Navbar = () => {
                     Home
                 </Link>
             </li>
-            <li>
-                <Link to="/dashboard" className="mx-2">
-                    Dashboard
-                </Link>
-            </li>
+         
             <li>
                 <Link to="/about" className="mx-2">
                     About us
                 </Link>
             </li>
-            {/* Conditional rendering for Courses or Login/Register in the main menu */}
-            {user ? (
-                // If user is logged in, show Courses link
-                <li>
+             <li>
                     <Link to="/courses" className="mx-2">
                         Courses
                     </Link>
                 </li>
+            {/* Conditional rendering for Courses or Login/Register in the main menu */}
+            {user ? (
+                // If user is logged in, show Courses link
+                <li>
+                <Link to="/dashboard" className="mx-2">
+                    Dashboard
+                </Link>
+            </li>
             ) : (
                 // If user is NOT logged in, show Login/Register as separate links in the main menu
                 <>
-                    <li>
-                        <Link to="/login" className="mx-2">
-                            Login
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/register" className="mx-2">
-                            Register
-                        </Link>
-                    </li>
+                    
                 </>
             )}
             <li>
