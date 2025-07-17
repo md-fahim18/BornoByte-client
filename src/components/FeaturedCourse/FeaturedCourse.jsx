@@ -37,7 +37,7 @@ const FeaturedCourses = () => {
                 <h3 className="text-lg font-bold">{course.title}</h3>
                 <p className="text-sm text-gray-500">{course.category}</p>
                 <p className="text-sm font-medium mt-1">
-                  By: <span className="text-orange-500">{course.teacherEmail}</span>
+                  By: <span className="text-orange-500">{course.instructor}</span>
                 </p>
                 <Link to={`/courses/${course._id}`} className="btn btn-outline btn-sm mt-3">
                   View Details
