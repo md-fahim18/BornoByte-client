@@ -1,7 +1,7 @@
 // src/components/Admin/AddCourse.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
-import PendingCourses from './PendingCourses';
+// import PendingCourses from './PendingCourses';
 
 const AddCourse = () => {
   const [formData, setFormData] = useState({
@@ -101,8 +101,8 @@ const AddCourse = () => {
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Pending Courses</h2>
-      <PendingCourses />
+      {/* <h2 className="text-2xl font-bold mb-4">Pending Courses</h2>
+      <PendingCourses /> */}
 
       <h2 className="text-2xl font-bold mt-8 mb-4">Add New Course</h2>
       <form onSubmit={handleSubmit} className="grid gap-4">

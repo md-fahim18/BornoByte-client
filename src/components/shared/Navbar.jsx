@@ -48,11 +48,47 @@ const Navbar = () => {
       ) : (
         // If user is NOT logged in, show Login/Register as separate links in the main menu
         <>
+
           <li>
             <Link to="/contactUs" className="mx-2">
               Contact Us
             </Link>
           </li>
+
+            <li>
+                <Link to="/" className="mx-2">
+                    Home
+                </Link>
+            </li>
+         
+            <li>
+                <Link to="/about" className="mx-2">
+                    About us
+                </Link>
+            </li>
+             <li>
+                    <Link to="/courses" className="mx-2">
+                        Courses
+                    </Link>
+                </li>
+            {/* Conditional rendering for Courses or Login/Register in the main menu */}
+            {user ? (
+                // If user is logged in, show Courses link
+                <li>
+                <Link to="/dashboard" className="mx-2">
+                    Dashboard
+                </Link>
+            </li>
+            ) : (
+                // If user is NOT logged in, show Login/Register as separate links in the main menu
+                <>
+                    
+                </>
+            )}
+            <li>
+                <ThemeSwitcher />
+            </li>
+
         </>
       )}
       <li>

@@ -11,7 +11,13 @@ import CourseDetails from "../CourseDetails/CourseDetails";
 import UpdateProfilePicture from "../Layout/DashBoard/UpdateProfilePicture";
 import AddCourse from "../Layout/DashBoard/AdminDash/AddCourse";
 import AllCourses from "../AllCourses/AllCourses"; // ✅ Adjust path if needed
+
 import ContactUs from "../ContactUs/ContactUs";
+
+import PendingCourses from "../Layout/DashBoard/AdminDash/PendingCourses";
+import ManageCourses from "../Layout/DashBoard/AdminDash/ManageCourse";
+
+
 
 const router = createBrowserRouter([
   {
@@ -66,11 +72,29 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
   },
+  
+
+    path: "/dashboard/pending-courses",
+    element: (
+      <PrivateRoute>
+        <PendingCourses />
+      </PrivateRoute>
+    ),
+  },
   {
+
     path: "/dashboard/add-course",
     element: (
       <PrivateRoute>
-        <AddCourse></AddCourse>
+        <AddCourse />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/dashboard/manage-courses",
+    element: (
+      <PrivateRoute>
+        <ManageCourses />
       </PrivateRoute>
     ),
   },
