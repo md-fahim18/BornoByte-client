@@ -17,6 +17,7 @@ import ContactUs from "../ContactUs/ContactUs";
 import PendingCourses from "../Layout/DashBoard/AdminDash/PendingCourses";
 import ManageCourses from "../Layout/DashBoard/AdminDash/ManageCourse";
 import CourseDetailsMain from "../CourseDetailsMain/CourseDetailsMain"; // ✅ updated import
+import UpdateCourse from "../Layout/DashBoard/AdminDash/UpdateCourse"; // ✅ updated import
 
 const router = createBrowserRouter([
   {
@@ -95,6 +96,15 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
   },
+  {
+  path: "/dashboard/update-course/:id",
+  element: (
+    <PrivateRoute>
+      <UpdateCourse />
+    </PrivateRoute>
+  )
+},
+
 ]);
 
 export default router;
