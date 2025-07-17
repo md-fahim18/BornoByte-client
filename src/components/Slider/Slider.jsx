@@ -6,6 +6,7 @@ import "swiper/css/navigation";
 
 import bannerImg1 from "../../assets/Image/Banner/slide1.png";
 import bannerImg2 from "../../assets/Image/Banner/slide2.png";
+import bannerImg3 from "../../assets/Image/Banner/slide3.jpg";
 
 const slides = [
   {
@@ -23,8 +24,7 @@ const slides = [
     btn2: "Try Now",
   },
   {
-    image:
-      "https://prezibase.com/free/preview/edtech-educational-technology-school-teaching-ipad-prezi-presentation-template.jpg",
+    image: bannerImg3,
     title: "Final Slide",
     subtitle: "Your SSC/HSC success starts here.",
     btn1: "Back to Home",
