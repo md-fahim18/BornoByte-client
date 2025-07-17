@@ -17,8 +17,6 @@ import ContactUs from "../ContactUs/ContactUs";
 import PendingCourses from "../Layout/DashBoard/AdminDash/PendingCourses";
 import ManageCourses from "../Layout/DashBoard/AdminDash/ManageCourse";
 
-
-
 const router = createBrowserRouter([
   {
     path: "/",
@@ -72,8 +70,8 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
   },
-  
 
+  {
     path: "/dashboard/pending-courses",
     element: (
       <PrivateRoute>
@@ -82,7 +80,6 @@ const router = createBrowserRouter([
     ),
   },
   {
-
     path: "/dashboard/add-course",
     element: (
       <PrivateRoute>
