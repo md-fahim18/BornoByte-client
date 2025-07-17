@@ -74,8 +74,7 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
   },
-  
-
+  {
     path: "/dashboard/pending-courses",
     element: (
       <PrivateRoute>
