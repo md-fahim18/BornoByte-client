@@ -146,17 +146,11 @@ const Navbar = () => {
                   {user.displayName || user.email}
                 </span>
               </li>
-              <li>
-                <Link to="/queries">Dashboard</Link>{" "}
-                {/* Changed from "myqueries" to "queries" as per your first Navbar */}
-              </li>
-              <li>
-                <Link to="/updateProfile">Update Profile</Link>{" "}
-                {/* Changed from "myqueries" to "queries" as per your first Navbar */}
-              </li>
-              <li>
-                <button onClick={handleLogOut}>Logout</button>
-              </li>
+              <li><Link to="/dashboard">Dashboard</Link></li>
+              <li><Link to="/dashboard/settings">Settings</Link></li>
+              <li><Link to="/dashboard/inbox">Inbox</Link></li>
+              <li><Link to="/dashboard/achievements">Achievements</Link></li>
+              <li><button onClick={handleLogOut}>Logout</button></li>
             </ul>
           </div>
         ) : (
