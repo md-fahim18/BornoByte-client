@@ -60,8 +60,10 @@ const UpdateCourse = () => {
         updatedThumbnail = await handleThumbnailUpload();
       }
 
+      const {_id, ...formWithoutId} = formData;
+
       const updatedCourse = {
-        ...formData,
+        ...formWithoutId,
         thumbnail: updatedThumbnail,
         videos: videos.filter(v => v.title && v.url)
       };
