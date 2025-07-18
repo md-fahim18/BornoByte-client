@@ -7,8 +7,6 @@ import { MdOutlineMail } from "react-icons/md";
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
 
-
-
   useEffect(() => {
     axios.get("http://localhost:3000/users").then((res) => {
       setUsers(res.data);
@@ -16,41 +14,55 @@ const AdminDashboard = () => {
   }, []);
 
   const handleRoleChange = (id, newRole) => {
-  axios.patch(`http://localhost:3000/users/role/${id}`, 
-  { role: newRole },
-  {
-    headers: {
-      authorization: `Bearer ${localStorage.getItem('access-token')}`
-    }
-  }
-)
-
-    .then((res) => {
-      if (res.data.modifiedCount > 0) {
-        alert("User role updated successfully");
-
-        // Update frontend state
-        setUsers((prev) =>
-          prev.map((user) =>
-            user._id === id ? { ...user, role: newRole } : user
-          )
-        );
+    axios.patch(
+      `http://localhost:3000/users/role/${id}`,
+      { role: newRole },
+      {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("access-token")}`,
+        },
       }
-    })
-    .catch((err) => {
-      console.error("Failed to update role:", err);
-      alert("Role update failed");
-    });
-};
+    )
+      .then((res) => {
+        if (res.data.modifiedCount > 0) {
+          alert("User role updated successfully");
+          setUsers((prev) =>
+            prev.map((user) =>
+              user._id === id ? { ...user, role: newRole } : user
+            )
+          );
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to update role:", err);
+        alert("Role update failed");
+      });
+  };
 
+  const handleDelete = (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+    if (!confirmDelete) return;
 
-
-
+    axios
+      .delete(`http://localhost:3000/users/${id}`, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("access-token")}`,
+        },
+      })
+      .then((res) => {
+        if (res.data.deletedCount > 0) {
+          alert("User deleted successfully!");
+          setUsers((prev) => prev.filter((user) => user._id !== id));
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to delete user", err);
+        alert("User deletion failed");
+      });
+  };
 
   return (
     <div className="p-6 pt-24 bg-base-100 min-h-screen text-base-content">
-      {/* Top padding (pt-24) accounts for fixed topbar height (h-16 + spacing) */}
-
       <h2 className="text-3xl font-semibold mb-6 text-center">All Registered Users</h2>
 
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
@@ -64,7 +76,10 @@ const AdminDashboard = () => {
               <div className="avatar">
                 <div className="w-16 rounded-full ring ring-orange-400 ring-offset-base-100 ring-offset-2">
                   <img
-                    src={user.photo || `https://api.dicebear.com/7.x/thumbs/svg?seed=${user.email}`}
+                    src={
+                      user.photo ||
+                      `https://api.dicebear.com/7.x/thumbs/svg?seed=${user.email}`
+                    }
                     alt="User Avatar"
                   />
                 </div>
@@ -83,25 +98,25 @@ const AdminDashboard = () => {
             {/* Role Selector */}
             <div className="mt-4">
               <label className="block text-sm font-medium mb-1">Role</label>
-              {/* <select
+              <select
                 className="select select-bordered w-full"
-                defaultValue={user.role}
-                // You can add onChange handler here later
+                value={user.role}
+                onChange={(e) => handleRoleChange(user._id, e.target.value)}
               >
                 <option value="admin">Admin</option>
                 <option value="teacher">Teacher</option>
                 <option value="student">Student</option>
-              </select> */}
-              <select
-  className="select select-bordered w-full"
-  value={user.role}
-  onChange={(e) => handleRoleChange(user._id, e.target.value)}
->
-  <option value="admin">Admin</option>
-  <option value="teacher">Teacher</option>
-  <option value="student">Student</option>
-</select>
+              </select>
+            </div>
 
+            {/* Delete Button */}
+            <div className="mt-4">
+              <button
+                onClick={() => handleDelete(user._id)}
+                className="btn btn-error btn-sm w-full"
+              >
+                Delete User
+              </button>
             </div>
           </div>
         ))}
