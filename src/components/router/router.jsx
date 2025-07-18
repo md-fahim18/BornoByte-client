@@ -19,6 +19,9 @@ import ManageCourses from "../Layout/DashBoard/AdminDash/ManageCourse";
 import CourseDetailsMain from "../CourseDetailsMain/CourseDetailsMain"; // ✅ updated import
 import UpdateCourse from "../Layout/DashBoard/AdminDash/UpdateCourse"; // ✅ updated import
 import EnrollForm from "../Layout/DashBoard/AdminDash/EnrollForm";
+import Settings from "../Layout/DashBoard/settings";
+import Inbox from "../Layout/DashBoard/inbox";
+import Achievements from "../Layout/DashBoard/achievement";
 
 const router = createBrowserRouter([
   {
@@ -65,11 +68,27 @@ const router = createBrowserRouter([
     path: "/courses/:id",
     element: <CourseDetailsMain />,
   },
-  {
-    path: "/updateProfile",
+    {
+    path: "/settings",
     element: (
       <PrivateRoute>
-        <UpdateProfilePicture></UpdateProfilePicture>
+        <Settings />
+      </PrivateRoute>
+    ),
+  },
+     {
+    path: "/inbox",
+    element: (
+      <PrivateRoute>
+        <Inbox />
+      </PrivateRoute>
+    ),
+  },
+     {
+    path: "/achievements",
+    element: (
+      <PrivateRoute>
+        <Achievements />
       </PrivateRoute>
     ),
   },
