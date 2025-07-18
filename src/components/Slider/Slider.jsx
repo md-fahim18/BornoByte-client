@@ -3,32 +3,39 @@ import { Pagination, Navigation, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import { Link } from "react-router-dom";
 
 import bannerImg1 from "../../assets/Image/Banner/slide1.png";
 import bannerImg2 from "../../assets/Image/Banner/slide2.png";
+import bannerImg3 from "../../assets/Image/Banner/slide3.jpg";
 
 const slides = [
   {
     image: bannerImg1,
-    title: "Welcome to Slide One",
-    subtitle: "Learn smarter, not harder with BornoByte.",
-    btn1: "Learn More",
-    btn2: "Get Started",
+    title: "Learn Smarter with BornoByte",
+    subtitle: "SSC & HSC made simple.",
+    btn1: "About Us",
+    btn2: "Join Now",
+    btn1Route: "/about",
+    btn2Route: "/register",
   },
   {
     image: bannerImg2,
-    title: "Explore Slide Two",
-    subtitle: "Master Math & Physics the fun way.",
-    btn1: "See Features",
-    btn2: "Try Now",
+    title: "Master Science Easily",
+    subtitle: "Math & Physics the fun way.",
+    btn1: "See Courses",
+    btn2: "Explore",
+    btn1Route: "/courses",
+    btn2Route: "/login",
   },
   {
-    image:
-      "https://prezibase.com/free/preview/edtech-educational-technology-school-teaching-ipad-prezi-presentation-template.jpg",
-    title: "Final Slide",
-    subtitle: "Your SSC/HSC success starts here.",
-    btn1: "Back to Home",
-    btn2: "Contact Us",
+    image: bannerImg3,
+    title: "Level Up Your Learning",
+    subtitle: "From SSC to University.",
+    btn1: "Contact Us",
+    btn2: "Go Back",
+    btn1Route: "/contactUs",
+    btn2Route: "/",
   },
 ];
 
@@ -38,35 +45,50 @@ export default function MySlider() {
       modules={[Navigation, Pagination, Autoplay]}
       navigation
       pagination={{ clickable: true }}
-      autoplay={{ delay: 5000 }}
+      autoplay={{ delay: 50000 }}
       loop={true}
       className="w-full"
     >
       {slides.map((slide, index) => (
         <SwiperSlide key={index}>
-          <div
-            className="w-full h-[60vh] sm:h-[70vh] md:h-[85vh] bg-cover bg-center relative"
-            style={{ backgroundImage: `url(${slide.image})` }}
-          >
-            {/* Dark overlay with light transparency */}
-            <div className="absolute inset-0 bg-black/10" />
+          <div className="relative w-full h-[50vh] md:h-[80vh] overflow-hidden">
+            {/* 👇 Stretch image slightly to fill container with no crop */}
+            <div
+              className="absolute inset-0 w-full h-full"
+              style={{
+                backgroundImage: `url(${slide.image})`,
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+                backgroundSize: "100% 100%", // 💥 THIS is the magic
+              }}
+            />
+
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-black/10 z-10" />
 
             {/* Content Box */}
-            <div className="absolute inset-0 flex items-center justify-center md:justify-end px-4 md:px-16">
-              <div className="bg-black/25 backdrop-blur-sm shadow-xl rounded-lg text-white w-full max-w-[500px] h-[250px] sm:h-[280px] md:h-[300px] p-5 sm:p-6 flex flex-col justify-center">
-                <h1 className="text-lg sm:text-2xl md:text-3xl font-bold mb-3">
+            <div className="absolute inset-10 flex items-center justify-center text-center md:justify-end px-4 md:px-16 z-20">
+              <div className="bg-black/30 backdrop-blur-sm shadow-2xl rounded-lg text-white w-full max-w-[90%] sm:max-w-[400px] h-auto p-5 sm:p-6 flex flex-col justify-center text-center items-center md:text-left">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 justify-center text-center">
                   {slide.title}
                 </h1>
-                <p className="text-sm sm:text-base md:text-lg mb-4">
+                <p className="text-sm sm:text-base md:text-lg mb-5">
                   {slide.subtitle}
                 </p>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <button className="px-5 py-2 bg-white text-black rounded hover:bg-gray-200 transition text-sm sm:text-base">
+                <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-3">
+                  <Link
+                    to={slide.btn1Route}
+                    className="px-5 py-2 bg-white text-black rounded hover:bg-gray-200 transition text-sm sm:text-base text-center"
+                  >
                     {slide.btn1}
-                  </button>
-                  <button className="px-5 py-2 bg-transparent border border-white text-white rounded hover:bg-white hover:text-black transition text-sm sm:text-base">
+                  </Link>
+
+                  <Link
+                    to={slide.btn2Route}
+                    className="px-5 py-2 bg-transparent border border-white text-white rounded hover:bg-white hover:text-black transition text-sm sm:text-base text-center"
+                  >
                     {slide.btn2}
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
