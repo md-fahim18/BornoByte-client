@@ -8,15 +8,12 @@ import ChooseUs from "../ChooseUS/ChooseUs";
 import Faq from "../FAQ/Faq";
 import FeaturedCourses from "../FeaturedCourse/FeaturedCourse"; // Adjust path if needed
 
-
 const Home = () => {
   return (
     <div>
       <MySlider></MySlider>
-
       <CourseSection></CourseSection>
       <FeaturedCourses></FeaturedCourses> {/* Featured Courses Section */}
-
       <Courses></Courses>
       <ChooseUs></ChooseUs>
       <Faq></Faq>
