@@ -19,6 +19,9 @@ import ManageCourses from "../Layout/DashBoard/AdminDash/ManageCourse";
 import CourseDetailsMain from "../CourseDetailsMain/CourseDetailsMain"; // ✅ updated import
 import UpdateCourse from "../Layout/DashBoard/AdminDash/UpdateCourse"; // ✅ updated import
 import EnrollForm from "../Layout/DashBoard/AdminDash/EnrollForm";
+import Settings from "../Layout/DashBoard/settings";
+import Inbox from "../Layout/DashBoard/inbox";
+import Achievements from "../Layout/DashBoard/achievement";
 
 const router = createBrowserRouter([
   {
@@ -60,60 +63,22 @@ const router = createBrowserRouter([
         <Dashboard></Dashboard>
       </PrivateRoute>
     ),
+      children: [
+    { path: "", element: <div className="pt-24 p-6">Welcome to Dashboard</div> },
+    { path: "settings", element: <Settings /> },
+    { path: "inbox", element: <Inbox /> },
+    { path: "achievements", element: <Achievements /> },
+    { path: "pending-courses", element: <PendingCourses /> },
+    { path: "add-course", element: <AddCourse /> },
+    { path: "manage-courses", element: <ManageCourses /> },
+    { path: "update-course/:id", element: <UpdateCourse /> },
+    { path: "enroll-form/:id", element: <EnrollForm /> }
+  ]
   },
   {
     path: "/courses/:id",
     element: <CourseDetailsMain />,
-  },
-  {
-    path: "/updateProfile",
-    element: (
-      <PrivateRoute>
-        <UpdateProfilePicture></UpdateProfilePicture>
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: "/dashboard/pending-courses",
-    element: (
-      <PrivateRoute>
-        <PendingCourses />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: "/dashboard/add-course",
-    element: (
-      <PrivateRoute>
-        <AddCourse />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: "/dashboard/manage-courses",
-    element: (
-      <PrivateRoute>
-        <ManageCourses />
-      </PrivateRoute>
-    ),
-  },
-  {
-  path: "/dashboard/update-course/:id",
-  element: (
-    <PrivateRoute>
-      <UpdateCourse />
-    </PrivateRoute>
-  )
-},
-{
-  path:"/enroll-form/:id", 
-  element: 
-    <PrivateRoute>
-      <EnrollForm />
-    </PrivateRoute>
-  
-
-}
+  }
 
 ]);
 

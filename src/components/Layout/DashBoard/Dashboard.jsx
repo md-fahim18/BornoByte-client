@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { Outlet } from 'react-router-dom';
 
 import useAdmin from '../../RoleHooks/useAdmin';
 import useTeacher from '../../RoleHooks/useTeacher';
@@ -61,6 +62,9 @@ const Dashboard = () => {
 
         {isTeacher && !isAdmin && <TeacherDashboard />}
         {!isAdmin && !isTeacher && <UserDashboard />}
+
+        {/* Outlet for nested routes */}
+        <Outlet />
       </div>
     </div>
   );
