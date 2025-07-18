@@ -64,7 +64,6 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
       children: [
-    { path: "", element: <div className="pt-24 p-6">Welcome to Dashboard</div> },
     { path: "settings", element: <Settings /> },
     { path: "inbox", element: <Inbox /> },
     { path: "achievements", element: <Achievements /> },
