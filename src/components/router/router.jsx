@@ -22,6 +22,9 @@ import EnrollForm from "../Layout/DashBoard/AdminDash/EnrollForm";
 import Settings from "../Layout/DashBoard/settings";
 import Inbox from "../Layout/DashBoard/inbox";
 import Achievements from "../Layout/DashBoard/achievement";
+import TermsOfUse from "../shared/FooterComponents/termsOfUse";
+import PrivacyPolicy from "../shared/FooterComponents/PrivacyPolicy";
+import CookiePolicy from "../shared/FooterComponents/CookiePolicy";
 
 const router = createBrowserRouter([
   {
@@ -64,7 +67,7 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
   },
-  
+
   {
     path: "/courses/:id",
     element: <CourseDetailsMain />,
@@ -75,23 +78,23 @@ const router = createBrowserRouter([
   },
   {
     path: "inbox",
-    element: <Inbox />, 
+    element: <Inbox />,
   },
-  { 
+  {
     path: "achievements",
-    element: <Achievements />,  
+    element: <Achievements />,
   },
   {
     path: "pending-courses",
-    element: <PendingCourses />,  
+    element: <PendingCourses />,
   },
   {
     path: "add-course",
-    element: <AddCourse />, 
+    element: <AddCourse />,
   },
   {
     path: "manage-courses",
-    element: <ManageCourses />, 
+    element: <ManageCourses />,
   },
   {
     path: "update-course/:id",
@@ -101,7 +104,18 @@ const router = createBrowserRouter([
     path: "enroll-form/:id",
     element: <EnrollForm />,
   },
-
+  {
+    path: "terms-of-use",
+    element: <TermsOfUse></TermsOfUse>,
+  },
+  {
+    path: "privacy-policy",
+    element: <PrivacyPolicy></PrivacyPolicy>,
+  },
+  {
+    path: "cookie-policy",
+    element: <CookiePolicy></CookiePolicy>,
+  },
 ]);
 
 export default router;
