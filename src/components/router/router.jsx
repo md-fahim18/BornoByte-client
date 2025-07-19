@@ -63,21 +63,44 @@ const router = createBrowserRouter([
         <Dashboard></Dashboard>
       </PrivateRoute>
     ),
-      children: [
-    { path: "settings", element: <Settings /> },
-    { path: "inbox", element: <Inbox /> },
-    { path: "achievements", element: <Achievements /> },
-    { path: "pending-courses", element: <PendingCourses /> },
-    { path: "add-course", element: <AddCourse /> },
-    { path: "manage-courses", element: <ManageCourses /> },
-    { path: "update-course/:id", element: <UpdateCourse /> },
-    { path: "enroll-form/:id", element: <EnrollForm /> }
-  ]
   },
+  
   {
     path: "/courses/:id",
     element: <CourseDetailsMain />,
-  }
+  },
+  {
+    path: "settings",
+    element: <Settings />,
+  },
+  {
+    path: "inbox",
+    element: <Inbox />, 
+  },
+  { 
+    path: "achievements",
+    element: <Achievements />,  
+  },
+  {
+    path: "pending-courses",
+    element: <PendingCourses />,  
+  },
+  {
+    path: "add-course",
+    element: <AddCourse />, 
+  },
+  {
+    path: "manage-courses",
+    element: <ManageCourses />, 
+  },
+  {
+    path: "update-course/:id",
+    element: <UpdateCourse />,
+  },
+  {
+    path: "enroll-form/:id",
+    element: <EnrollForm />,
+  },
 
 ]);
 

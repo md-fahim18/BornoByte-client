@@ -2,10 +2,16 @@ import React, { useContext } from "react";
 import { Link } from "react-router-dom"; // Corrected import for react-router-dom
 import AuthContext from "../Auth/AuthContext"; // Assuming AuthContext is correctly located
 import ThemeSwitcher from "./ThemeSwitcher"; // Assuming ThemeSwitcher is in the same directory as Navbar
+import useAdmin from "../RoleHooks/useAdmin"; // Adjust path as necessary
+import useTeacher from "../RoleHooks/useTeacher"; // Adjust path as necessary
 
 const Navbar = () => {
   // Destructure user and logOut from AuthContext
   const { user, logOut } = useContext(AuthContext);
+  // Check if the user is an admin or a teacher
+  const [isAdmin] = useAdmin();
+  const [isTeacher] = useTeacher();
+  
 
   const handleLogOut = () => {
     logOut()
@@ -18,6 +24,9 @@ const Navbar = () => {
         console.error("An error occurred during sign-out:", error);
       });
   };
+
+  // Check if the user is an admin or a teacher
+
 
   // Define the navigation links
   const links = (
@@ -136,22 +145,35 @@ const Navbar = () => {
                 />
               </div>
             </div>
-            <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
-            >
-              <li>
-                {/* Display user's name or email */}
-                <span className="text-sm font-bold">
+              <ul
+                tabIndex={0}
+                className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+              >
+                <li className="text-sm font-bold">
                   {user.displayName || user.email}
-                </span>
-              </li>
-              <li><Link to="/dashboard">Dashboard</Link></li>
-              <li><Link to="/dashboard/settings">Settings</Link></li>
-              <li><Link to="/dashboard/inbox">Inbox</Link></li>
-              <li><Link to="/dashboard/achievements">Achievements</Link></li>
-              <li><button onClick={handleLogOut}>Logout</button></li>
-            </ul>
+                </li>
+
+                {/* Dynamically render items based on role */}
+                {isAdmin && <li><Link to="/dashboard">Settings</Link></li>}
+                {isTeacher && (
+                  <>
+                    <li><Link to="/dashboard">Inbox</Link></li>
+                    <li><Link to="/dashboard">Settings</Link></li>
+                  </>
+                )}
+                {!isAdmin && !isTeacher && (
+                  <>
+                    <li><Link to="/dashboard">Inbox</Link></li>
+                    <li><Link to="/dashboard">Settings</Link></li>
+                    <li><Link to="/dashboard">Achievement</Link></li>
+                  </>
+                )}
+
+                <li>
+                  <button onClick={handleLogOut}>Logout</button>
+                </li>
+              </ul>
+
           </div>
         ) : (
           // If not logged in, show Login and Register buttons
