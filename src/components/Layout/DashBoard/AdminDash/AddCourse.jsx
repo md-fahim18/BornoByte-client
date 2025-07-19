@@ -15,7 +15,7 @@ const AddCourse = () => {
   });
 
   const [thumbnailFile, setThumbnailFile] = useState(null);
-  const [videos, setVideos] = useState([{ title: '', url: '' }]);
+  const [videos, setVideos] = useState([{  title: '', url: '', chapter: '', subject: '' }]);
   const [uploading, setUploading] = useState(false);
 
   const imgbbApiKey = import.meta.env.VITE_Image_hosting_key;
@@ -36,7 +36,7 @@ const AddCourse = () => {
   };
 
   const addVideoField = () => {
-    setVideos([...videos, { title: '', url: '' }]);
+    setVideos([...videos, { title: '', url: '', chapter: '', subject: '' }]);
   };
 
   const handleSubmit = async e => {
@@ -151,6 +151,20 @@ const AddCourse = () => {
                 className="input input-bordered"
                 required
               />
+               <input
+        placeholder="Chapter"
+        value={video.chapter}
+        onChange={e => handleVideoChange(index, 'chapter', e.target.value)}
+        className="input input-bordered"
+        required
+      />
+      <input
+        placeholder="Subject"
+        value={video.subject}
+        onChange={e => handleVideoChange(index, 'subject', e.target.value)}
+        className="input input-bordered"
+        required
+      />
             </div>
           ))}
           <button type="button" onClick={addVideoField} className="btn btn-sm btn-outline">+ Add Another Video</button>
