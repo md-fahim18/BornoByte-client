@@ -103,9 +103,10 @@ const Login = () => {
                   </div>
                 </div>
                 <label className="label">
-                  <a href="#" className="label-text-alt link link-hover">
-                    Forgot password?
-                  </a>
+                  
+                  <Link to="/password-reset" className="link link-hover">
+                    Forget Password?
+                    </Link>
                 </label>
               </div>
 
