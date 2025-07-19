@@ -25,16 +25,6 @@ const UpdateCourse = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleVideoChange = (index, field, value) => {
-    const updated = [...videos];
-    updated[index][field] = value;
-    setVideos(updated);
-  };
-
-  const addVideoField = () => {
-    setVideos([...videos, { title: "", url: "", chapter: "", subject: "" }]);
-  };
-
   const handleThumbnailChange = (e) => {
     setThumbnailFile(e.target.files[0]);
   };
@@ -48,6 +38,16 @@ const UpdateCourse = () => {
     });
     const data = await res.json();
     return data.data.url;
+  };
+
+  const handleVideoChange = (index, field, value) => {
+    const updated = [...videos];
+    updated[index][field] = value;
+    setVideos(updated);
+  };
+
+  const addVideoField = () => {
+    setVideos([...videos, { title: "", url: "", chapter: "", subject: "" }]);
   };
 
   const handleSubmit = async (e) => {
@@ -65,13 +65,20 @@ const UpdateCourse = () => {
       const updatedCourse = {
         ...formWithoutId,
         thumbnail: updatedThumbnail,
-        videos: videos.filter(v => v.title && v.url),
+        overview: formData.overview || "",
+        requirements: typeof formData.requirements === "string"
+          ? formData.requirements.split(",").map(r => r.trim())
+          : formData.requirements || [],
+        whatYouWillLearn: typeof formData.whatYouWillLearn === "string"
+          ? formData.whatYouWillLearn.split(",").map(w => w.trim())
+          : formData.whatYouWillLearn || [],
+        videos: videos.filter(v => v.title && v.url)
       };
 
       await axios.patch(`http://localhost:3000/videos/${id}`, updatedCourse, {
         headers: {
-          authorization: `Bearer ${localStorage.getItem("access-token")}`,
-        },
+          authorization: `Bearer ${localStorage.getItem("access-token")}`
+        }
       });
 
       alert("Course updated successfully!");
@@ -105,40 +112,76 @@ const UpdateCourse = () => {
         <input name="duration" placeholder="Duration" value={formData.duration} onChange={handleChange} className="input input-bordered" required />
         <input name="price" type="number" placeholder="Price" value={formData.price} onChange={handleChange} className="input input-bordered" required />
         <input name="teacherEmail" placeholder="Teacher Email" value={formData.teacherEmail} onChange={handleChange} className="input input-bordered" required />
-        <input name="otherLink" placeholder="Other Link" value={formData.otherLink} onChange={handleChange} className="input input-bordered" />
+        <input name="otherLink" placeholder="Other Link (optional)" value={formData.otherLink} onChange={handleChange} className="input input-bordered" />
+
+        {/* Overview */}
+        <textarea
+          name="overview"
+          placeholder="Course Overview"
+          value={formData.overview || ""}
+          onChange={handleChange}
+          className="textarea textarea-bordered"
+          required
+        />
+
+        {/* Requirements */}
+        <textarea
+          name="requirements"
+          placeholder="Requirements (comma separated)"
+          value={Array.isArray(formData.requirements) ? formData.requirements.join(", ") : ""}
+          onChange={e =>
+            setFormData(prev => ({
+              ...prev,
+              requirements: e.target.value.split(",").map(i => i.trim())
+            }))
+          }
+          className="textarea textarea-bordered"
+        />
+
+        {/* What You'll Learn */}
+        <textarea
+          name="whatYouWillLearn"
+          placeholder="What You Will Learn (comma separated)"
+          value={Array.isArray(formData.whatYouWillLearn) ? formData.whatYouWillLearn.join(", ") : ""}
+          onChange={e =>
+            setFormData(prev => ({
+              ...prev,
+              whatYouWillLearn: e.target.value.split(",").map(i => i.trim())
+            }))
+          }
+          className="textarea textarea-bordered"
+        />
 
         {/* Videos */}
         <div>
           <h4 className="font-semibold mt-4 mb-2">Course Videos</h4>
           {videos.map((video, index) => (
-            <div key={index} className="grid grid-cols-2 gap-2 mb-3">
+            <div key={index} className="grid grid-cols-2 gap-2 mb-2">
               <input
                 placeholder="Video Title"
                 value={video.title}
-                onChange={e => handleVideoChange(index, "title", e.target.value)}
+                onChange={e => handleVideoChange(index, 'title', e.target.value)}
                 className="input input-bordered"
                 required
               />
               <input
                 placeholder="Video URL"
                 value={video.url}
-                onChange={e => handleVideoChange(index, "url", e.target.value)}
+                onChange={e => handleVideoChange(index, 'url', e.target.value)}
                 className="input input-bordered"
                 required
               />
               <input
                 placeholder="Chapter"
                 value={video.chapter || ""}
-                onChange={e => handleVideoChange(index, "chapter", e.target.value)}
+                onChange={e => handleVideoChange(index, 'chapter', e.target.value)}
                 className="input input-bordered"
-                required
               />
               <input
                 placeholder="Subject"
                 value={video.subject || ""}
-                onChange={e => handleVideoChange(index, "subject", e.target.value)}
+                onChange={e => handleVideoChange(index, 'subject', e.target.value)}
                 className="input input-bordered"
-                required
               />
             </div>
           ))}
