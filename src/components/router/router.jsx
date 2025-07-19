@@ -25,6 +25,7 @@ import Achievements from "../Layout/DashBoard/achievement";
 import TermsOfUse from "../shared/FooterComponents/termsOfUse";
 import PrivacyPolicy from "../shared/FooterComponents/PrivacyPolicy";
 import CookiePolicy from "../shared/FooterComponents/CookiePolicy";
+import PasswordReset from "../Auth/PasswordReset";
 
 const router = createBrowserRouter([
   {
@@ -115,6 +116,10 @@ const router = createBrowserRouter([
   {
     path: "cookie-policy",
     element: <CookiePolicy></CookiePolicy>,
+  },
+  {
+  path: "/password-reset",
+  element: <PasswordReset />,
   },
 ]);
 
