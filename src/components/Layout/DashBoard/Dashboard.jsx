@@ -12,6 +12,9 @@ import AdminTopbar from './AdminDash/adminTop';
 import TeacherDashboard from './TeacherDash/teacherDash';
 import TeacherSidebar from './TeacherDash/teacherSide';
 import TeacherTopbar from './TeacherDash/teacherTop';
+import Settings from './settings';
+import Inbox from './inbox.jsx';
+import Achievement from './achievement.jsx';
 
 //admin
 import AddCourse from './AdminDash/AddCourse.jsx';         // ✅ You already have this
@@ -29,6 +32,8 @@ const Dashboard = () => {
   const [isAdmin] = useAdmin();
   const [isTeacher] = useTeacher();
   const [adminTab, setAdminTab] = useState('users'); // default section
+  const [teacherTab, setTeacherTab] = useState('user'); // default section for teacher
+  const [userTab, setUserTab] = useState('user'); // default section
 
 
   // Set layout adjustments if using fixed topbar/sidebar
@@ -45,8 +50,8 @@ const Dashboard = () => {
 
       {/* Sidebar (Fixed handled inside sidebar components) */}
       {isAdmin && <AdminSidebar setAdminTab={setAdminTab} />}
-      {!isAdmin && isTeacher && <TeacherSidebar />}
-      {!isAdmin && !isTeacher && <UserSidebar />}
+      {!isAdmin && isTeacher && <TeacherSidebar setTeacherTab={setTeacherTab}/>}
+      {!isAdmin && !isTeacher && <UserSidebar setUserTab={setUserTab}/>}
 
       {/* Main Content */}
       <div className={`p-6 ${topOffset} ${leftOffset}`}>
@@ -57,14 +62,28 @@ const Dashboard = () => {
             {adminTab === 'pending' && <PendingCourses />}
             {adminTab === 'manage' && <ManageCourses />}
              {adminTab === 'enrollReq' && <AdminEnrollRequests />}
+             {adminTab === 'settings' && <Settings />}
           </>
         )}
 
-        {isTeacher && !isAdmin && <TeacherDashboard />}
-        {!isAdmin && !isTeacher && <UserDashboard />}
+          {/* Teacher */}
+                  {isTeacher && !isAdmin && (
+                    <>
+                      {teacherTab === 'default' && <TeacherDashboard />}
+                      {teacherTab === 'inbox' && <Inbox />}
+                      {teacherTab === 'settings' && <Settings />}
+                    </>
+                  )}
 
-        {/* Outlet for nested routes */}
-        <Outlet />
+                  {/* User */}
+                  {!isAdmin && !isTeacher && (
+                    <>
+                      {userTab === 'default' && <UserDashboard />}
+                      {userTab === 'inbox' && <Inbox />}
+                      {userTab === 'settings' && <Settings />}
+                      {userTab === 'achievement' && <Achievement />}
+                    </>
+                  )}
       </div>
     </div>
   );

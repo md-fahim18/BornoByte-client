@@ -72,7 +72,7 @@ const AdminSidebar = ({ setAdminTab }) => {
             onClick={() => setAdminTab("enrollReq")}
             className="flex items-center gap-3 w-full text-left hover:text-orange-500 transition"
           >
-            <FiSettings className="text-lg" /> Approve Courses
+            <FiSettings className="text-lg" /> Enrolement Requests
           </button>
         </li>
       </ul>
