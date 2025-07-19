@@ -35,9 +35,23 @@ const CourseDetailsMain = () => {
   useEffect(() => {
     const checkApproval = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:3000/enrollments/check/${user?.email}/${id}`
-        );
+        // const res = await axios.get(
+        //   `http://localhost:3000/enrollments/check/${user?.email}/${id}`
+        // );
+        // ✅ NEW (Matches backend route)
+const res = await axios.get(
+  `http://localhost:3000/checkApproval`,
+  {
+    params: {
+      userEmail: user?.email,
+      courseId: id
+    },
+      headers: {
+    authorization: `Bearer ${localStorage.getItem('access-token')}`
+  }
+  }
+);
+
         setIsApproved(res.data.approved);
       } catch (err) {
         console.error("Approval check failed:", err);
