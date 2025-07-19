@@ -5,6 +5,7 @@ import axios from "axios";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import Navbar from "../shared/Navbar";
 import Footer from "../shared/Footer";
+import GoogleSign from "./GoogleSign";
 
 const Login = () => {
   const { loginUser } = useContext(AuthContext);
@@ -111,6 +112,12 @@ const Login = () => {
               <div className="flex justify-center">
                 <button className="btn btn-primary w-full max-w-xs mt-4">
                   Login
+                </button>
+              </div>
+              <div className="flex justify-center">
+                <button className="btn btn-primary w-full max-w-xs mt-4">
+                 <GoogleSign />
+                 
                 </button>
               </div>
               <p className="text-xl font-semibold text-center">

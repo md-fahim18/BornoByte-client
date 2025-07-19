@@ -32,7 +32,7 @@ const UpdateCourse = () => {
   };
 
   const addVideoField = () => {
-    setVideos([...videos, { title: "", url: "" }]);
+    setVideos([...videos, { title: "", url: "", chapter: "", subject: "" }]);
   };
 
   const handleThumbnailChange = (e) => {
@@ -60,18 +60,18 @@ const UpdateCourse = () => {
         updatedThumbnail = await handleThumbnailUpload();
       }
 
-      const {_id, ...formWithoutId} = formData;
+      const { _id, ...formWithoutId } = formData;
 
       const updatedCourse = {
         ...formWithoutId,
         thumbnail: updatedThumbnail,
-        videos: videos.filter(v => v.title && v.url)
+        videos: videos.filter(v => v.title && v.url),
       };
 
       await axios.patch(`http://localhost:3000/videos/${id}`, updatedCourse, {
         headers: {
-          authorization: `Bearer ${localStorage.getItem("access-token")}`
-        }
+          authorization: `Bearer ${localStorage.getItem("access-token")}`,
+        },
       });
 
       alert("Course updated successfully!");
@@ -91,7 +91,7 @@ const UpdateCourse = () => {
       <form onSubmit={handleSubmit} className="grid gap-4">
         <input name="title" placeholder="Course Title" value={formData.title} onChange={handleChange} className="input input-bordered" required />
         <input name="instructor" placeholder="Instructor" value={formData.instructor} onChange={handleChange} className="input input-bordered" required />
-        
+
         <input type="file" onChange={handleThumbnailChange} className="file-input file-input-bordered" />
         <p className="text-xs text-gray-500">Leave empty if you don't want to change thumbnail</p>
 
@@ -111,18 +111,32 @@ const UpdateCourse = () => {
         <div>
           <h4 className="font-semibold mt-4 mb-2">Course Videos</h4>
           {videos.map((video, index) => (
-            <div key={index} className="grid grid-cols-2 gap-2 mb-2">
+            <div key={index} className="grid grid-cols-2 gap-2 mb-3">
               <input
                 placeholder="Video Title"
                 value={video.title}
-                onChange={e => handleVideoChange(index, 'title', e.target.value)}
+                onChange={e => handleVideoChange(index, "title", e.target.value)}
                 className="input input-bordered"
                 required
               />
               <input
                 placeholder="Video URL"
                 value={video.url}
-                onChange={e => handleVideoChange(index, 'url', e.target.value)}
+                onChange={e => handleVideoChange(index, "url", e.target.value)}
+                className="input input-bordered"
+                required
+              />
+              <input
+                placeholder="Chapter"
+                value={video.chapter || ""}
+                onChange={e => handleVideoChange(index, "chapter", e.target.value)}
+                className="input input-bordered"
+                required
+              />
+              <input
+                placeholder="Subject"
+                value={video.subject || ""}
+                onChange={e => handleVideoChange(index, "subject", e.target.value)}
                 className="input input-bordered"
                 required
               />

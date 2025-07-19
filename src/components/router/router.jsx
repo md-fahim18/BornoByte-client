@@ -97,7 +97,7 @@ const router = createBrowserRouter([
     element: <ManageCourses />,
   },
   {
-    path: "update-course/:id",
+    path: "/dashboard/update-course/:id",
     element: <UpdateCourse />,
   },
   {
