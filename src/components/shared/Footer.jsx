@@ -1,53 +1,140 @@
-import React from "react";
+import {
+  FaFacebookF,
+  FaTwitter,
+  FaInstagram,
+  FaLinkedinIn,
+} from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <div>
-      <footer className="footer sm:footer-horizontal bg-base-200 text-base-content p-10">
-        <nav>
-          <h6 className="footer-title">Services</h6>
-          <a className="link link-hover">Branding</a>
-          <a className="link link-hover">Design</a>
-          <a className="link link-hover">Marketing</a>
-          <a className="link link-hover">Advertisement</a>
-        </nav>
-        <nav>
-          <h6 className="footer-title">Company</h6>
-          <Link to="/about" className="link link-hover">
-            About us
-          </Link>
-          <Link to="/contactUs" className="link link-hover">
-            Contact us
-          </Link>
-          <a className="link link-hover">Jobs</a>
-          <a className="link link-hover">Press kit</a>
-        </nav>
-        <nav>
-          <h6 className="footer-title">Legal</h6>
-          <a className="link link-hover">Terms of use</a>
-          <a className="link link-hover">Privacy policy</a>
-          <a className="link link-hover">Cookie policy</a>
-        </nav>
-        <form>
-          <h6 className="footer-title">Newsletter</h6>
-          <fieldset className="w-80">
-            <label>Enter your email address</label>
-            <div className="join">
-              <input
-                type="text"
-                placeholder="username@site.com"
-                className="input input-bordered join-item"
-              />
-              <button className="btn btn-primary join-item">Subscribe</button>
+    <footer className="w-full bg-gray-900 text-gray-300">
+      {/* No max-w here */}
+      <div className="px-6 md:px-20 py-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 border-b border-gray-700 pb-8">
+          {/* Column 1: Useful Links */}
+          <div>
+            <h3 className="text-lg font-semibold text-white mb-4">
+              Useful Links
+            </h3>
+            <ul className="space-y-2 text-sm text-gray-300">
+              <li>
+                <Link to="/about" className="hover:text-white transition">
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link to="/courses" className="hover:text-white transition">
+                  Courses
+                </Link>
+              </li>
+
+              <li>
+                <Link to="/contactUs" className="hover:text-white transition">
+                  Contact Us
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 2: Legal */}
+          <div>
+            <h3 className="text-lg font-semibold text-white mb-4">Legal</h3>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link
+                  to="/terms-of-use"
+                  className="hover:text-white transition"
+                >
+                  Terms of Use
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/privacy-policy"
+                  className="hover:text-white transition"
+                >
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/cookie-policy"
+                  className="hover:text-white transition"
+                >
+                  Cookie Policy
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3: Social Media */}
+          <div>
+            <h3 className="text-lg font-semibold text-white mb-4">Follow Us</h3>
+            <div className="flex space-x-4">
+              <a
+                href="https://facebook.com"
+                className="p-2 bg-blue-600 rounded-full hover:bg-blue-700 transition"
+              >
+                <FaFacebookF />
+              </a>
+              <a
+                href="https://twitter.com"
+                className="p-2 bg-blue-400 rounded-full hover:bg-blue-500 transition"
+              >
+                <FaTwitter />
+              </a>
+              <a
+                href="https://instagram.com"
+                className="p-2 bg-pink-500 rounded-full hover:bg-pink-600 transition"
+              >
+                <FaInstagram />
+              </a>
+              <a
+                href="https://linkedin.com"
+                className="p-2 bg-blue-800 rounded-full hover:bg-blue-900 transition"
+              >
+                <FaLinkedinIn />
+              </a>
             </div>
-          </fieldset>
-        </form>
-      </footer>
-      <div className="footer footer-center p-4 bg-base-300 text-base-content">
-        <p>Copyright © 2025 - All right reserved by BornoByte Ltd</p>
+          </div>
+
+          {/* Column 4: Contact Info */}
+          <div>
+            <h3 className="text-lg font-semibold text-white mb-4">Contact</h3>
+            <ul className="space-y-2 text-sm text-gray-300">
+              <li>
+                <span className="font-semibold">Email:</span>{" "}
+                <a
+                  href="mailto:bornobyte@gmail.com"
+                  className="hover:text-white transition"
+                >
+                  bornobyte@gmail.com
+                </a>
+              </li>
+              <li>
+                <span className="font-semibold">Phone:</span>{" "}
+                <a
+                  href="tel:+8801234567890"
+                  className="hover:text-white transition"
+                >
+                  +880 1234-567890
+                </a>
+              </li>
+              <li>
+                <span className="font-semibold">Location:</span> Dhaka,
+                Bangladesh
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="text-center text-sm text-gray-500 mt-6">
+          &copy; {new Date().getFullYear()} BornoByte. All rights reserved.
+        </div>
       </div>
-    </div>
+    </footer>
   );
 };
 

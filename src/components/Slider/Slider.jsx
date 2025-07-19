@@ -45,7 +45,7 @@ export default function MySlider() {
       modules={[Navigation, Pagination, Autoplay]}
       navigation
       pagination={{ clickable: true }}
-      autoplay={{ delay: 50000 }}
+      autoplay={{ delay: 5000 }}
       loop={true}
       className="w-full"
     >
