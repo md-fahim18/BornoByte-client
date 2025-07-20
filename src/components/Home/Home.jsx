@@ -7,6 +7,9 @@ import Courses from "../Courses/Courses";
 import ChooseUs from "../ChooseUS/ChooseUs";
 import Faq from "../FAQ/Faq";
 import FeaturedCourses from "../FeaturedCourse/FeaturedCourse"; // Adjust path if needed
+import Teacher from "../TeacherSection/Teacher";
+import Teachers from "../TeacherSection/Teachers";
+import Reviews from "../Reviews/Reviews";
 
 const Home = () => {
   return (
@@ -15,6 +18,8 @@ const Home = () => {
       <CourseSection></CourseSection>
       <FeaturedCourses></FeaturedCourses> {/* Featured Courses Section */}
       <Courses></Courses>
+      <Teachers></Teachers>
+      <Reviews></Reviews>
       <ChooseUs></ChooseUs>
       <Faq></Faq>
     </div>
