@@ -1,4 +1,3 @@
-
 // src/CourseDetailsMain/CourseDetailsMain.jsx
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -16,7 +15,6 @@ const CourseDetailsMain = () => {
   const [isApproved, setIsApproved] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // Load course info
   useEffect(() => {
     axios
       .get(`http://localhost:3000/videos/${id}`)
@@ -31,26 +29,18 @@ const CourseDetailsMain = () => {
       });
   }, [id]);
 
-  // Check if user is approved for this course
   useEffect(() => {
     const checkApproval = async () => {
       try {
-        // const res = await axios.get(
-        //   `http://localhost:3000/enrollments/check/${user?.email}/${id}`
-        // );
-        // ✅ NEW (Matches backend route)
-const res = await axios.get(
-  `http://localhost:3000/checkApproval`,
-  {
-    params: {
-      userEmail: user?.email,
-      courseId: id
-    },
-      headers: {
-    authorization: `Bearer ${localStorage.getItem('access-token')}`
-  }
-  }
-);
+        const res = await axios.get("http://localhost:3000/checkApproval", {
+          params: {
+            userEmail: user?.email,
+            courseId: id,
+          },
+          headers: {
+            authorization: `Bearer ${localStorage.getItem("access-token")}`,
+          },
+        });
 
         setIsApproved(res.data.approved);
       } catch (err) {
@@ -61,7 +51,6 @@ const res = await axios.get(
     if (user?.email) checkApproval();
   }, [user?.email, id]);
 
-  // Check if user is admin
   useEffect(() => {
     const checkAdmin = async () => {
       try {
@@ -81,61 +70,107 @@ const res = await axios.get(
   if (error) return <p className="text-center text-red-500">{error}</p>;
   if (!course) return <p className="text-center">Course not found</p>;
 
+  // 🧠 Group videos by chapter
+  const groupedVideos = course.videos?.reduce((acc, video) => {
+    const chapter = video.chapter || "Uncategorized";
+    if (!acc[chapter]) acc[chapter] = [];
+    acc[chapter].push(video);
+    return acc;
+  }, {});
+
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <img
-        src={course.thumbnail}
-        alt={course.title}
-        className="w-full h-64 object-cover rounded-lg shadow"
-      />
-      <h1 className="text-3xl font-bold mt-4 mb-2 text-orange-500">
-        {course.title}
-      </h1>
-      <p className="text-gray-600">{course.category}</p>
-      <p className="text-sm text-gray-500">Instructor: {course.instructor}</p>
+    <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 p-6">
+      {/* Left/Main Content */}
+      <div className="lg:col-span-2 space-y-6">
+        <h1 className="text-3xl font-bold text-gray-800">{course.title}</h1>
+        <p className="text-sm text-gray-500">
+          Category: {course.category} | Instructor: {course.instructor}
+        </p>
 
-      <div className="mt-6 space-y-3">
-        <h3 className="text-xl font-semibold">Course Overview</h3>
-        <p>{course.description || "No overview available."}</p>
+        <h2 className="text-xl font-semibold mt-6 mb-2 text-gray-700">
+          What you'll learn
+        </h2>
+        <ul className="list-disc ml-6 text-gray-600">
+          {course.whatYouWillLearn?.length > 0 ? (
+            course.whatYouWillLearn.map((item, idx) => <li key={idx}>{item}</li>)
+          ) : (
+            <li>No learning outcomes provided.</li>
+          )}
+        </ul>
 
-        <h3 className="text-xl font-semibold">Duration</h3>
-        <p>{course.duration}</p>
+        <h2 className="text-xl font-semibold mt-6 mb-2 text-gray-700">
+          Requirements
+        </h2>
+        <ul className="list-disc ml-6 text-gray-600">
+          {course.requirements?.length > 0 ? (
+            course.requirements.map((req, idx) => <li key={idx}>{req}</li>)
+          ) : (
+            <li>No requirements provided.</li>
+          )}
+        </ul>
 
-        <h3 className="text-xl font-semibold">Price</h3>
-        <p>{course.price === 0 ? "Free" : `৳${course.price}`}</p>
+        <h2 className="text-xl font-semibold mt-6 mb-2 text-gray-700">
+          Course Overview
+        </h2>
+        <p className="text-gray-600">{course.overview || course.description}</p>
 
-        {/* ✅ Only show videos if approved or admin */}
         {(isApproved || isAdmin) && (
-          <>
-            <h3 className="text-xl font-semibold">Videos</h3>
-            <ul className="list-disc ml-6">
-              {course.videos?.map((vid, idx) => (
-                <li key={idx}>
-                  {vid.title} –{" "}
-                  <a
-                    href={vid.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 underline"
-                  >
-                    Watch
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </>
+          <div className="mt-8">
+            <h2 className="text-xl font-bold mb-4 text-green-700">
+              Course Videos (Grouped by Chapter)
+            </h2>
+            {Object.keys(groupedVideos).map((chapter, idx) => (
+              <div key={idx} className="mb-6">
+                <h3 className="text-lg font-semibold text-indigo-600 mb-2">
+                  {chapter}
+                </h3>
+                <ul className="list-disc ml-6 text-blue-600 space-y-1">
+                  {groupedVideos[chapter].map((vid, i) => (
+                    <li key={i}>
+                      <a
+                        href={vid.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline"
+                      >
+                        {vid.title}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         )}
       </div>
 
-      {/* ✅ Show enroll button only if not admin */}
-      {!isAdmin && (
-        <button
-          className="btn btn-primary mt-6 w-full sm:w-auto"
-          onClick={() => navigate(`/enroll-form/${course._id}`)}
-        >
-          Enroll Now
-        </button>
-      )}
+      {/* Right Sidebar */}
+      <div className="space-y-4 p-4 bg-gray-100 rounded-lg shadow-md">
+        <img
+          src={course.thumbnail}
+          alt={course.title}
+          className="w-full h-48 object-cover rounded-md"
+        />
+        <h3 className="text-2xl font-bold text-green-600">
+          {course.price === 0 ? "Free" : `৳${course.price}`}
+        </h3>
+        <p className="text-sm text-gray-600">Duration: {course.duration}</p>
+
+        {!isAdmin && (
+          <button
+            className="btn btn-primary w-full mt-4"
+            onClick={() => navigate(`/enroll-form/${course._id}`)}
+          >
+            Enroll Now
+          </button>
+        )}
+
+        {(isApproved || isAdmin) && (
+          <p className="text-green-600 text-sm mt-2 text-center">
+            ✅ You are enrolled in this course
+          </p>
+        )}
+      </div>
     </div>
   );
 };
