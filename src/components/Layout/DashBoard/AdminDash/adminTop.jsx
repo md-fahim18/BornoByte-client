@@ -1,6 +1,8 @@
 // src/components/Layout/DashBoard/AdminDash/AdminTopbar.jsx
 import React from "react";
 import { FiBell, FiUser } from "react-icons/fi";
+import ThemeSwitcher from "../../../shared/ThemeSwitcher"; // Assuming ThemeSwitcher is in the same directory as Navbar
+
 
 const AdminTopbar = () => {
   return (
@@ -14,6 +16,9 @@ const AdminTopbar = () => {
 
       {/* Right Icon Buttons */}
       <div className="ml-auto flex gap-4 items-center">
+        <span className="scale-50">
+          <ThemeSwitcher />
+        </span>
         <button className="btn btn-ghost btn-circle hover:text-orange-500 transition">
           <FiBell className="text-xl" />
         </button>
