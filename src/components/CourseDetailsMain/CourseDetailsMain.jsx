@@ -1,4 +1,5 @@
 // src/CourseDetailsMain/CourseDetailsMain.jsx
+
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
@@ -10,144 +11,210 @@ const CourseDetailsMain = () => {
   const { user } = useContext(AuthContext);
 
   const [course, setCourse] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [isApproved, setIsApproved] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios
       .get(`http://localhost:3000/videos/${id}`)
       .then((res) => {
         setCourse(res.data);
+        setSelectedVideo(res.data.videos?.[0] || null);
         setLoading(false);
       })
       .catch((err) => {
-        console.error("Failed to load course:", err);
-        setError("Failed to load course details.");
+        console.error("Error loading course", err);
         setLoading(false);
       });
   }, [id]);
 
   useEffect(() => {
-    const checkApproval = async () => {
+    if (!user?.email) return;
+
+    const checkStatus = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/checkApproval`, {
-          params: {
-            userEmail: user?.email,
-            courseId: id,
-          },
-          headers: {
-            authorization: `Bearer ${localStorage.getItem("access-token")}`,
-          },
-        });
-        setIsApproved(res.data.approved);
+        const token = localStorage.getItem("access-token");
+
+        const [approvalRes, adminRes] = await Promise.all([
+          axios.get(`http://localhost:3000/checkApproval`, {
+            params: { userEmail: user.email, courseId: id },
+            headers: { authorization: `Bearer ${token}` },
+          }),
+          axios.get(`http://localhost:3000/users/admin/${user.email}`),
+        ]);
+
+        setIsApproved(approvalRes.data.approved);
+        setIsAdmin(adminRes.data.admin);
       } catch (err) {
-        console.error("Approval check failed:", err);
+        console.error("Status check failed", err);
       }
     };
-    if (user?.email) checkApproval();
+
+    checkStatus();
   }, [user?.email, id]);
 
-  useEffect(() => {
-    const checkAdmin = async () => {
-      try {
-        const res = await axios.get(
-          `http://localhost:3000/users/admin/${user?.email}`
-        );
-        setIsAdmin(res.data.admin);
-      } catch (err) {
-        console.error("Admin check failed:", err);
+  const extractYouTubeID = (url) => {
+    try {
+      const parsed = new URL(url);
+      if (parsed.hostname === "youtu.be") return parsed.pathname.slice(1);
+      else if (parsed.hostname.includes("youtube.com")) {
+        const params = new URLSearchParams(parsed.search);
+        return params.get("v");
       }
-    };
-    if (user?.email) checkAdmin();
-  }, [user?.email]);
+    } catch {
+      console.error("Invalid video URL:", url);
+      return "";
+    }
+  };
 
-  if (loading) return <p className="text-center text-lg">Loading...</p>;
-  if (error) return <p className="text-center text-red-500">{error}</p>;
-  if (!course) return <p className="text-center">Course not found</p>;
+  const groupByChapter = (videos = []) => {
+    const grouped = {};
+    videos.forEach((vid) => {
+      if (!grouped[vid.chapter]) grouped[vid.chapter] = [];
+      grouped[vid.chapter].push(vid);
+    });
+    return grouped;
+  };
+
+  if (loading) return <div className="text-center py-20">Loading...</div>;
+  if (!course) return <div className="text-center py-20">Course not found</div>;
+
+  const isEnrolled = isApproved || isAdmin;
+  const groupedChapters = groupByChapter(course.videos);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10">
-      <div className="grid md:grid-cols-3 gap-8">
-        {/* Left side: Course Overview */}
+    <div className="min-h-screen bg-base-100 text-base-content p-4 md:p-8">
+      <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-6">
+        {/* === LEFT COLUMN === */}
         <div className="md:col-span-2 space-y-6">
-          <h1 className="text-4xl font-bold text-orange-500">{course.title}</h1>
-          <p className="text-gray-500 text-sm">By {course.instructor}</p>
-          <p className="text-gray-600 text-md">{course.category}</p>
+          {isEnrolled && selectedVideo && (
+            <div className="w-full aspect-video">
+              <iframe
+                className="w-full h-full rounded-lg"
+                src={`https://www.youtube.com/embed/${extractYouTubeID(selectedVideo.url)}`}
+                title={selectedVideo.title}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope;"
+                allowFullScreen
+              />
+            </div>
+          )}
 
-          <section className="space-y-3 mt-4">
-            <h3 className="text-xl font-semibold">Course Overview</h3>
-            <p>{course.overview || "No overview available."}</p>
+          <h1 className="text-3xl font-bold text-orange-500">{course.title}</h1>
+          <p className="text-sm text-gray-500">Instructor: {course.instructor}</p>
+          <p className="text-sm">Category: {course.category}</p>
+          <p className="text-sm mb-2">Duration: {course.duration}</p>
 
-            <h3 className="text-xl font-semibold">What You'll Learn</h3>
+          <div>
+            <h3 className="text-lg font-semibold mb-1">Overview</h3>
+            <p>{course.overview || "No overview available"}</p>
+          </div>
+
+          <div>
+            <h3 className="text-lg font-semibold mb-1">What You’ll Learn</h3>
             <ul className="list-disc ml-6">
-              {course.whatYouWillLearn?.map((item, i) => (
-                <li key={i}>{item}</li>
+              {course.whatYouWillLearn?.map((item, idx) => (
+                <li key={idx}>{item}</li>
               ))}
             </ul>
+          </div>
 
-            <h3 className="text-xl font-semibold">Requirements</h3>
+          <div>
+            <h3 className="text-lg font-semibold mb-1">Requirements</h3>
             <ul className="list-disc ml-6">
-              {course.requirements?.map((item, i) => (
-                <li key={i}>{item}</li>
+              {course.requirements?.map((item, idx) => (
+                <li key={idx}>{item}</li>
               ))}
             </ul>
-          </section>
+          </div>
 
-          {/* Videos shown only after approval */}
-          {(isApproved || isAdmin) && (
-            <div className="mt-8">
-              <h3 className="text-xl font-semibold">Course Content</h3>
-              <div className="space-y-2 mt-4">
-                {course.videos?.map((vid, idx) => (
-                  <div
-                    key={idx}
-                    className="border p-3 rounded-lg shadow-sm hover:bg-base-100 transition"
+          {/* === CHAPTER CONTENTS (ONLY if NOT ENROLLED) === */}
+          {!isEnrolled && (
+            <div className="mt-6">
+              <h3 className="text-lg font-semibold mb-3">Course Contents</h3>
+              <div className="space-y-3">
+                {Object.entries(groupedChapters).map(([chapter, vids]) => (
+                  <details
+                    key={chapter}
+                    className="collapse collapse-arrow bg-base-200 rounded-lg"
                   >
-                    <p className="font-semibold">{vid.chapter} - {vid.title}</p>
-                    <a
-                      href={vid.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 underline text-sm"
-                    >
-                      Watch
-                    </a>
-                  </div>
+                    <summary className="collapse-title font-medium">{chapter}</summary>
+                    <div className="collapse-content px-2 py-1">
+                      <ul className="space-y-1 text-sm">
+                        {vids.map((vid, i) => (
+                          <li
+                            key={i}
+                            className="cursor-pointer text-gray-400 hover:text-orange-500"
+                            onClick={() =>
+                              document
+                                .getElementById("enrollCard")
+                                ?.scrollIntoView({ behavior: "smooth" })
+                            }
+                          >
+                            • {vid.title}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </details>
                 ))}
               </div>
             </div>
           )}
         </div>
 
-        {/* Right side: Thumbnail and Enroll */}
-        <div className="bg-base-200 p-6 rounded-lg shadow-md flex flex-col justify-between">
-          <img
-            src={course.thumbnail}
-            alt={course.title}
-            className="rounded-lg object-cover h-48 w-full mb-4"
-          />
-          <div className="space-y-2">
-            <p>
-              <span className="font-semibold">Duration:</span> {course.duration}
-            </p>
-            <p>
-              <span className="font-semibold">Price:</span>{" "}
-              {course.price === 0 ? "Free" : `৳${course.price}`}
-            </p>
-            <p>
-              <span className="font-semibold">Instructor:</span> {course.instructor}
-            </p>
-          </div>
+        {/* === RIGHT COLUMN === */}
+        <div className="bg-base-200 shadow-xl rounded-xl p-4 self-start w-full">
+          {/* === CONTENTS IF ENROLLED === */}
+          {isEnrolled && (
+            <>
+              <h3 className="text-lg font-semibold mb-3">Course Contents</h3>
+              <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+                {Object.entries(groupedChapters).map(([chapter, vids]) => (
+                  <details key={chapter} className="collapse collapse-arrow bg-base-100 rounded-lg">
+                    <summary className="collapse-title font-medium">{chapter}</summary>
+                    <div className="collapse-content px-2 py-1">
+                      <ul className="space-y-1 text-sm">
+                        {vids.map((vid, i) => (
+                          <li
+                            key={i}
+                            className="cursor-pointer hover:text-orange-500"
+                            onClick={() => setSelectedVideo(vid)}
+                          >
+                            • {vid.title}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </>
+          )}
 
-          {!isAdmin && !isApproved && (
-            <button
-              onClick={() => navigate(`/enroll-form/${course._id}`)}
-              className="btn btn-primary mt-6"
-            >
-              Enroll Now
-            </button>
+          {/* === ENROLL CARD === */}
+          {!isEnrolled && (
+            <div id="enrollCard" className="bg-base-100 p-4 rounded-lg shadow mt-6">
+              <img
+                src={course.thumbnail}
+                alt={course.title}
+                className="w-full h-40 object-cover rounded mb-3"
+              />
+              <p className="font-semibold text-lg mb-1">{course.title}</p>
+              <p className="text-sm text-gray-500">Instructor: {course.instructor}</p>
+              <p className="text-sm mt-1">Duration: {course.duration}</p>
+              <p className="text-lg font-bold mt-2 mb-3">
+                {course.price === 0 ? "Free" : `৳${course.price}`}
+              </p>
+              <button
+                className="btn btn-primary w-full"
+                onClick={() => navigate(`/enroll-form/${course._id}`)}
+              >
+                Enroll Now
+              </button>
+            </div>
           )}
         </div>
       </div>
