@@ -1,50 +1,45 @@
 // src/CourseDetailsMain/CourseDetailsMain.jsx
-
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import AuthContext from "../Auth/AuthContext";
 
 const CourseDetailsMain = () => {
-  const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [course, setCourse] = useState(null);
+  const [selectedVideo, setSelectedVideo] = useState(null);
   const [isApproved, setIsApproved] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [selectedVideo, setSelectedVideo] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [progress, setProgress] = useState([]);
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
 
+  const token = localStorage.getItem("access-token");
+
+  // Fetch course & approval
   useEffect(() => {
-    axios
-      .get(`http://localhost:3000/videos/${id}`)
-      .then((res) => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`http://localhost:3000/videos/${id}`);
         setCourse(res.data);
         setSelectedVideo(res.data.videos?.[0] || null);
-        setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("Error loading course", err);
-        setLoading(false);
-      });
-  }, [id]);
-
-  useEffect(() => {
-    if (!user?.email) return;
+      }
+    };
 
     const checkStatus = async () => {
       try {
-        const token = localStorage.getItem("access-token");
-
         const [approvalRes, adminRes] = await Promise.all([
           axios.get(`http://localhost:3000/checkApproval`, {
-            params: { userEmail: user.email, courseId: id },
+            params: { userEmail: user?.email, courseId: id },
             headers: { authorization: `Bearer ${token}` },
           }),
-          axios.get(`http://localhost:3000/users/admin/${user.email}`),
+          axios.get(`http://localhost:3000/users/admin/${user?.email}`),
         ]);
-
         setIsApproved(approvalRes.data.approved);
         setIsAdmin(adminRes.data.admin);
       } catch (err) {
@@ -52,43 +47,84 @@ const CourseDetailsMain = () => {
       }
     };
 
-    checkStatus();
-  }, [user?.email, id]);
+    fetchData();
+    if (user?.email) checkStatus();
+  }, [id, user?.email, token]);
+
+  // Progress
+  useEffect(() => {
+    if (!user?.email) return;
+    axios
+      .get(`http://localhost:3000/progress`, {
+        params: { userEmail: user.email, courseId: id },
+        headers: { authorization: `Bearer ${token}` },
+      })
+      .then((res) => setProgress(res.data.completedVideos || []))
+      .catch(() => setProgress([]));
+  }, [id, user?.email, token]);
+
+  // Comments
+  useEffect(() => {
+    axios
+      .get(`http://localhost:3000/comments/${id}`)
+      .then((res) => setComments(res.data));
+  }, [id]);
+
+  const isEnrolled = isApproved || isAdmin;
+  const grouped = course?.videos?.reduce((acc, vid) => {
+    acc[vid.chapter] = acc[vid.chapter] || [];
+    acc[vid.chapter].push(vid);
+    return acc;
+  }, {}) || {};
 
   const extractYouTubeID = (url) => {
     try {
       const parsed = new URL(url);
       if (parsed.hostname === "youtu.be") return parsed.pathname.slice(1);
-      else if (parsed.hostname.includes("youtube.com")) {
-        const params = new URLSearchParams(parsed.search);
-        return params.get("v");
-      }
+      if (parsed.hostname.includes("youtube.com")) return new URLSearchParams(parsed.search).get("v");
     } catch {
-      console.error("Invalid video URL:", url);
       return "";
     }
   };
 
-  const groupByChapter = (videos = []) => {
-    const grouped = {};
-    videos.forEach((vid) => {
-      if (!grouped[vid.chapter]) grouped[vid.chapter] = [];
-      grouped[vid.chapter].push(vid);
-    });
-    return grouped;
+  const handleVideoClick = (vid) => {
+    if (!isEnrolled) {
+      document.getElementById("enrollCard")?.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+
+    setSelectedVideo(vid);
+
+    axios.post(
+      `http://localhost:3000/progress`,
+      { courseId: id, userEmail: user.email, videoUrl: vid.url },
+      { headers: { authorization: `Bearer ${token}` } }
+    );
   };
 
-  if (loading) return <div className="text-center py-20">Loading...</div>;
-  if (!course) return <div className="text-center py-20">Course not found</div>;
+  const handleCommentSubmit = async () => {
+    if (!newComment.trim()) return;
 
-  const isEnrolled = isApproved || isAdmin;
-  const groupedChapters = groupByChapter(course.videos);
+    const res = await axios.post(
+      `http://localhost:3000/comments`,
+      {
+        userEmail: user.email,
+        courseId: id,
+        text: newComment,
+      },
+      { headers: { authorization: `Bearer ${token}` } }
+    );
+
+    setComments([res.data, ...comments]);
+    setNewComment("");
+  };
 
   return (
-    <div className="min-h-screen bg-base-100 text-base-content p-4 md:p-8">
+    <div className="bg-base-100 text-base-content min-h-screen p-4 md:p-8">
       <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-6">
-        {/* === LEFT COLUMN === */}
+        {/* LEFT - Main Content */}
         <div className="md:col-span-2 space-y-6">
+          {/* ✅ Video Player */}
           {isEnrolled && selectedVideo && (
             <div className="w-full aspect-video">
               <iframe
@@ -96,121 +132,119 @@ const CourseDetailsMain = () => {
                 src={`https://www.youtube.com/embed/${extractYouTubeID(selectedVideo.url)}`}
                 title={selectedVideo.title}
                 frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope;"
                 allowFullScreen
               />
             </div>
           )}
 
-          <h1 className="text-3xl font-bold text-orange-500">{course.title}</h1>
-          <p className="text-sm text-gray-500">Instructor: {course.instructor}</p>
-          <p className="text-sm">Category: {course.category}</p>
-          <p className="text-sm mb-2">Duration: {course.duration}</p>
+          <h1 className="text-3xl font-bold text-orange-500">{course?.title}</h1>
+          <p className="text-sm text-gray-500">Instructor: {course?.instructor}</p>
+          <p className="text-sm">Category: {course?.category}</p>
+          <p className="text-sm">Duration: {course?.duration}</p>
 
           <div>
-            <h3 className="text-lg font-semibold mb-1">Overview</h3>
-            <p>{course.overview || "No overview available"}</p>
+            <h3 className="font-semibold">Overview</h3>
+            <p>{course?.overview || "No overview available"}</p>
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-1">What You’ll Learn</h3>
+            <h3 className="font-semibold">What You’ll Learn</h3>
             <ul className="list-disc ml-6">
-              {course.whatYouWillLearn?.map((item, idx) => (
-                <li key={idx}>{item}</li>
-              ))}
+              {course?.whatYouWillLearn?.map((item, i) => <li key={i}>{item}</li>)}
             </ul>
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-1">Requirements</h3>
+            <h3 className="font-semibold">Requirements</h3>
             <ul className="list-disc ml-6">
-              {course.requirements?.map((item, idx) => (
-                <li key={idx}>{item}</li>
-              ))}
+              {course?.requirements?.map((item, i) => <li key={i}>{item}</li>)}
             </ul>
           </div>
 
-          {/* === CHAPTER CONTENTS (ONLY if NOT ENROLLED) === */}
+          {/* ✅ Course Contents (if NOT enrolled, show here) */}
           {!isEnrolled && (
+            <div>
+              <h3 className="text-xl font-bold mt-6 mb-3">Course Contents</h3>
+              {Object.entries(grouped).map(([chapter, vids]) => (
+                <details key={chapter} className="collapse collapse-arrow bg-base-200 mb-2">
+                  <summary className="collapse-title font-semibold">{chapter}</summary>
+                  <div className="collapse-content px-4">
+                    <ul>
+                      {vids.map((vid, idx) => (
+                        <li
+                          key={idx}
+                          onClick={() => handleVideoClick(vid)}
+                          className="text-gray-400 hover:text-orange-500 cursor-pointer"
+                        >
+                          • {vid.title}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </details>
+              ))}
+            </div>
+          )}
+
+          {/* ✅ Comments */}
+          {isEnrolled && (
             <div className="mt-6">
-              <h3 className="text-lg font-semibold mb-3">Course Contents</h3>
-              <div className="space-y-3">
-                {Object.entries(groupedChapters).map(([chapter, vids]) => (
-                  <details
-                    key={chapter}
-                    className="collapse collapse-arrow bg-base-200 rounded-lg"
-                  >
-                    <summary className="collapse-title font-medium">{chapter}</summary>
-                    <div className="collapse-content px-2 py-1">
-                      <ul className="space-y-1 text-sm">
-                        {vids.map((vid, i) => (
-                          <li
-                            key={i}
-                            className="cursor-pointer text-gray-400 hover:text-orange-500"
-                            onClick={() =>
-                              document
-                                .getElementById("enrollCard")
-                                ?.scrollIntoView({ behavior: "smooth" })
-                            }
-                          >
-                            • {vid.title}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </details>
+              <h3 className="text-xl font-bold mb-2">Comments</h3>
+              <textarea
+                className="textarea textarea-bordered w-full"
+                placeholder="Write a comment..."
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+              />
+              <button onClick={handleCommentSubmit} className="btn btn-primary mt-2">Post</button>
+
+              <div className="mt-4 space-y-2">
+                {comments.map((com) => (
+                  <div key={com._id} className="bg-base-200 p-3 rounded">
+                    <p className="font-semibold text-sm">{com.userEmail}</p>
+                    <p>{com.text}</p>
+                    <p className="text-xs text-gray-500">{new Date(com.timestamp).toLocaleString()}</p>
+                  </div>
                 ))}
               </div>
             </div>
           )}
         </div>
 
-        {/* === RIGHT COLUMN === */}
-        <div className="bg-base-200 shadow-xl rounded-xl p-4 self-start w-full">
-          {/* === CONTENTS IF ENROLLED === */}
-          {isEnrolled && (
-            <>
-              <h3 className="text-lg font-semibold mb-3">Course Contents</h3>
-              <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
-                {Object.entries(groupedChapters).map(([chapter, vids]) => (
-                  <details key={chapter} className="collapse collapse-arrow bg-base-100 rounded-lg">
-                    <summary className="collapse-title font-medium">{chapter}</summary>
-                    <div className="collapse-content px-2 py-1">
-                      <ul className="space-y-1 text-sm">
-                        {vids.map((vid, i) => (
-                          <li
-                            key={i}
-                            className="cursor-pointer hover:text-orange-500"
-                            onClick={() => setSelectedVideo(vid)}
-                          >
-                            • {vid.title}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </details>
-                ))}
-              </div>
-            </>
-          )}
-
-          {/* === ENROLL CARD === */}
-          {!isEnrolled && (
-            <div id="enrollCard" className="bg-base-100 p-4 rounded-lg shadow mt-6">
-              <img
-                src={course.thumbnail}
-                alt={course.title}
-                className="w-full h-40 object-cover rounded mb-3"
-              />
-              <p className="font-semibold text-lg mb-1">{course.title}</p>
-              <p className="text-sm text-gray-500">Instructor: {course.instructor}</p>
-              <p className="text-sm mt-1">Duration: {course.duration}</p>
-              <p className="text-lg font-bold mt-2 mb-3">
-                {course.price === 0 ? "Free" : `৳${course.price}`}
-              </p>
+        {/* RIGHT PANEL - Enroll Card or Contents */}
+        <div className="w-full">
+          {isEnrolled ? (
+            <div className="bg-base-200 p-4 rounded-lg space-y-2">
+              <h3 className="font-semibold mb-2">Contents</h3>
+              {Object.entries(grouped).map(([chapter, vids]) => (
+                <details key={chapter} className="collapse collapse-arrow bg-base-100 mb-2">
+                  <summary className="collapse-title font-semibold">{chapter}</summary>
+                  <div className="collapse-content px-2">
+                    <ul>
+                      {vids.map((vid, idx) => (
+                        <li
+                          key={idx}
+                          className={`cursor-pointer ${progress.includes(vid.url) ? "text-green-500" : ""}`}
+                          onClick={() => handleVideoClick(vid)}
+                        >
+                          • {vid.title}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </details>
+              ))}
+            </div>
+          ) : (
+            <div id="enrollCard" className="bg-base-200 p-4 rounded-lg shadow space-y-2">
+              <img src={course?.thumbnail} alt={course?.title} className="w-full h-40 object-cover rounded mb-2" />
+              <h2 className="font-bold text-lg">{course?.title}</h2>
+              <p className="text-sm">Instructor: {course?.instructor}</p>
+              <p className="text-sm">Duration: {course?.duration}</p>
+              <p className="text-lg font-bold text-orange-500">{course?.price === 0 ? "Free" : `৳${course?.price}`}</p>
               <button
-                className="btn btn-primary w-full"
                 onClick={() => navigate(`/enroll-form/${course._id}`)}
+                className="btn btn-primary w-full"
               >
                 Enroll Now
               </button>
