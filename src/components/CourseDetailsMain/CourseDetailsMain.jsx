@@ -32,7 +32,7 @@ const CourseDetailsMain = () => {
   useEffect(() => {
     const checkApproval = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/checkApproval", {
+        const res = await axios.get(`http://localhost:3000/checkApproval`, {
           params: {
             userEmail: user?.email,
             courseId: id,
@@ -41,13 +41,11 @@ const CourseDetailsMain = () => {
             authorization: `Bearer ${localStorage.getItem("access-token")}`,
           },
         });
-
         setIsApproved(res.data.approved);
       } catch (err) {
         console.error("Approval check failed:", err);
       }
     };
-
     if (user?.email) checkApproval();
   }, [user?.email, id]);
 
@@ -62,7 +60,6 @@ const CourseDetailsMain = () => {
         console.error("Admin check failed:", err);
       }
     };
-
     if (user?.email) checkAdmin();
   }, [user?.email]);
 
@@ -70,106 +67,89 @@ const CourseDetailsMain = () => {
   if (error) return <p className="text-center text-red-500">{error}</p>;
   if (!course) return <p className="text-center">Course not found</p>;
 
-  // 🧠 Group videos by chapter
-  const groupedVideos = course.videos?.reduce((acc, video) => {
-    const chapter = video.chapter || "Uncategorized";
-    if (!acc[chapter]) acc[chapter] = [];
-    acc[chapter].push(video);
-    return acc;
-  }, {});
-
   return (
-    <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 p-6">
-      {/* Left/Main Content */}
-      <div className="lg:col-span-2 space-y-6">
-        <h1 className="text-3xl font-bold text-gray-800">{course.title}</h1>
-        <p className="text-sm text-gray-500">
-          Category: {course.category} | Instructor: {course.instructor}
-        </p>
+    <div className="max-w-6xl mx-auto px-4 py-10">
+      <div className="grid md:grid-cols-3 gap-8">
+        {/* Left side: Course Overview */}
+        <div className="md:col-span-2 space-y-6">
+          <h1 className="text-4xl font-bold text-orange-500">{course.title}</h1>
+          <p className="text-gray-500 text-sm">By {course.instructor}</p>
+          <p className="text-gray-600 text-md">{course.category}</p>
 
-        <h2 className="text-xl font-semibold mt-6 mb-2 text-gray-700">
-          What you'll learn
-        </h2>
-        <ul className="list-disc ml-6 text-gray-600">
-          {course.whatYouWillLearn?.length > 0 ? (
-            course.whatYouWillLearn.map((item, idx) => <li key={idx}>{item}</li>)
-          ) : (
-            <li>No learning outcomes provided.</li>
-          )}
-        </ul>
+          <section className="space-y-3 mt-4">
+            <h3 className="text-xl font-semibold">Course Overview</h3>
+            <p>{course.overview || "No overview available."}</p>
 
-        <h2 className="text-xl font-semibold mt-6 mb-2 text-gray-700">
-          Requirements
-        </h2>
-        <ul className="list-disc ml-6 text-gray-600">
-          {course.requirements?.length > 0 ? (
-            course.requirements.map((req, idx) => <li key={idx}>{req}</li>)
-          ) : (
-            <li>No requirements provided.</li>
-          )}
-        </ul>
+            <h3 className="text-xl font-semibold">What You'll Learn</h3>
+            <ul className="list-disc ml-6">
+              {course.whatYouWillLearn?.map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
+            </ul>
 
-        <h2 className="text-xl font-semibold mt-6 mb-2 text-gray-700">
-          Course Overview
-        </h2>
-        <p className="text-gray-600">{course.overview || course.description}</p>
+            <h3 className="text-xl font-semibold">Requirements</h3>
+            <ul className="list-disc ml-6">
+              {course.requirements?.map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
+            </ul>
+          </section>
 
-        {(isApproved || isAdmin) && (
-          <div className="mt-8">
-            <h2 className="text-xl font-bold mb-4 text-green-700">
-              Course Videos (Grouped by Chapter)
-            </h2>
-            {Object.keys(groupedVideos).map((chapter, idx) => (
-              <div key={idx} className="mb-6">
-                <h3 className="text-lg font-semibold text-indigo-600 mb-2">
-                  {chapter}
-                </h3>
-                <ul className="list-disc ml-6 text-blue-600 space-y-1">
-                  {groupedVideos[chapter].map((vid, i) => (
-                    <li key={i}>
-                      <a
-                        href={vid.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:underline"
-                      >
-                        {vid.title}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
+          {/* Videos shown only after approval */}
+          {(isApproved || isAdmin) && (
+            <div className="mt-8">
+              <h3 className="text-xl font-semibold">Course Content</h3>
+              <div className="space-y-2 mt-4">
+                {course.videos?.map((vid, idx) => (
+                  <div
+                    key={idx}
+                    className="border p-3 rounded-lg shadow-sm hover:bg-base-100 transition"
+                  >
+                    <p className="font-semibold">{vid.chapter} - {vid.title}</p>
+                    <a
+                      href={vid.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 underline text-sm"
+                    >
+                      Watch
+                    </a>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+          )}
+        </div>
+
+        {/* Right side: Thumbnail and Enroll */}
+        <div className="bg-base-200 p-6 rounded-lg shadow-md flex flex-col justify-between">
+          <img
+            src={course.thumbnail}
+            alt={course.title}
+            className="rounded-lg object-cover h-48 w-full mb-4"
+          />
+          <div className="space-y-2">
+            <p>
+              <span className="font-semibold">Duration:</span> {course.duration}
+            </p>
+            <p>
+              <span className="font-semibold">Price:</span>{" "}
+              {course.price === 0 ? "Free" : `৳${course.price}`}
+            </p>
+            <p>
+              <span className="font-semibold">Instructor:</span> {course.instructor}
+            </p>
           </div>
-        )}
-      </div>
 
-      {/* Right Sidebar */}
-      <div className="space-y-4 p-4 bg-gray-100 rounded-lg shadow-md">
-        <img
-          src={course.thumbnail}
-          alt={course.title}
-          className="w-full h-48 object-cover rounded-md"
-        />
-        <h3 className="text-2xl font-bold text-green-600">
-          {course.price === 0 ? "Free" : `৳${course.price}`}
-        </h3>
-        <p className="text-sm text-gray-600">Duration: {course.duration}</p>
-
-        {!isAdmin && (
-          <button
-            className="btn btn-primary w-full mt-4"
-            onClick={() => navigate(`/enroll-form/${course._id}`)}
-          >
-            Enroll Now
-          </button>
-        )}
-
-        {(isApproved || isAdmin) && (
-          <p className="text-green-600 text-sm mt-2 text-center">
-            ✅ You are enrolled in this course
-          </p>
-        )}
+          {!isAdmin && !isApproved && (
+            <button
+              onClick={() => navigate(`/enroll-form/${course._id}`)}
+              className="btn btn-primary mt-6"
+            >
+              Enroll Now
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
