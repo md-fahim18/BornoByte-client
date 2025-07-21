@@ -16,8 +16,12 @@ const CourseDetailsMain = () => {
   const [progress, setProgress] = useState([]);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editedText, setEditedText] = useState("");
 
   const token = localStorage.getItem("access-token");
+
+  const isEnrolled = isApproved || isAdmin;
 
   // Fetch course & approval
   useEffect(() => {
@@ -61,7 +65,7 @@ const CourseDetailsMain = () => {
       })
       .then((res) => setProgress(res.data.completedVideos || []))
       .catch(() => setProgress([]));
-  }, [id, user?.email, token]);
+  }, [id, user?.email, token, selectedVideo]);
 
   // Comments
   useEffect(() => {
@@ -70,18 +74,12 @@ const CourseDetailsMain = () => {
       .then((res) => setComments(res.data));
   }, [id]);
 
-  const isEnrolled = isApproved || isAdmin;
-  const grouped = course?.videos?.reduce((acc, vid) => {
-    acc[vid.chapter] = acc[vid.chapter] || [];
-    acc[vid.chapter].push(vid);
-    return acc;
-  }, {}) || {};
-
   const extractYouTubeID = (url) => {
     try {
       const parsed = new URL(url);
       if (parsed.hostname === "youtu.be") return parsed.pathname.slice(1);
-      if (parsed.hostname.includes("youtube.com")) return new URLSearchParams(parsed.search).get("v");
+      if (parsed.hostname.includes("youtube.com"))
+        return new URLSearchParams(parsed.search).get("v");
     } catch {
       return "";
     }
@@ -99,7 +97,9 @@ const CourseDetailsMain = () => {
       `http://localhost:3000/progress`,
       { courseId: id, userEmail: user.email, videoUrl: vid.url },
       { headers: { authorization: `Bearer ${token}` } }
-    );
+    ).then(() => {
+      setProgress((prev) => [...new Set([...prev, vid.url])]);
+    });
   };
 
   const handleCommentSubmit = async () => {
@@ -119,12 +119,38 @@ const CourseDetailsMain = () => {
     setNewComment("");
   };
 
+  const handleDeleteComment = async (commentId) => {
+    await axios.delete(`http://localhost:3000/comments/${commentId}`, {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    setComments((prev) => prev.filter((com) => com._id !== commentId));
+  };
+
+  const handleEditSave = async (commentId) => {
+    const res = await axios.patch(
+      `http://localhost:3000/comments/${commentId}`,
+      { text: editedText },
+      { headers: { authorization: `Bearer ${token}` } }
+    );
+
+    setComments((prev) =>
+      prev.map((com) => (com._id === commentId ? res.data : com))
+    );
+    setEditingCommentId(null);
+    setEditedText("");
+  };
+
+  const grouped = course?.videos?.reduce((acc, vid) => {
+    acc[vid.chapter] = acc[vid.chapter] || [];
+    acc[vid.chapter].push(vid);
+    return acc;
+  }, {}) || {};
+
   return (
     <div className="bg-base-100 text-base-content min-h-screen p-4 md:p-8">
       <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-6">
-        {/* LEFT - Main Content */}
+        {/* LEFT MAIN */}
         <div className="md:col-span-2 space-y-6">
-          {/* ✅ Video Player */}
           {isEnrolled && selectedVideo && (
             <div className="w-full aspect-video">
               <iframe
@@ -144,7 +170,7 @@ const CourseDetailsMain = () => {
 
           <div>
             <h3 className="font-semibold">Overview</h3>
-            <p>{course?.overview || "No overview available"}</p>
+            <p>{course?.overview}</p>
           </div>
 
           <div>
@@ -161,7 +187,6 @@ const CourseDetailsMain = () => {
             </ul>
           </div>
 
-          {/* ✅ Course Contents (if NOT enrolled, show here) */}
           {!isEnrolled && (
             <div>
               <h3 className="text-xl font-bold mt-6 mb-3">Course Contents</h3>
@@ -174,7 +199,7 @@ const CourseDetailsMain = () => {
                         <li
                           key={idx}
                           onClick={() => handleVideoClick(vid)}
-                          className="text-gray-400 hover:text-orange-500 cursor-pointer"
+                          className="hover:text-amber-500 text-gray-400 cursor-pointer"
                         >
                           • {vid.title}
                         </li>
@@ -202,8 +227,33 @@ const CourseDetailsMain = () => {
                 {comments.map((com) => (
                   <div key={com._id} className="bg-base-200 p-3 rounded">
                     <p className="font-semibold text-sm">{com.userEmail}</p>
-                    <p>{com.text}</p>
-                    <p className="text-xs text-gray-500">{new Date(com.timestamp).toLocaleString()}</p>
+                    {editingCommentId === com._id ? (
+                      <>
+                        <textarea
+                          className="textarea textarea-sm w-full mb-2"
+                          value={editedText}
+                          onChange={(e) => setEditedText(e.target.value)}
+                        />
+                        <button onClick={() => handleEditSave(com._id)} className="btn btn-xs btn-success mr-2">Save</button>
+                        <button onClick={() => setEditingCommentId(null)} className="btn btn-xs btn-ghost">Cancel</button>
+                      </>
+                    ) : (
+                      <>
+                        <p>{com.text}</p>
+                        <p className="text-xs text-gray-500">
+                          {com.timestamp ? new Date(com.timestamp).toLocaleString() : ""}
+                        </p>
+                        {(user?.email === com.userEmail || isAdmin) && (
+                          <div className="flex gap-2 mt-1">
+                            <button onClick={() => {
+                              setEditingCommentId(com._id);
+                              setEditedText(com.text);
+                            }} className="text-blue-500 text-xs">Edit</button>
+                            <button onClick={() => handleDeleteComment(com._id)} className="text-red-500 text-xs">Delete</button>
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
                 ))}
               </div>
@@ -211,7 +261,7 @@ const CourseDetailsMain = () => {
           )}
         </div>
 
-        {/* RIGHT PANEL - Enroll Card or Contents */}
+        {/* RIGHT PANEL */}
         <div className="w-full">
           {isEnrolled ? (
             <div className="bg-base-200 p-4 rounded-lg space-y-2">
@@ -224,10 +274,11 @@ const CourseDetailsMain = () => {
                       {vids.map((vid, idx) => (
                         <li
                           key={idx}
-                          className={`cursor-pointer ${progress.includes(vid.url) ? "text-green-500" : ""}`}
+                          className={`cursor-pointer flex items-center gap-2 hover:text-amber-500 ${selectedVideo?.url === vid.url ? "text-orange-500" : ""}`}
                           onClick={() => handleVideoClick(vid)}
                         >
-                          • {vid.title}
+                          {progress.includes(vid.url) && <span className="text-green-500">✔</span>}
+                          {vid.title}
                         </li>
                       ))}
                     </ul>
@@ -241,7 +292,9 @@ const CourseDetailsMain = () => {
               <h2 className="font-bold text-lg">{course?.title}</h2>
               <p className="text-sm">Instructor: {course?.instructor}</p>
               <p className="text-sm">Duration: {course?.duration}</p>
-              <p className="text-lg font-bold text-orange-500">{course?.price === 0 ? "Free" : `৳${course?.price}`}</p>
+              <p className="text-lg font-bold text-orange-500">
+                {course?.price === 0 ? "Free" : `৳${course?.price}`}
+              </p>
               <button
                 onClick={() => navigate(`/enroll-form/${course._id}`)}
                 className="btn btn-primary w-full"
