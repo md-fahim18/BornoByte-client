@@ -59,7 +59,7 @@
 // };
 
 // export default EnrollForm;
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import AuthContext from "../../../Auth/AuthContext";
@@ -67,6 +67,15 @@ import AuthContext from "../../../Auth/AuthContext";
 const EnrollForm = () => {
   const { id: courseId } = useParams();
   const { user, loading } = useContext(AuthContext);
+  const [courseTitle, setCourseTitle] = useState("");
+ useEffect(() => {
+  if (courseId) {
+    axios.get(`http://localhost:3000/videos/${courseId}`)
+      .then(res => setCourseTitle(res.data.title || ""))
+      .catch(() => setCourseTitle(""));
+  }
+}, [courseId]);
+
 
   const [formData, setFormData] = useState({ phone: "" });
   const [message, setMessage] = useState("");
@@ -94,6 +103,7 @@ const EnrollForm = () => {
         "http://localhost:3000/enrollRequests",
         {
           courseId,
+          courseTitle,
           userEmail: user.email,
           phone: formData.phone,
         },
