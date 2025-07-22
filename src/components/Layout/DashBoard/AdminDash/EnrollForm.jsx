@@ -90,7 +90,7 @@ const EnrollForm = () => {
     const token = localStorage.getItem("access-token");
 
     try {
-      const res = await axios.post(
+      await axios.post(
         "http://localhost:3000/enrollRequests",
         {
           courseId,
