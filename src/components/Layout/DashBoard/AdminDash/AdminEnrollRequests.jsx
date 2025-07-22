@@ -40,7 +40,7 @@ const AdminEnrollRequests = () => {
       );
       Swal.fire("Approved!", "User has been granted access.", "success");
       fetchRequests();
-    } catch (err) {
+    } catch {
       Swal.fire("Error", "Failed to approve", "error");
     }
   };
@@ -63,7 +63,7 @@ const AdminEnrollRequests = () => {
         });
         Swal.fire("Deleted!", "Request has been removed.", "success");
         fetchRequests();
-      } catch (err) {
+      } catch {
         Swal.fire("Error", "Failed to delete", "error");
       }
     }

@@ -1,4 +1,3 @@
-// src/components/Layout/DashBoard/AdminDash/UpdateCourse.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -12,12 +11,21 @@ const UpdateCourse = () => {
   const imgbbApiKey = import.meta.env.VITE_Image_hosting_key;
 
   useEffect(() => {
-    axios.get(`http://localhost:3000/videos/${id}`)
-      .then(res => {
+    const fetchCourse = async () => {
+      try {
+        const res = await axios.get(`http://localhost:3000/videos/${id}`, {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem("access-token")}`
+          }
+        });
         setFormData(res.data);
         setVideos(res.data.videos || []);
-      })
-      .catch(err => console.error("Failed to load course", err));
+      } catch (err) {
+        console.error("Failed to load course", err);
+        alert("Failed to load course. Please make sure you are authorized.");
+      }
+    };
+    fetchCourse();
   }, [id]);
 
   const handleChange = e => {
@@ -48,6 +56,48 @@ const UpdateCourse = () => {
 
   const addVideoField = () => {
     setVideos([...videos, { title: "", url: "", chapter: "", subject: "" }]);
+  };
+
+  // New: Delete a video entry
+  const deleteVideoField = (index) => {
+    const updated = [...videos];
+    updated.splice(index, 1);
+    setVideos(updated);
+  };
+
+  // Modified: Send notification ONLY to enrolled users on course update
+  const sendUpdateNotificationToEnrolledUsers = async (courseId, courseTitle, teacherEmail) => {
+    try {
+      // 1. Fetch all enrolled users for this course
+      const res = await axios.get(`http://localhost:3000/enrollments?courseId=${courseId}`, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("access-token")}`
+        }
+      });
+      const enrolledUsers = res.data; // Array of enrollment objects with userEmail or similar
+
+      // 2. For each enrolled user, send notification
+      for (const enrollment of enrolledUsers) {
+        await axios.post(
+          "http://localhost:3000/notifications",
+          {
+            recipientEmail: enrollment.userEmail, // assuming this field contains user's email
+            type: "course_update",
+            title: "Course Updated",
+            message: `Course titled "${courseTitle}" was updated by ${teacherEmail}.`,
+            read: false,
+            timestamp: new Date(),
+          },
+          {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem("access-token")}`,
+            }
+          }
+        );
+      }
+    } catch (err) {
+      console.error("Failed to send update notifications to enrolled users", err);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -81,9 +131,12 @@ const UpdateCourse = () => {
         }
       });
 
-      alert("Course updated successfully!");
+      // 🔔 Send Notification to enrolled users only
+      await sendUpdateNotificationToEnrolledUsers(id, updatedCourse.title, updatedCourse.teacherEmail);
+
+      alert("✅ Course updated successfully!");
     } catch (err) {
-      console.error("Update failed", err);
+      console.error("❌ Update failed", err);
       alert("Update failed. Please try again.");
     } finally {
       setLoading(false);
@@ -96,8 +149,22 @@ const UpdateCourse = () => {
     <div className="p-6 max-w-2xl mx-auto">
       <h2 className="text-2xl font-bold mb-4">Update Course</h2>
       <form onSubmit={handleSubmit} className="grid gap-4">
-        <input name="title" placeholder="Course Title" value={formData.title} onChange={handleChange} className="input input-bordered" required />
-        <input name="instructor" placeholder="Instructor" value={formData.instructor} onChange={handleChange} className="input input-bordered" required />
+        <input
+          name="title"
+          placeholder="Course Title"
+          value={formData.title}
+          onChange={handleChange}
+          className="input input-bordered"
+          required
+        />
+        <input
+          name="instructor"
+          placeholder="Instructor"
+          value={formData.instructor}
+          onChange={handleChange}
+          className="input input-bordered"
+          required
+        />
 
         <input type="file" onChange={handleThumbnailChange} className="file-input file-input-bordered" />
         <p className="text-xs text-gray-500">Leave empty if you don't want to change thumbnail</p>
@@ -109,12 +176,39 @@ const UpdateCourse = () => {
           <option value="Undergraduate">Undergraduate</option>
         </select>
 
-        <input name="duration" placeholder="Duration" value={formData.duration} onChange={handleChange} className="input input-bordered" required />
-        <input name="price" type="number" placeholder="Price" value={formData.price} onChange={handleChange} className="input input-bordered" required />
-        <input name="teacherEmail" placeholder="Teacher Email" value={formData.teacherEmail} onChange={handleChange} className="input input-bordered" required />
-        <input name="otherLink" placeholder="Other Link (optional)" value={formData.otherLink} onChange={handleChange} className="input input-bordered" />
+        <input
+          name="duration"
+          placeholder="Duration"
+          value={formData.duration}
+          onChange={handleChange}
+          className="input input-bordered"
+          required
+        />
+        <input
+          name="price"
+          type="number"
+          placeholder="Price"
+          value={formData.price}
+          onChange={handleChange}
+          className="input input-bordered"
+          required
+        />
+        <input
+          name="teacherEmail"
+          placeholder="Teacher Email"
+          value={formData.teacherEmail}
+          onChange={handleChange}
+          className="input input-bordered"
+          required
+        />
+        <input
+          name="otherLink"
+          placeholder="Other Link (optional)"
+          value={formData.otherLink}
+          onChange={handleChange}
+          className="input input-bordered"
+        />
 
-        {/* Overview */}
         <textarea
           name="overview"
           placeholder="Course Overview"
@@ -124,7 +218,6 @@ const UpdateCourse = () => {
           required
         />
 
-        {/* Requirements */}
         <textarea
           name="requirements"
           placeholder="Requirements (comma separated)"
@@ -138,7 +231,6 @@ const UpdateCourse = () => {
           className="textarea textarea-bordered"
         />
 
-        {/* What You'll Learn */}
         <textarea
           name="whatYouWillLearn"
           placeholder="What You Will Learn (comma separated)"
@@ -152,11 +244,10 @@ const UpdateCourse = () => {
           className="textarea textarea-bordered"
         />
 
-        {/* Videos */}
         <div>
           <h4 className="font-semibold mt-4 mb-2">Course Videos</h4>
           {videos.map((video, index) => (
-            <div key={index} className="grid grid-cols-2 gap-2 mb-2">
+            <div key={index} className="grid grid-cols-5 gap-2 mb-2">
               <input
                 placeholder="Video Title"
                 value={video.title}
@@ -183,6 +274,14 @@ const UpdateCourse = () => {
                 onChange={e => handleVideoChange(index, 'subject', e.target.value)}
                 className="input input-bordered"
               />
+              <button
+                type="button"
+                onClick={() => deleteVideoField(index)}
+                className="btn btn-sm btn-error"
+                title="Delete this video"
+              >
+                Delete
+              </button>
             </div>
           ))}
           <button type="button" onClick={addVideoField} className="btn btn-sm btn-outline">+ Add Another Video</button>

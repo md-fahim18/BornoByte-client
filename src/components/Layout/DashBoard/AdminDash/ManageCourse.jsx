@@ -25,7 +25,7 @@ const ManageCourses = () => {
 
     axios.delete(`http://localhost:3000/videos/${id}`, {
       headers: {
-        authorization: `Bearer ${localStorage.getItem('access-token')}`
+        Authorization: `Bearer ${localStorage.getItem('access-token')}`  // <-- Fixed header casing here
       }
     })
       .then(res => {
@@ -40,31 +40,30 @@ const ManageCourses = () => {
       });
   };
 
-    const toggleFeature = (id, isCurrentlyFeatured) => {
-      axios.patch(`http://localhost:3000/videos/feature/${id}`, {
-        featured: !isCurrentlyFeatured
-      }, {
-        headers: {
-          authorization: `Bearer ${localStorage.getItem('access-token')}`
+  const toggleFeature = (id, isCurrentlyFeatured) => {
+    axios.patch(`http://localhost:3000/videos/feature/${id}`, {
+      featured: !isCurrentlyFeatured
+    }, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('access-token')}`  // <-- Fixed header casing here too
+      }
+    })
+      .then(res => {
+        if (res.data.modifiedCount > 0) {
+          alert(`Course ${!isCurrentlyFeatured ? 'featured' : 'unfeatured'} successfully!`);
+          setCourses(prev =>
+            prev.map(course =>
+              course._id === id ? { ...course, featured: !isCurrentlyFeatured } : course
+            )
+          );
         }
       })
-        .then(res => {
-          if (res.data.modifiedCount > 0) {
-            alert(`Course ${!isCurrentlyFeatured ? 'featured' : 'unfeatured'} successfully!`);
-            setCourses(prev =>
-              prev.map(course =>
-                course._id === id ? { ...course, featured: !isCurrentlyFeatured } : course
-              )
-            );
-          }
-        })
-        .catch(err => {
-          const msg = err.response?.data?.error || "Feature toggle failed";
-          alert(msg);
-          console.error("Feature error:", err);
-        });
-    };
-
+      .catch(err => {
+        const msg = err.response?.data?.error || "Feature toggle failed";
+        alert(msg);
+        console.error("Feature error:", err);
+      });
+  };
 
   return (
     <div className="p-6">
