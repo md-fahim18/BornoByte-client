@@ -65,7 +65,7 @@ import { useParams } from "react-router-dom";
 import AuthContext from "../../../Auth/AuthContext";
 
 const EnrollForm = () => {
-  const { id: courseId } = useParams();
+  const { id: courseId , title: title} = useParams();
   const { user, loading } = useContext(AuthContext);
 
   const [formData, setFormData] = useState({ phone: "" });
@@ -94,6 +94,7 @@ const EnrollForm = () => {
         "http://localhost:3000/enrollRequests",
         {
           courseId,
+          title,
           userEmail: user.email,
           phone: formData.phone,
         },
