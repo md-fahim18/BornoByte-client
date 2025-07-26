@@ -27,6 +27,9 @@ import PrivacyPolicy from "../shared/FooterComponents/PrivacyPolicy";
 import CookiePolicy from "../shared/FooterComponents/CookiePolicy";
 import PasswordReset from "../Auth/PasswordReset";
 
+import PaymentSuccess from "../Payments/paymentSuccess"; // ✅ updated import
+import PaymentFailed from "../Payments/paymentFail";  // ✅ updated import
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -121,6 +124,15 @@ const router = createBrowserRouter([
   path: "/password-reset",
   element: <PasswordReset />,
   },
+  {
+  path: "payment-success",
+  element: <PaymentSuccess />, // ✅ updated import 
+  },
+  {
+  path: "payment-failed",
+  element: <PaymentFailed />, // ✅ updated import  
+  },
+
 ]);
 
 export default router;
