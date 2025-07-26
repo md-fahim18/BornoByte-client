@@ -13,7 +13,7 @@ const UpdateCourse = () => {
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/videos/${id}`, {
+        const res = await axios.get(`https://bornobyte.vercel.app/videos/${id}`, {
           headers: {
             authorization: `Bearer ${localStorage.getItem("access-token")}`
           }
@@ -69,7 +69,7 @@ const UpdateCourse = () => {
   const sendUpdateNotificationToEnrolledUsers = async (courseId, courseTitle, teacherEmail) => {
     try {
       // 1. Fetch all enrolled users for this course
-      const res = await axios.get(`http://localhost:3000/enrollments?courseId=${courseId}`, {
+      const res = await axios.get(`https://bornobyte.vercel.app/enrollments?courseId=${courseId}`, {
         headers: {
           authorization: `Bearer ${localStorage.getItem("access-token")}`
         }
@@ -79,7 +79,7 @@ const UpdateCourse = () => {
       // 2. For each enrolled user, send notification
       for (const enrollment of enrolledUsers) {
         await axios.post(
-          "http://localhost:3000/notifications",
+          "https://bornobyte.vercel.app/notifications",
           {
             recipientEmail: enrollment.userEmail, // assuming this field contains user's email
             type: "course_update",
@@ -125,7 +125,7 @@ const UpdateCourse = () => {
         videos: videos.filter(v => v.title && v.url)
       };
 
-      await axios.patch(`http://localhost:3000/videos/${id}`, updatedCourse, {
+      await axios.patch(`https://bornobyte.vercel.app/videos/${id}`, updatedCourse, {
         headers: {
           authorization: `Bearer ${localStorage.getItem("access-token")}`
         }

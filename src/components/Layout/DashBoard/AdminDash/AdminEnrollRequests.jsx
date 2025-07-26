@@ -10,7 +10,7 @@ const AdminEnrollRequests = () => {
 
   const fetchRequests = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/enrollRequests", {
+      const res = await axios.get("https://bornobyte.vercel.app/enrollRequests", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access-token")}`,
         },
@@ -30,7 +30,7 @@ const AdminEnrollRequests = () => {
   const handleApprove = async (id) => {
     try {
       await axios.patch(
-        `http://localhost:3000/enrollRequests/${id}`,
+        `https://bornobyte.vercel.app/enrollRequests/${id}`,
         { status: "approved" },
         {
           headers: {
@@ -56,7 +56,7 @@ const AdminEnrollRequests = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:3000/enrollRequests/${id}`, {
+        await axios.delete(`https://bornobyte.vercel.app/enrollRequests/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access-token")}`,
           },

@@ -6,7 +6,7 @@ const PendingCourses = () => {
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:3000/videos')
+    axios.get('https://bornobyte.vercel.app/videos')
       .then(res => {
         const pending = res.data.filter(course => course.status === 'pending');
         setCourses(pending);
@@ -15,7 +15,7 @@ const PendingCourses = () => {
   }, []);
 
   const handleApprove = (id) => {
-    axios.patch(`http://localhost:3000/videos/approve/${id}`, {}, {
+    axios.patch(`https://bornobyte.vercel.app/videos/approve/${id}`, {}, {
       headers: {
         authorization: `Bearer ${localStorage.getItem('access-token')}`
       }

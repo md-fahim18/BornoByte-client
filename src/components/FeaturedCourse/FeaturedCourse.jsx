@@ -6,7 +6,7 @@ const FeaturedCourses = () => {
   const [featuredCourses, setFeaturedCourses] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:3000/videos")
+    axios.get("https://bornobyte.vercel.app/videos")
       .then(res => {
         const featured = res.data.filter(course => course.featured === true && course.status === "approved");
         setFeaturedCourses(featured);
