@@ -29,7 +29,7 @@ const CourseDetailsMain = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/videos/${id}`);
+        const res = await axios.get(`https://bornobyte.vercel.app/videos/${id}`);
         setCourse(res.data);
         setSelectedVideo(res.data.videos?.[0] || null);
       } catch (err) {
@@ -40,11 +40,11 @@ const CourseDetailsMain = () => {
     const checkStatus = async () => {
       try {
         const [approvalRes, adminRes] = await Promise.all([
-          axios.get(`http://localhost:3000/checkApproval`, {
+          axios.get(`https://bornobyte.vercel.app/checkApproval`, {
             params: { userEmail: user?.email, courseId: id },
             headers: { authorization: `Bearer ${token}` },
           }),
-          axios.get(`http://localhost:3000/users/admin/${user?.email}`),
+          axios.get(`https://bornobyte.vercel.app/users/admin/${user?.email}`),
         ]);
         setIsApproved(approvalRes.data.approved);
         setIsAdmin(adminRes.data.admin);
@@ -60,7 +60,7 @@ const CourseDetailsMain = () => {
   useEffect(() => {
     if (!user?.email) return;
     axios
-      .get(`http://localhost:3000/progress`, {
+      .get(`https://bornobyte.vercel.app/progress`, {
         params: { userEmail: user.email, courseId: id },
         headers: { authorization: `Bearer ${token}` },
       })
@@ -70,7 +70,7 @@ const CourseDetailsMain = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/comments/${id}`)
+      .get(`https://bornobyte.vercel.app/comments/${id}`)
       .then((res) => setComments(res.data));
   }, [id, commentRefreshTrigger]);
 
@@ -94,7 +94,7 @@ const CourseDetailsMain = () => {
     setSelectedVideo(vid);
 
     axios.post(
-      `http://localhost:3000/progress`,
+      `https://bornobyte.vercel.app/progress`,
       { courseId: id, userEmail: user.email, videoUrl: vid.url },
       { headers: { authorization: `Bearer ${token}` } }
     ).then(() => {
@@ -106,7 +106,7 @@ const CourseDetailsMain = () => {
     if (!newComment.trim()) return;
 
     await axios.post(
-      `http://localhost:3000/comments`,
+      `https://bornobyte.vercel.app/comments`,
       {
         userEmail: user.email,
         courseId: id,
@@ -120,7 +120,7 @@ const CourseDetailsMain = () => {
   };
 
   const handleDeleteComment = async (commentId) => {
-    await axios.delete(`http://localhost:3000/comments/${commentId}`, {
+    await axios.delete(`https://bornobyte.vercel.app/comments/${commentId}`, {
       headers: { authorization: `Bearer ${token}` },
     });
     setCommentRefreshTrigger((prev) => prev + 1);
@@ -128,7 +128,7 @@ const CourseDetailsMain = () => {
 
   const handleEditSave = async (commentId) => {
     await axios.patch(
-      `http://localhost:3000/comments/${commentId}`,
+      `https://bornobyte.vercel.app/comments/${commentId}`,
       { text: editedText },
       { headers: { authorization: `Bearer ${token}` } }
     );

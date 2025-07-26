@@ -8,14 +8,14 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:3000/users").then((res) => {
+    axios.get("https://bornobyte.vercel.app/users").then((res) => {
       setUsers(res.data);
     });
   }, []);
 
   const handleRoleChange = (id, newRole) => {
     axios.patch(
-      `http://localhost:3000/users/role/${id}`,
+      `https://bornobyte.vercel.app/users/role/${id}`,
       { role: newRole },
       {
         headers: {
@@ -44,7 +44,7 @@ const AdminDashboard = () => {
     if (!confirmDelete) return;
 
     axios
-      .delete(`http://localhost:3000/users/${id}`, {
+      .delete(`https://bornobyte.vercel.app/users/${id}`, {
         headers: {
           authorization: `Bearer ${localStorage.getItem("access-token")}`,
         },

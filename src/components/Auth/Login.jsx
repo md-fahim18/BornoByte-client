@@ -28,7 +28,7 @@ const Login = () => {
         console.log("log in", user);
 
         axios
-          .post("http://localhost:3000/jwt", { email: user.email })
+          .post("https://bornobyte.vercel.app/jwt", { email: user.email })
           .then((res) => {
             const token = res.data.token;
             localStorage.setItem("access-token", token);
