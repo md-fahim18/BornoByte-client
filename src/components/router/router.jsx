@@ -49,6 +49,15 @@ const router = createBrowserRouter([
         path: "courses",
         element: <AllCourses />,
       },
+      {
+        path: "/payment-success",
+        element: <PaymentSuccess />, // ✅ updated import 
+      },
+      {
+        path: "/payment-failed",
+        element: <PaymentFailed />, // ✅ updated import  
+      },
+
     ],
   },
   {
@@ -124,14 +133,7 @@ const router = createBrowserRouter([
   path: "/password-reset",
   element: <PasswordReset />,
   },
-  {
-  path: "payment-success",
-  element: <PaymentSuccess />, // ✅ updated import 
-  },
-  {
-  path: "payment-failed",
-  element: <PaymentFailed />, // ✅ updated import  
-  },
+
 
 ]);
 
