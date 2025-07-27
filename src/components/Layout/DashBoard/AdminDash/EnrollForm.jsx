@@ -19,7 +19,7 @@ const EnrollForm = () => {
   useEffect(() => {
     if (courseId) {
       axios
-        .get(`http://localhost:3000/videos/${courseId}`)
+        .get(`https://bornobyte.vercel.app/videos/${courseId}`)
         .then((res) => {
           setCourseTitle(res.data.title || "");
           setPrice(res.data.price || "");
@@ -47,7 +47,7 @@ const EnrollForm = () => {
 
     try {
       await axios.post(
-        "http://localhost:3000/enrollRequests",
+        "https://bornobyte.vercel.app/enrollRequests",
         {
           courseId,
           courseTitle,
@@ -72,7 +72,7 @@ const EnrollForm = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:3000/initiate-payment",
+        "https://bornobyte.vercel.app/initiate-payment",
         {
           courseId,
           courseTitle,

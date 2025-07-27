@@ -8,7 +8,7 @@ const ManageCourses = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get("http://localhost:3000/videos")
+    axios.get("https://bornobyte.vercel.app/videos")
       .then(res => {
         const approved = res.data.filter(course => course.status === 'approved');
         setCourses(approved);
@@ -23,7 +23,7 @@ const ManageCourses = () => {
     const confirm = window.confirm("Are you sure you want to delete this course?");
     if (!confirm) return;
 
-    axios.delete(`http://localhost:3000/videos/${id}`, {
+    axios.delete(`https://bornobyte.vercel.app/videos/${id}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('access-token')}`  // <-- Fixed header casing here
       }
@@ -41,7 +41,7 @@ const ManageCourses = () => {
   };
 
   const toggleFeature = (id, isCurrentlyFeatured) => {
-    axios.patch(`http://localhost:3000/videos/feature/${id}`, {
+    axios.patch(`https://bornobyte.vercel.app/videos/feature/${id}`, {
       featured: !isCurrentlyFeatured
     }, {
       headers: {

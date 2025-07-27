@@ -15,7 +15,7 @@ const Navbar = () => {
   useEffect(() => {
     if (user) {
       const token = localStorage.getItem("access-token");
-      fetch(`http://localhost:3000/notifications?email=${user.email}`, {
+      fetch(`https://bornobyte.vercel.app/notifications?email=${user.email}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -38,7 +38,7 @@ const Navbar = () => {
     if (!id) return;
     const token = localStorage.getItem("access-token");
     try {
-      await fetch(`http://localhost:3000/notifications/${id}`, {
+      await fetch(`https://bornobyte.vercel.app/notifications/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

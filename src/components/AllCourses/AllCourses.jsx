@@ -17,7 +17,7 @@ const AllCourses = () => {
   // ✅ Fetch approved courses
   useEffect(() => {
     axios
-      .get("http://localhost:3000/videos")
+      .get("https://bornobyte.vercel.app/videos")
       .then((res) => {
         const approvedCourses = res.data.filter((course) => course.status === "approved");
         setCourses(approvedCourses);
@@ -31,7 +31,7 @@ const AllCourses = () => {
   useEffect(() => {
     if (!user?.email) return;
     axios
-      .get("http://localhost:3000/enrollRequests", {
+      .get("https://bornobyte.vercel.app/enrollRequests", {
         headers: {
           authorization: `Bearer ${localStorage.getItem("access-token")}`,
         },

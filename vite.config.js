@@ -1,16 +1,20 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { fileURLToPath } from 'url'
+import path from 'path'
 
-// https://vite.dev/config/
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
 export default defineConfig({
   plugins: [react()],
-    build: {
-    outDir: 'dist'
+  build: {
+    outDir: 'dist',
   },
-  // optional if using history routing
   server: {
-    historyApiFallback: true
-  }
+    port: 5173,
+    proxy: {
+      '/api': 'http://bornobyte.vercel.app', // Optional: backend API proxying
+    },
+  },
 })
-
-

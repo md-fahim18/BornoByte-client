@@ -74,7 +74,7 @@ const AddCourse = () => {
         videos: videos.filter(v => v.title && v.url),
       };
 
-      const res = await axios.post('http://localhost:3000/videos', courseData, {
+      const res = await axios.post('https://bornobyte.vercel.app/videos', courseData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access-token')}` // <-- FIXED header casing here
         }
