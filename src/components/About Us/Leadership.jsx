@@ -1,9 +1,9 @@
 import React from "react";
 
 const team = [
-  { name: "Abdul Kaium", role: "Founder & Visionary", img: "https://i.pravatar.cc/150?u=1" },
-  { name: "Amina Rahman", role: "Head of Curriculum", img: "https://i.pravatar.cc/150?u=2" },
-  { name: "Tanvir Hasan", role: "Tech Lead", img: "https://i.pravatar.cc/150?u=3" },
+  { name: "Al Nahian Mugdho", role: "Founder & Visionary", img: "https://i.ibb.co/BHdgwtZ9/Al-Nahian-Mugdho.jpg" },
+  { name: "Md Fahim", role: "Head of Curriculum", img: "https://i.ibb.co/dwPvBmRd/120-by-150.jpg" },
+  { name: "Sk Md Abdul Kaium", role: "Tech Lead", img: "https://i.ibb.co/DfdJ21VT/DSC-3632-Copy-2.jpg" },
 ];
 
 const Leadership = () => {
