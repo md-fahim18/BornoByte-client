@@ -74,6 +74,14 @@ const AdminSidebar = ({ setAdminTab }) => {
           >
             <FiSettings className="text-lg" /> Enrolement Requests
           </button>
+        </li> 
+          <li>
+          <button
+            onClick={() => setAdminTab("homepage-Courses")}
+            className="flex items-center gap-3 w-full text-left hover:text-orange-500 transition"
+          >
+            <FiSettings className="text-lg" /> HomePage Courses Form
+          </button>
         </li>
       </ul>
     </div>

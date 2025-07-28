@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "borno-9e597"
-  }
+    "default": "borno-9e597",
+    "alt": "bornobyte-bd"
+  },
+  "targets": {},
+  "etags": {}
 }
