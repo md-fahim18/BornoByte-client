@@ -5,11 +5,9 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Link } from "react-router-dom";
 
-
-
 const slides = [
   {
-    image:` https://i.ibb.co/M55KvkWR/pexels-aminulislambulbul-32628278.jpg`,
+    image: ` https://i.ibb.co/M55KvkWR/pexels-aminulislambulbul-32628278.jpg`,
     title: "শুধু ভালো না, এক্সেলেন্স-এর জন্য প্রস্তুত করো নিজেকে",
     subtitle: "ভবিষ্যতের জন্য প্রস্তুত হও আজ থেকেই",
     btn1: "See Courses",
@@ -26,7 +24,7 @@ const slides = [
     btn1Route: "/about",
     btn2Route: "/register",
   },
-  
+
   {
     image: `https://i.ibb.co/9kKNgCHC/pexels-karolina-grabowska-7285165.jpg`,
     title: " From SSC to University 🎓",
@@ -69,25 +67,25 @@ export default function MySlider() {
             <div className="absolute inset-0 bg-black/10 z-10" />
 
             {/* Content Box */}
-            <div className="absolute  inset-10 flex items-center justify-center text-center md:justify-end px-4 md:pr-14  md:py-14  z-20">
-              <div className="bg-black/30 backdrop-blur-sm shadow-2xl rounded-lg text-white w-full max-w-[90%] sm:max-w-[400px] h-auto p-5 sm:p-6 flex flex-col justify-center text-center items-center md:text-left">
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 justify-center text-center">
+            {/* Content Box */}
+            <div className="absolute inset-0 flex items-center justify-center md:justify-end px-4 md:pr-14 py-10 md:py-14 z-20">
+              <div className="bg-black/40 backdrop-blur-md shadow-xl rounded-2xl text-white w-full max-w-[95%] sm:max-w-[380px] p-4 sm:p-6 flex flex-col justify-center items-center text-center md:text-left md:items-start">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 leading-tight">
                   {slide.title}
                 </h1>
-                <p className="text-sm sm:text-base md:text-lg mb-5">
+                <p className="text-sm sm:text-base md:text-lg mb-4 leading-snug">
                   {slide.subtitle}
                 </p>
-                <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-3">
+                <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                   <Link
                     to={slide.btn1Route}
-                    className="px-5 py-2 bg-white text-black rounded hover:bg-gray-200 transition text-sm sm:text-base text-center"
+                    className="w-full sm:w-auto px-4 py-2 bg-white text-black rounded-md hover:bg-gray-200 transition text-sm sm:text-base text-center"
                   >
                     {slide.btn1}
                   </Link>
-
                   <Link
                     to={slide.btn2Route}
-                    className="px-5 py-2 bg-transparent border border-white text-white rounded hover:bg-white hover:text-black transition text-sm sm:text-base text-center"
+                    className="w-full sm:w-auto px-4 py-2 border border-white text-white rounded-md hover:bg-white hover:text-black transition text-sm sm:text-base text-center"
                   >
                     {slide.btn2}
                   </Link>
