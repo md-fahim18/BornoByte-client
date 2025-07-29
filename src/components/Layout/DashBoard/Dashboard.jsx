@@ -27,6 +27,8 @@ import UserDashboard from './UserDash/userDash.jsx';
 import UserSidebar from './UserDash/userSide';
 import UserTopbar from './UserDash/userTop';
 import AdminEnrollRequests from './AdminDash/AdminEnrollRequests.jsx';
+import AdminCourseForm from './AdminDash/HomePageCourseSec/AdminCourseForm.jsx';
+import HomeCourses from './AdminDash/HomePageCourseSec/HomeCourses.jsx';
 
 const Dashboard = () => {
   const [isAdmin] = useAdmin();
@@ -63,6 +65,7 @@ const Dashboard = () => {
             {adminTab === 'manage' && <ManageCourses />}
              {adminTab === 'enrollReq' && <AdminEnrollRequests />}
              {adminTab === 'settings' && <Settings />}
+             {adminTab === 'homepage-Courses' && <HomeCourses />}
           </>
         )}
 

@@ -10,6 +10,7 @@ import FeaturedCourses from "../FeaturedCourse/FeaturedCourse"; // Adjust path i
 import Teacher from "../TeacherSection/Teacher";
 import Teachers from "../TeacherSection/Teachers";
 import Reviews from "../Reviews/Reviews";
+import HomepageCourses from "../Layout/DashBoard/AdminDash/HomePageCourseSec/HomepageCourses";
 
 const Home = () => {
   return (
@@ -17,7 +18,8 @@ const Home = () => {
       <MySlider></MySlider>
       <CourseSection></CourseSection>
       <FeaturedCourses></FeaturedCourses> {/* Featured Courses Section */}
-      <Courses></Courses>
+      {/* <Courses></Courses> */}
+      <HomepageCourses></HomepageCourses>
       <Teachers></Teachers>
       <Reviews></Reviews>
       <ChooseUs></ChooseUs>
