@@ -11,6 +11,7 @@ import Teacher from "../TeacherSection/Teacher";
 import Teachers from "../TeacherSection/Teachers";
 import Reviews from "../Reviews/Reviews";
 import HomepageCourses from "../Layout/DashBoard/AdminDash/HomePageCourseSec/HomepageCourses";
+import TeacherProfile from "../TeacherSection/TeacherProfile";
 
 const Home = () => {
   return (
