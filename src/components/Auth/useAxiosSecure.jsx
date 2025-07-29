@@ -10,7 +10,7 @@ const useAxiosSecure = () => {
   const { logOut } = useContext(AuthContext);
 
   const instance = axios.create({
-    baseURL: 'http://localhost:3000', // ✅ বা তোমার সার্ভারের URL
+    baseURL: 'https://bornobyte.vercel.app', // ✅ বা তোমার সার্ভারের URL
   });
 
   useEffect(() => {

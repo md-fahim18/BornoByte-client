@@ -1,11 +1,11 @@
 [
   {
     "id": "01",
-    "name": "John Doe",
-    "title": "Senior Web Development Instructor",
-    "image": "https://randomuser.me/api/portraits/men/32.jpg",
-    "email": "johndoe@example.com",
-    "linkedin": "https://linkedin.com/in/johndoe",
+    "name": "Al Nahian Mugdho",
+    "title": "Instructor",
+    "image": "https://i.ibb.co/VcCQgp4z/m.jpg",
+    "email": "nahianmugdho@gmail.com",
+    "linkedin": "https://www.linkedin.com/in/al-nahian-mugdho",
     "coursesLink": "/instructors/johndoe/courses",
     "course": "Full-Stack Web Development (MERN)",
     "education": "MSc in Computer Science, University of Toronto",
