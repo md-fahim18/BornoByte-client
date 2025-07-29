@@ -1,9 +1,9 @@
 [
   {
     "id": "01",
-    "name": "John Doe",
+    "name": "Abdul Kaium",
     "title": "Senior Web Development Instructor",
-    "image": "https://randomuser.me/api/portraits/men/32.jpg",
+    "image": "https://i.ibb.co/Q78qkKzg/88bee0c08e1c.jpg",
     "email": "johndoe@example.com",
     "linkedin": "https://linkedin.com/in/johndoe",
     "coursesLink": "/instructors/johndoe/courses",
@@ -14,9 +14,9 @@
   },
   {
     "id": "02",
-    "name": "Sarah Ahmed",
+    "name": "Fahim Hossain Zarif",
     "title": "Data Science & AI Specialist",
-    "image": "https://randomuser.me/api/portraits/women/45.jpg",
+    "image": "https://i.ibb.co/vxSv5J6R/photo-2025-07-24-02-43-03.jpg",
     "email": "sarah.ahmed@example.com",
     "linkedin": "https://linkedin.com/in/sarahahmed",
     "coursesLink": "/instructors/sarahahmed/courses",
@@ -27,9 +27,9 @@
   },
   {
     "id": "03",
-    "name": "Kevin Lee",
+    "name": "Al Nahian Mugdho",
     "title": "Mobile App Development Instructor",
-    "image": "https://randomuser.me/api/portraits/men/40.jpg",
+    "image": "https://i.ibb.co/32vy4cF/Al-Nahian-Mugdho.jpg",
     "email": "kevin.lee@example.com",
     "linkedin": "https://linkedin.com/in/kevinlee",
     "coursesLink": "/instructors/kevinlee/courses",

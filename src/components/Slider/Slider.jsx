@@ -67,7 +67,6 @@ export default function MySlider() {
             <div className="absolute inset-0 bg-black/10 z-10" />
 
             {/* Content Box */}
-            {/* Content Box */}
             <div className="absolute inset-0 flex items-center justify-center md:justify-end px-4 md:pr-14 py-10 md:py-14 z-20">
               <div className="bg-black/40 backdrop-blur-md shadow-xl rounded-2xl text-white w-full max-w-[95%] sm:max-w-[380px] p-4 sm:p-6 flex flex-col justify-center items-center text-center md:text-left md:items-start">
                 <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 leading-tight">
