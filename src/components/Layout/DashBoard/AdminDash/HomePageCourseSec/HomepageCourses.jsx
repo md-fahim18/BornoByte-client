@@ -105,8 +105,12 @@
 // };
 
 // export default HomepageCourses;
+// import React, { useEffect, useState } from 'react';
+// import axios from 'axios';
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom'; // <-- ✅ Needed for internal routing
 
 const HomepageCourses = () => {
   const [courses, setCourses] = useState([]);
@@ -176,55 +180,47 @@ const HomepageCourses = () => {
               <p><span className="font-semibold text-gray-700">Price:</span> {selectedCourse.price}৳</p>
             </div>
 
-
-
             <div className="mt-6">
-  <h4 className="text-lg font-semibold mb-2 text-gray-800">Description:</h4>
-  {selectedCourse.description
-    ? selectedCourse.description.split('\n').map((para, idx) => (
-        <p key={idx} className="text-sm text-gray-700 leading-relaxed mb-2">
-          {para}
-        </p>
-      ))
-    : <p className="text-sm text-gray-500 italic">No description provided.</p>
-  }
-</div>
+              <h4 className="text-lg font-semibold mb-2 text-gray-800">Description:</h4>
+              {selectedCourse.description
+                ? selectedCourse.description.split('\n').map((para, idx) => (
+                    <p key={idx} className="text-sm text-gray-700 leading-relaxed mb-2">
+                      {para}
+                    </p>
+                  ))
+                : <p className="text-sm text-gray-500 italic">No description provided.</p>
+              }
+            </div>
 
             {/* <div className="mt-6">
               <h4 className="text-lg font-semibold mb-2 text-gray-800">Overview:</h4>
               <p className="text-sm text-gray-700 leading-relaxed">{selectedCourse.overview || "No overview provided."}</p>
-              
-            </div> */} <div className="mt-6">
-  <h4 className="text-lg font-semibold mb-2 text-gray-800">Overview:</h4>
-  {selectedCourse.overview
-    ? selectedCourse.overview.split('\n').map((para, idx) => (
-        <p key={idx} className="text-sm text-gray-700 leading-relaxed mb-2">
-          {para}
-        </p>
-      ))
-    : <p className="text-sm text-gray-500 italic">No overview provided.</p>
-  }
-</div>
+            </div> */}
+            <div className="mt-6">
+              <h4 className="text-lg font-semibold mb-2 text-gray-800">Overview:</h4>
+              {selectedCourse.overview
+                ? selectedCourse.overview.split('\n').map((para, idx) => (
+                    <p key={idx} className="text-sm text-gray-700 leading-relaxed mb-2">
+                      {para}
+                    </p>
+                  ))
+                : <p className="text-sm text-gray-500 italic">No overview provided.</p>
+              }
+            </div>
 
             <div className="mt-6">
               <h4 className="text-lg font-semibold mb-2 text-gray-800">Modules:</h4>
               {selectedCourse.modules && selectedCourse.modules.length > 0 ? (
                 <ul className="list-disc list-inside space-y-2 text-sm text-gray-700">
-                  {selectedCourse.modules.map((mod, index) => (
+                  {selectedCourse.modules.map((module, index) => (
                     <li key={index}>
-                      <span className="font-semibold">{mod.title}:</span>{' '}
-                      {mod.link ? (
-                        <a
-                          href={mod.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:underline"
-                        >
-                          Go to Module
-                        </a>
-                      ) : (
-                        <span className="italic text-gray-500">Soon to be announced</span>
-                      )}
+                      {/* ✅ Link to dynamic route */}
+                      <Link 
+                        to={`/courses/${module._id}`} 
+                        className="text-blue-600 hover:underline"
+                      >
+                        {module.title}
+                      </Link>
                     </li>
                   ))}
                 </ul>
