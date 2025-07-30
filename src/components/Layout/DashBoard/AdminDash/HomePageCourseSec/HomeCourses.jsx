@@ -11,7 +11,7 @@ export default function HomeCourses() {
   
 
   const fetchCourses = async () => {
-    const res = await axios.get("https://bornobyte.vercel.app/courses");
+    const res = await axios.get("https://bornobyte.vercel.app/specializations");
     setCourses(res.data);
   };
 
@@ -20,7 +20,7 @@ export default function HomeCourses() {
   }, []);
 
   const deleteCourse = async (id) => {
-    await axios.delete(`https://bornobyte.vercel.app/courses/${id}`);
+    await axios.delete(`https://bornobyte.vercel.app/specializations/${id}`);
     fetchCourses();
   };
 

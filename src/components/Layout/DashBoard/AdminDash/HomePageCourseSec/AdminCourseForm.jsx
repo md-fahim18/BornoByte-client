@@ -288,7 +288,7 @@ export default function AdminCourseForm() {
 
   const fetchCourses = async () => {
     try {
-      const res = await axios.get("https://bornobyte.vercel.app/courses");
+      const res = await axios.get("https://bornobyte.vercel.app/specializations");
       setCourses(res.data);
     } catch (err) {
       console.error("Failed to fetch courses", err);
@@ -349,12 +349,12 @@ export default function AdminCourseForm() {
       const fullData = { ...formData, thumbnail: imageUrl, modules: selectedModules };
 
       if (editingCourseId) {
-        await axios.patch(`https://bornobyte.vercel.app/courses/${editingCourseId}`, fullData, {
+        await axios.patch(`https://bornobyte.vercel.app/specializations/${editingCourseId}`, fullData, {
           headers: { Authorization: `Bearer ${token}` },
         });
         Swal.fire("Updated!", "Course has been updated.", "success");
       } else {
-        await axios.post("https://bornobyte.vercel.app/courses", fullData, {
+        await axios.post("https://bornobyte.vercel.app/specializations", fullData, {
           headers: { Authorization: `Bearer ${token}` },
         });
         Swal.fire("Added!", "Course has been added.", "success");
@@ -411,7 +411,7 @@ export default function AdminCourseForm() {
 
     if (confirm.isConfirmed) {
       try {
-        await axios.delete(`https://bornobyte.vercel.app/courses/${id}`, {
+        await axios.delete(`https://bornobyte.vercel.app/specializations/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         Swal.fire("Deleted!", "Course has been deleted.", "success");
