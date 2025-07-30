@@ -1,11 +1,34 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  FaGraduationCap,
+  FaBriefcase,
+  FaEnvelope,
+  FaLinkedin,
+  FaBook,
+  FaLink,
+  FaInfoCircle,
+} from "react-icons/fa";
 
 const Teacher = ({ teacher }) => {
-  const { name, title, education, experience, image } = teacher;
+  const {
+    name,
+    title,
+    education,
+    experience,
+    image,
+    email,
+    linkedin,
+    coursesLink,
+    course,
+    bio,
+  } = teacher;
+
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className="text-neutral-800 dark:text-neutral-100 h-full">
+      {/* Card */}
       <div className="card-body flex flex-col justify-between max-w-sm mx-auto bg-base-100 rounded-3xl shadow-2xl p-10 hover:shadow-2xl transition duration-300 h-full gap-3">
         <div className="flex flex-col items-center text-center">
           <img
@@ -19,12 +42,12 @@ const Teacher = ({ teacher }) => {
 
         <div className="text-left text-sm text-base-content space-y-2 mt-2">
           <p>
-            <span className="font-semibold text-primary">🎓 Education:</span>{" "}
-            {education}
+            <FaGraduationCap className="inline text-primary mr-2" />
+            <span className="font-semibold">Education:</span> {education}
           </p>
           <p>
-            <span className="font-semibold text-primary">💼 Experience:</span>{" "}
-            {experience}
+            <FaBriefcase className="inline text-primary mr-2" />
+            <span className="font-semibold">Experience:</span> {experience}
           </p>
         </div>
 
@@ -57,20 +80,51 @@ const Teacher = ({ teacher }) => {
                 alt={name}
                 className="w-36 h-36 md:w-44 md:h-44 object-cover rounded-full border-4 border-primary shadow-md"
               />
-              <div className="flex-1 space-y-4">
-                <h2 className="text-3xl font-bold">{name}</h2>
-                <p className="text-sm opacity-70">{title}</p>
 
-                <p className="text-sm">
-                  <span className="font-semibold">🎓 Education:</span>{" "}
-                  {education}
+              <div className="flex-1 space-y-3 text-sm">
+                <h2 className="text-3xl font-bold">{name}</h2>
+                <p className="text-primary">{title}</p>
+
+                <p>
+                  <FaGraduationCap className="inline text-primary mr-2" />
+                  <span className="font-semibold">Education:</span> {education}
                 </p>
-                <p className="text-sm">
-                  <span className="font-semibold">💼 Experience:</span>{" "}
+                <p>
+                  <FaBriefcase className="inline text-primary mr-2" />
+                  <span className="font-semibold">Experience:</span>{" "}
                   {experience}
                 </p>
-
-                {/* You can add more fields like course, rating, links here */}
+                <p>
+                  <FaEnvelope className="inline text-primary mr-2" />
+                  <span className="font-semibold">Email:</span> {email}
+                </p>
+                <p>
+                  <FaLinkedin className="inline text-primary mr-2" />
+                  <span className="font-semibold">LinkedIn:</span>{" "}
+                  <a
+                    href={linkedin}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="link link-primary"
+                  >
+                    View Profile
+                  </a>
+                </p>
+                <p>
+                  <FaBook className="inline text-primary mr-2" />
+                  <span className="font-semibold">Course:</span> {course}
+                </p>
+                <p>
+                  <FaLink className="inline text-primary mr-2" />
+                  <span className="font-semibold">Courses Link:</span>{" "}
+                  <Link to={coursesLink} className="link link-secondary">
+                    See All Courses
+                  </Link>
+                </p>
+                <p>
+                  <FaInfoCircle className="inline text-primary mr-2" />
+                  <span className="font-semibold">Bio:</span> {bio}
+                </p>
               </div>
             </div>
           </div>
