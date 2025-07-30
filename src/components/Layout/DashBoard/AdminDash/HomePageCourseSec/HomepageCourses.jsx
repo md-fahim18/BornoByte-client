@@ -115,7 +115,7 @@ const HomepageCourses = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await axios.get('https://bornobyte.vercel.app/courses');
+        const res = await axios.get('https://bornobyte.vercel.app/specializations');
         setCourses(res.data);
       } catch (error) {
         console.error('Failed to fetch courses:', error);
