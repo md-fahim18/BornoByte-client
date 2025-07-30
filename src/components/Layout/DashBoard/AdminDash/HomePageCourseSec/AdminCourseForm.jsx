@@ -73,9 +73,7 @@
 //         });
 //         Swal.fire("Updated!", "Course has been updated.", "success");
 //       } else {
-//         await    
-
-// await axios.post("https://bornobyte.vercel.app/courses", fullData, {
+//         await axios.post("https://bornobyte.vercel.app/courses", fullData, {
 //           headers: { Authorization: `Bearer ${token}` },
 //         });
 //         Swal.fire("Added!", "Course has been added.", "success");
@@ -137,133 +135,7 @@
 //     }
 //   };
 
-//   return (
-//     <div className="p-4 max-w-4xl mx-auto">
-//       <form onSubmit={handleSubmit} className="space-y-4 bg-base-200 p-4 rounded-lg">
-//         <h3 className="text-xl font-bold">
-//           {editingCourseId ? "Edit Course" : "Add New Course"}
-//         </h3>
-//         <input
-//           name="title"
-//           value={formData.title}
-//           onChange={handleChange}
-//           required
-//           placeholder="Title"
-//           className="input input-bordered w-full"
-//         />
-//         <textarea
-//           name="description"
-//           value={formData.description}
-//           onChange={handleChange}
-//           required
-//           placeholder="Description"
-//           className="textarea textarea-bordered w-full"
-//         />
-//         <input
-//           name="level"
-//           value={formData.level}
-//           onChange={handleChange}
-//           required
-//           placeholder="Level (e.g., SSC, HSC)"
-//           className="input input-bordered w-full"
-//         />
-//         {/* New input for duration */}
-//         <input
-//           name="duration"
-//           value={formData.duration}
-//           onChange={handleChange}
-//           required
-//           placeholder="Duration (e.g., 2 hours)"
-//           className="input input-bordered w-full"
-//         />
-//         {/* New input for price */}
-//         <input
-//           name="price"
-//           value={formData.price}
-//           onChange={handleChange}
-//           required
-//           placeholder="Price (e.g., 1000)"
-//           className="input input-bordered w-full"
-//         />
-//         {/* New textarea for overview */}
-//         <textarea
-//           name="overview"
-//           value={formData.overview}
-//           onChange={handleChange}
-//           required
-//           placeholder="Course Overview"
-//           className="textarea textarea-bordered w-full"
-//         />
-//         <input
-//           type="file"
-//           onChange={handleImageChange}
-//           accept="image/*"
-//           className="file-input w-full"
-//         />
-//         <button type="submit" className="btn btn-primary w-full">
-//           {editingCourseId ? "Update Course" : "Add Course"}
-//         </button>
-//         {editingCourseId && (
-//           <button
-//             type="button"
-//             onClick={() => {
-//               setEditingCourseId(null);
-//               setFormData({
-//                 title: "",
-//                 description: "",
-//                 level: "",
-//                 thumbnail: "",
-//                 duration: "",
-//                 price: "",
-//                 overview: "",
-//               });
-//               setImageFile(null);
-//             }}
-//             className="btn btn-warning w-full"
-//           >
-//             Cancel Edit
-//           </button>
-//         )}
-//       </form>
-
-//       <hr className="my-6" />
-
-//       <h2 className="text-xl font-semibold mb-2">All Courses</h2>
-//       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-//         {courses.map((course) => (
-//           <div key={course._id} className="card bg-base-100 shadow p-4">
-//             <img
-//               src={course.thumbnail}
-//               alt={course.title}
-//               className="h-40 w-full object-cover rounded"
-//             />
-//             <h3 className="text-lg font-bold mt-2">{course.title}</h3>
-//             <p>{course.description}</p>
-//             <p className="text-sm text-gray-500">Level: {course.level}</p>
-//             {/* Display new fields */}
-//             <p>Duration: {course.duration}</p>
-//             <p>Price: {course.price}৳</p>
-//             <p>Overview: {course.overview}</p>
-//             <div className="mt-2 flex gap-2">
-//               <button
-//                 onClick={() => handleEdit(course)}
-//                 className="btn btn-sm btn-info"
-//               >
-//                 Edit
-//               </button>
-//               <button
-//                 onClick={() => handleDelete(course._id)}
-//                 className="btn btn-sm btn-error"
-//               >
-//                 Delete
-//               </button>
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// }
+// ========== 💡 YOUR EXTENDED LOGIC WITH MODULE ID AND TITLE SUPPORT STARTS HERE ==========
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -298,7 +170,6 @@ export default function AdminCourseForm() {
   const fetchModules = async () => {
     try {
       const res = await axios.get("https://bornobyte.vercel.app/videos");
-      // Assuming the endpoint returns an array of videos directly
       setAvailableModules(res.data);
     } catch (error) {
       console.error("Failed to fetch modules:", error);
@@ -344,7 +215,10 @@ export default function AdminCourseForm() {
 
       const selectedModules = availableModules
         .filter((module) => selectedModuleIds.includes(module._id))
-        .map((module) => ({ title: module.title, link: module.url }));
+        .map((module) => ({
+          _id: module._id,
+          title: module.title
+        }));
 
       const fullData = { ...formData, thumbnail: imageUrl, modules: selectedModules };
 
@@ -388,12 +262,8 @@ export default function AdminCourseForm() {
       price: course.price || "",
       overview: course.overview || "",
     });
-    const courseModules = course.modules || [];
-    const selectedIds = availableModules
-      .filter((module) =>
-        courseModules.some((m) => m.title === module.title && m.link === module.url)
-      )
-      .map((module) => module._id);
+
+    const selectedIds = course.modules?.map((m) => m._id).filter(Boolean) || [];
     setSelectedModuleIds(selectedIds);
     setEditingCourseId(course._id);
   };
@@ -416,7 +286,7 @@ export default function AdminCourseForm() {
         });
         Swal.fire("Deleted!", "Course has been deleted.", "success");
         fetchCourses();
-      } catch (err) {
+      } catch {
         Swal.fire("Error", "Could not delete", "error");
       }
     }
@@ -457,7 +327,7 @@ export default function AdminCourseForm() {
           value={formData.duration}
           onChange={handleChange}
           required
-          placeholder="Duration (e.g., 2 hours)"
+          placeholder="Duration (e.g., 3 Months)"
           className="input input-bordered w-full"
         />
         <input
@@ -465,7 +335,7 @@ export default function AdminCourseForm() {
           value={formData.price}
           onChange={handleChange}
           required
-          placeholder="Price (e.g., 1000)"
+          placeholder="Price (e.g., 2000)"
           className="input input-bordered w-full"
         />
         <textarea
@@ -533,7 +403,7 @@ export default function AdminCourseForm() {
         )}
       </form>
 
-      <hr class IrisName="my-6" />
+      <hr className="my-6" />
 
       <h2 className="text-xl font-semibold mb-2">All Courses</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -549,15 +419,15 @@ export default function AdminCourseForm() {
             <p className="text-sm text-gray-500">Level: {course.level}</p>
             <p>Duration: {course.duration}</p>
             <p>Price: {course.price}৳</p>
- <div>
-  <strong>Overview:</strong>
-  {course.overview
-    ? course.overview.split('\n').map((para, idx) => (
-        <p key={idx}>{para}</p>
-      ))
-    : <p className="italic text-gray-500">No overview provided.</p>
-  }
-</div>
+            <div>
+              <strong>Overview:</strong>
+              {course.overview
+                ? course.overview.split('\n').map((para, idx) => (
+                    <p key={idx}>{para}</p>
+                  ))
+                : <p className="italic text-gray-500">No overview provided.</p>
+              }
+            </div>
 
             <div className="mt-2 flex gap-2">
               <button
