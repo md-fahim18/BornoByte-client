@@ -8,21 +8,22 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    axios.get("https://bornobyte.vercel.app/users").then((res) => {
+    axios.get("http://localhost:3000/users").then((res) => {
       setUsers(res.data);
     });
   }, []);
 
   const handleRoleChange = (id, newRole) => {
-    axios.patch(
-      `https://bornobyte.vercel.app/users/role/${id}`,
-      { role: newRole },
-      {
-        headers: {
-          authorization: `Bearer ${localStorage.getItem("access-token")}`,
-        },
-      }
-    )
+    axios
+      .patch(
+        `http://localhost:3000/users/role/${id}`,
+        { role: newRole },
+        {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem("access-token")}`,
+          },
+        }
+      )
       .then((res) => {
         if (res.data.modifiedCount > 0) {
           alert("User role updated successfully");
@@ -44,7 +45,7 @@ const AdminDashboard = () => {
     if (!confirmDelete) return;
 
     axios
-      .delete(`https://bornobyte.vercel.app/users/${id}`, {
+      .delete(`http://localhost:3000/users/${id}`, {
         headers: {
           authorization: `Bearer ${localStorage.getItem("access-token")}`,
         },
@@ -88,6 +89,11 @@ const AdminDashboard = () => {
               <div>
                 <h3 className="text-xl font-semibold flex items-center gap-1">
                   <FaUserShield className="text-orange-400" /> {user.name}
+                  {user.isSuperAdmin && (
+                    <span className="ml-2 text-xs bg-orange-500 text-white px-2 py-0.5 rounded">
+                      Superadmin
+                    </span>
+                  )}
                 </h3>
                 <p className="text-sm flex items-center gap-1 text-gray-500 dark:text-gray-400">
                   <MdOutlineMail /> {user.email}
@@ -102,6 +108,7 @@ const AdminDashboard = () => {
                 className="select select-bordered w-full"
                 value={user.role}
                 onChange={(e) => handleRoleChange(user._id, e.target.value)}
+                disabled={user.isSuperAdmin} // ✅ Disable role change for superadmin
               >
                 <option value="admin">Admin</option>
                 <option value="teacher">Teacher</option>
@@ -114,6 +121,7 @@ const AdminDashboard = () => {
               <button
                 onClick={() => handleDelete(user._id)}
                 className="btn btn-error btn-sm w-full"
+                disabled={user.isSuperAdmin} // ✅ Disable delete for superadmin
               >
                 Delete User
               </button>
