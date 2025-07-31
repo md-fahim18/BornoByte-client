@@ -45,7 +45,7 @@ const AdminDashboard = () => {
     if (!confirmDelete) return;
 
     axios
-      .delete(`http://localhost:3000/users/${id}`, {
+      .delete(`http://bornobyte.vercel.app/users/${id}`, {
         headers: {
           authorization: `Bearer ${localStorage.getItem("access-token")}`,
         },
