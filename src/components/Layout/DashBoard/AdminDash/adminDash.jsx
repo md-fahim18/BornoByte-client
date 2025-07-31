@@ -8,7 +8,7 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:3000/users").then((res) => {
+    axios.get("http://bornobyte.vercel.app/users").then((res) => {
       setUsers(res.data);
     });
   }, []);
@@ -16,7 +16,7 @@ const AdminDashboard = () => {
   const handleRoleChange = (id, newRole) => {
     axios
       .patch(
-        `http://localhost:3000/users/role/${id}`,
+        `http://bornobyte.vercel.app/users/role/${id}`,
         { role: newRole },
         {
           headers: {
