@@ -14,7 +14,7 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      '/api': 'http://bornobyte.vercel.app', // Optional: backend API proxying
+      '/api': 'https://bornobyte.vercel.app', // Optional: backend API proxying
     },
   },
 })
