@@ -4,8 +4,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import AuthContext from "../Auth/AuthContext";
 
-import Navbar from "../shared/Navbar";   // Adjust this path if needed
-import Footer from "../shared/Footer";   // Adjust this path if needed
+import Navbar from "../shared/Navbar"; // Adjust this path if needed
+import Footer from "../shared/Footer"; // Adjust this path if needed
+import CourseVideo from "./CourseVideo";
 
 const CourseDetailsMain = () => {
   const { id } = useParams();
@@ -29,7 +30,9 @@ const CourseDetailsMain = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`https://bornobyte.vercel.app/videos/${id}`);
+        const res = await axios.get(
+          `https://bornobyte.vercel.app/videos/${id}`
+        );
         setCourse(res.data);
         setSelectedVideo(res.data.videos?.[0] || null);
       } catch (err) {
@@ -87,19 +90,23 @@ const CourseDetailsMain = () => {
 
   const handleVideoClick = (vid) => {
     if (!isEnrolled) {
-      document.getElementById("enrollCard")?.scrollIntoView({ behavior: "smooth" });
+      document
+        .getElementById("enrollCard")
+        ?.scrollIntoView({ behavior: "smooth" });
       return;
     }
 
     setSelectedVideo(vid);
 
-    axios.post(
-      `https://bornobyte.vercel.app/progress`,
-      { courseId: id, userEmail: user.email, videoUrl: vid.url },
-      { headers: { authorization: `Bearer ${token}` } }
-    ).then(() => {
-      setProgress((prev) => [...new Set([...prev, vid.url])]);
-    });
+    axios
+      .post(
+        `https://bornobyte.vercel.app/progress`,
+        { courseId: id, userEmail: user.email, videoUrl: vid.url },
+        { headers: { authorization: `Bearer ${token}` } }
+      )
+      .then(() => {
+        setProgress((prev) => [...new Set([...prev, vid.url])]);
+      });
   };
 
   const handleCommentSubmit = async () => {
@@ -138,11 +145,12 @@ const CourseDetailsMain = () => {
     setCommentRefreshTrigger((prev) => prev + 1);
   };
 
-  const grouped = course?.videos?.reduce((acc, vid) => {
-    acc[vid.chapter] = acc[vid.chapter] || [];
-    acc[vid.chapter].push(vid);
-    return acc;
-  }, {}) || {};
+  const grouped =
+    course?.videos?.reduce((acc, vid) => {
+      acc[vid.chapter] = acc[vid.chapter] || [];
+      acc[vid.chapter].push(vid);
+      return acc;
+    }, {}) || {};
 
   return (
     <>
@@ -154,18 +162,23 @@ const CourseDetailsMain = () => {
           <div className="md:col-span-2 space-y-6">
             {isEnrolled && selectedVideo && (
               <div className="w-full aspect-video">
-                <iframe
+                {/* <iframe
                   className="w-full h-full rounded-lg"
                   src={`https://www.youtube.com/embed/${extractYouTubeID(selectedVideo.url)}`}
                   title={selectedVideo.title}
                   frameBorder="0"
                   allowFullScreen
-                />
+                /> */}
+                <CourseVideo></CourseVideo>
               </div>
             )}
 
-            <h1 className="text-3xl font-bold text-orange-500">{course?.title}</h1>
-            <p className="text-sm text-gray-500">Instructor: {course?.instructor}</p>
+            <h1 className="text-3xl font-bold text-orange-500">
+              {course?.title}
+            </h1>
+            <p className="text-sm text-gray-500">
+              Instructor: {course?.instructor}
+            </p>
             <p className="text-sm">Category: {course?.category}</p>
             <p className="text-sm">Duration: {course?.duration}</p>
 
@@ -177,14 +190,18 @@ const CourseDetailsMain = () => {
             <div>
               <h3 className="font-semibold">What You’ll Learn</h3>
               <ul className="list-disc ml-6">
-                {course?.whatYouWillLearn?.map((item, i) => <li key={i}>{item}</li>)}
+                {course?.whatYouWillLearn?.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
               </ul>
             </div>
 
             <div>
               <h3 className="font-semibold">Requirements</h3>
               <ul className="list-disc ml-6">
-                {course?.requirements?.map((item, i) => <li key={i}>{item}</li>)}
+                {course?.requirements?.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
               </ul>
             </div>
 
@@ -192,8 +209,13 @@ const CourseDetailsMain = () => {
               <div>
                 <h3 className="text-xl font-bold mt-6 mb-3">Course Contents</h3>
                 {Object.entries(grouped).map(([chapter, vids]) => (
-                  <details key={chapter} className="collapse collapse-arrow bg-base-200 mb-2">
-                    <summary className="collapse-title font-semibold">{chapter}</summary>
+                  <details
+                    key={chapter}
+                    className="collapse collapse-arrow bg-base-200 mb-2"
+                  >
+                    <summary className="collapse-title font-semibold">
+                      {chapter}
+                    </summary>
                     <div className="collapse-content px-4">
                       <ul>
                         {vids.map((vid, idx) => (
@@ -221,11 +243,16 @@ const CourseDetailsMain = () => {
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                 />
-                <button onClick={handleCommentSubmit} className="btn btn-primary mt-2">Post</button>
+                <button
+                  onClick={handleCommentSubmit}
+                  className="btn btn-primary mt-2"
+                >
+                  Post
+                </button>
 
                 <div className="mt-4 space-y-2">
                   {comments
-                    .filter(com => isAdmin || com.userEmail === user.email)
+                    .filter((com) => isAdmin || com.userEmail === user.email)
                     .map((com) => (
                       <div key={com._id} className="bg-base-200 p-3 rounded">
                         <p className="font-semibold text-sm">{com.userEmail}</p>
@@ -236,29 +263,50 @@ const CourseDetailsMain = () => {
                               value={editedText}
                               onChange={(e) => setEditedText(e.target.value)}
                             />
-                            <button onClick={() => handleEditSave(com._id)} className="btn btn-xs btn-success mr-2">Save</button>
-                            <button onClick={() => setEditingCommentId(null)} className="btn btn-xs btn-ghost">Cancel</button>
+                            <button
+                              onClick={() => handleEditSave(com._id)}
+                              className="btn btn-xs btn-success mr-2"
+                            >
+                              Save
+                            </button>
+                            <button
+                              onClick={() => setEditingCommentId(null)}
+                              className="btn btn-xs btn-ghost"
+                            >
+                              Cancel
+                            </button>
                           </>
                         ) : (
                           <>
                             <p>{com.text}</p>
                             <p className="text-xs text-gray-500">
-                              {com.timestamp ? new Date(com.timestamp).toLocaleString() : ""}
+                              {com.timestamp
+                                ? new Date(com.timestamp).toLocaleString()
+                                : ""}
                             </p>
                             {(user?.email === com.userEmail || isAdmin) && (
                               <div className="flex gap-2 mt-1">
-                                <button onClick={() => {
-                                  setEditingCommentId(com._id);
-                                  setEditedText(com.text);
-                                }} className="text-blue-500 text-xs">Edit</button>
-                                <button onClick={() => handleDeleteComment(com._id)} className="text-red-500 text-xs">Delete</button>
+                                <button
+                                  onClick={() => {
+                                    setEditingCommentId(com._id);
+                                    setEditedText(com.text);
+                                  }}
+                                  className="text-blue-500 text-xs"
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteComment(com._id)}
+                                  className="text-red-500 text-xs"
+                                >
+                                  Delete
+                                </button>
                               </div>
                             )}
                           </>
                         )}
                       </div>
-                    ))
-                  }
+                    ))}
                 </div>
               </div>
             )}
@@ -270,7 +318,8 @@ const CourseDetailsMain = () => {
               <div className="bg-base-200 p-4 rounded-lg space-y-2">
                 <div className="mb-4">
                   <div className="font-semibold text-sm mb-1 text-base-content">
-                    Progress: {progress.length} / {course?.videos?.length || 0} completed
+                    Progress: {progress.length} / {course?.videos?.length || 0}{" "}
+                    completed
                   </div>
                   <progress
                     className="progress progress-warning w-full"
@@ -281,19 +330,30 @@ const CourseDetailsMain = () => {
 
                 <h3 className="font-semibold mb-2">Contents</h3>
                 {Object.entries(grouped).map(([chapter, vids]) => (
-                  <details key={chapter} className="collapse collapse-arrow bg-base-100 mb-2">
+                  <details
+                    key={chapter}
+                    className="collapse collapse-arrow bg-base-100 mb-2"
+                  >
                     <summary className="collapse-title font-semibold">
-                      {chapter} ({vids.filter(vid => progress.includes(vid.url)).length}/{vids.length})
+                      {chapter} (
+                      {vids.filter((vid) => progress.includes(vid.url)).length}/
+                      {vids.length})
                     </summary>
                     <div className="collapse-content px-2">
                       <ul>
                         {vids.map((vid, idx) => (
                           <li
                             key={idx}
-                            className={`cursor-pointer flex items-center gap-2 hover:text-amber-500 ${selectedVideo?.url === vid.url ? "text-orange-500" : ""}`}
+                            className={`cursor-pointer flex items-center gap-2 hover:text-amber-500 ${
+                              selectedVideo?.url === vid.url
+                                ? "text-orange-500"
+                                : ""
+                            }`}
                             onClick={() => handleVideoClick(vid)}
                           >
-                            {progress.includes(vid.url) && <span className="text-green-500">✔</span>}
+                            {progress.includes(vid.url) && (
+                              <span className="text-green-500">✔</span>
+                            )}
                             {vid.title}
                           </li>
                         ))}
@@ -303,8 +363,15 @@ const CourseDetailsMain = () => {
                 ))}
               </div>
             ) : (
-              <div id="enrollCard" className="bg-base-200 p-4 rounded-lg shadow space-y-2">
-                <img src={course?.thumbnail} alt={course?.title} className="w-full h-40 object-cover rounded mb-2" />
+              <div
+                id="enrollCard"
+                className="bg-base-200 p-4 rounded-lg shadow space-y-2"
+              >
+                <img
+                  src={course?.thumbnail}
+                  alt={course?.title}
+                  className="w-full h-40 object-cover rounded mb-2"
+                />
                 <h2 className="font-bold text-lg">{course?.title}</h2>
                 <p className="text-sm">Instructor: {course?.instructor}</p>
                 <p className="text-sm">Duration: {course?.duration}</p>
