@@ -121,6 +121,7 @@ const AddCourse = () => {
           <option value="SSC">SSC</option>
           <option value="HSC">HSC</option>
           <option value="Undergraduate">Undergraduate</option>
+          <option value={"Skills Development"}>Skills Development</option>
         </select>
 
         <input name="duration" placeholder="Duration (e.g., 3 Months)" value={formData.duration} onChange={handleChange} className="input input-bordered" required />
