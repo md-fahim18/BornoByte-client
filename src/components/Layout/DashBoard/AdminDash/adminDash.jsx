@@ -91,7 +91,7 @@ const AdminDashboard = () => {
                   <FaUserShield className="text-orange-400" /> {user.name}
                   {user.isSuperAdmin && (
                     <span className="ml-2 text-xs bg-orange-500 text-white px-2 py-0.5 rounded">
-                      Superadmin
+                      SuperAdmin
                     </span>
                   )}
                 </h3>
