@@ -12,7 +12,7 @@ import Teachers from "../TeacherSection/Teachers";
 import Reviews from "../Reviews/Reviews";
 import HomepageCourses from "../Layout/DashBoard/AdminDash/HomePageCourseSec/HomepageCourses";
 import TeacherProfile from "../TeacherSection/TeacherProfile";
-import TeacherCard from "../TeacherSection/TeacherCard";
+import TeacherCard from "../TeacherSection/teacherCards"; // Adjust path if needed
 
 const Home = () => {
   return (

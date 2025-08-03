@@ -2,11 +2,11 @@ import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { Dialog } from '@headlessui/react';
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
-import AuthContext from '../Auth/AuthContext'; // Adjust path to your AuthContext
+import AuthContext from '../Auth/AuthContext'; // Adjust this path if needed
 
 const TeacherCard = () => {
   const { user: currentUser } = useContext(AuthContext);
-
+  const [isAdmin, setIsAdmin] = useState(false);
   const [teachers, setTeachers] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [editingTeacher, setEditingTeacher] = useState(null);
@@ -17,9 +17,28 @@ const TeacherCard = () => {
     image: ''
   });
 
+  // Fetch user role from backend to determine if admin
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      if (!currentUser?.email) {
+        setIsAdmin(false);
+        return;
+      }
+      try {
+        const res = await axios.get(`https://bornobyte.vercel.app/users/admin/${currentUser.email}`);
+        setIsAdmin(res.data?.role === 'admin');
+      } catch (error) {
+        console.error('Failed to fetch user role:', error);
+        setIsAdmin(false);
+      }
+    };
+    fetchUserRole();
+  }, [currentUser]);
+
+  // Fetch all teachers from backend
   const fetchTeachers = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/teachers');
+      const res = await axios.get('https://bornobyte.vercel.app/teachers');
       setTeachers(res.data);
     } catch (error) {
       console.error('Failed to fetch teachers:', error);
@@ -53,47 +72,46 @@ const TeacherCard = () => {
   };
 
   const handleSave = async () => {
+    if (!currentUser) {
+      alert('You must be logged in to perform this action.');
+      return;
+    }
     try {
-      if (!currentUser) {
-        alert('You must be logged in to perform this action.');
-        return;
-      }
-
       if (editingTeacher) {
-        // Update
-        await axios.put(`http://localhost:3000/teachers/${editingTeacher._id}`, {
+        // Update teacher
+        await axios.put(`https://bornobyte.vercel.app/teachers/${editingTeacher._id}`, {
           ...formData,
-          userEmail: currentUser.email
+          userEmail: currentUser.email,
         });
       } else {
-        // Add new
-        await axios.post('http://localhost:3000/teachers', {
+        // Add new teacher
+        await axios.post('https://bornobyte.vercel.app/teachers', {
           ...formData,
-          userEmail: currentUser.email
+          userEmail: currentUser.email,
         });
       }
       fetchTeachers();
       handleClose();
-    } catch {
+    } catch (error) {
       alert('Failed to save teacher. Make sure you are an admin.');
+      console.error(error);
     }
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this teacher?')) return;
-
     if (!currentUser) {
       alert('You must be logged in to perform this action.');
       return;
     }
-
     try {
-      await axios.delete(`http://localhost:3000/teachers/${id}`, {
+      await axios.delete(`https://bornobyte.vercel.app/teachers/${id}`, {
         data: { userEmail: currentUser.email }
       });
       fetchTeachers();
-    } catch {
+    } catch (error) {
       alert('Failed to delete teacher. Make sure you are an admin.');
+      console.error(error);
     }
   };
 
@@ -101,7 +119,7 @@ const TeacherCard = () => {
     <div className="p-6 max-w-7xl mx-auto">
       <h2 className="text-3xl font-bold text-center mb-6">Meet Our Teachers</h2>
 
-      {currentUser?.role === 'admin' && (
+      {isAdmin && (
         <div className="flex justify-end mb-4">
           <button
             onClick={() => handleOpen()}
@@ -133,7 +151,7 @@ const TeacherCard = () => {
             </div>
             <div className="px-5 pb-5 text-sm text-gray-600">{teacher.description}</div>
 
-            {currentUser?.role === 'admin' && (
+            {isAdmin && (
               <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition">
                 <button
                   onClick={() => handleOpen(teacher)}
