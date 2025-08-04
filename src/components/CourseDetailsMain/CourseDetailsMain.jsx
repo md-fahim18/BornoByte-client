@@ -163,6 +163,16 @@ const CourseDetailsMain = () => {
           <div className="md:col-span-2 space-y-6">
             {isEnrolled && selectedVideo && (
               <div className="w-full aspect-video">
+                <video
+                  controls
+                  controlsList="nodownload"
+                  width="100%"
+                  className="w-full h-full rounded-lg"
+                  src={selectedVideo.url}
+                  title={selectedVideo.title}
+                  preload="metadata"
+                />
+
                 {/* <iframe
                   className="w-full h-full rounded-lg"
                   src={`https://www.youtube.com/embed/${extractYouTubeID(selectedVideo.url)}`}
@@ -170,7 +180,7 @@ const CourseDetailsMain = () => {
                   frameBorder="0"
                   allowFullScreen
                 /> */}
-                <CourseVideo></CourseVideo>
+                {/* <CourseVideo></CourseVideo> */}
               </div>
             )}
 
