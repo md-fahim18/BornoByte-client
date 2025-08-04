@@ -12,6 +12,7 @@ import Teachers from "../TeacherSection/Teachers";
 import Reviews from "../Reviews/Reviews";
 import HomepageCourses from "../Layout/DashBoard/AdminDash/HomePageCourseSec/HomepageCourses";
 import TeacherProfile from "../TeacherSection/TeacherProfile";
+import TeacherCard from "../TeacherSection/teacherCards"; // Adjust path if needed
 
 const Home = () => {
   return (
@@ -22,6 +23,7 @@ const Home = () => {
       {/* <Courses></Courses> */}
       <HomepageCourses></HomepageCourses>
       <Teachers></Teachers>
+      <TeacherCard></TeacherCard>
       <Reviews></Reviews>
       <ChooseUs></ChooseUs>
       <Faq></Faq>

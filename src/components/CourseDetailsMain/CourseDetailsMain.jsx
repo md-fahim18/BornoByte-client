@@ -77,6 +77,7 @@ const CourseDetailsMain = () => {
       .then((res) => setComments(res.data));
   }, [id, commentRefreshTrigger]);
 
+  // eslint-disable-next-line no-unused-vars
   const extractYouTubeID = (url) => {
     try {
       const parsed = new URL(url);
