@@ -98,9 +98,9 @@ const Blog = () => {
             timestamp: new Date(),
           },
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+             headers: {
+            authorization: `Bearer ${localStorage.getItem("access-token")}`
+          }
           }
         );
       } else if (modalMode === "edit" && selectedBlog) {
