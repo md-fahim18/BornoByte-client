@@ -85,6 +85,18 @@ const Blog = () => {
           ...formData,
           timestamp: new Date(),
         });
+        await axios.post(
+          "http://localhost:3000/blogs",
+          {
+            ...formData,
+            timestamp: new Date(),
+          },
+          {
+             headers: {
+            authorization: `Bearer ${localStorage.getItem("access-token")}`
+          }
+          }
+        );
       } else if (modalMode === "edit" && selectedBlog) {
         await axios.patch(`http://localhost:3000/blogs/${selectedBlog._id}`, formData);
       }
