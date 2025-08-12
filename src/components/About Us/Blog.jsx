@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from "react";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import AuthContext from "../Auth/AuthContext"; // adjust path if needed
 import axios from "axios";
-import auth from "../../../firebase.config"; // IMPORTANT: add this import for Firebase auth instance
 
 const Blog = () => {
   const { user } = useContext(AuthContext);
@@ -74,11 +73,7 @@ const Blog = () => {
   };
 
   // Helper: get token from current Firebase user (fixed)
-  const getAuthToken = async () => {
-    const currentUser = auth.currentUser;
-    if (!currentUser) throw new Error("User not logged in");
-    return await currentUser.getIdToken();
-  };
+  // (Removed unused getAuthToken function)
 
   // Handle blog add or update
   const handleSave = async () => {
@@ -88,7 +83,7 @@ const Blog = () => {
     }
 
     try {
-      const token = await getAuthToken();
+      // const token = await getAuthToken();
 
       if (modalMode === "add") {
         await axios.post(
@@ -109,7 +104,7 @@ const Blog = () => {
           formData,
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${localStorage.getItem("access-token")}`,
             },
           }
         );
@@ -127,11 +122,11 @@ const Blog = () => {
     if (!window.confirm("Are you sure you want to delete this blog?")) return;
 
     try {
-      const token = await getAuthToken();
+      // const token = await getAuthToken();
 
       await axios.delete(`http://localhost:3000/blogs/${blogId}`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${localStorage.getItem("access-token")}`,
         },
       });
 
