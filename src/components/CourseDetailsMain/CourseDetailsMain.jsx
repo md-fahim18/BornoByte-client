@@ -23,6 +23,15 @@ const CourseDetailsMain = () => {
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editedText, setEditedText] = useState("");
   const [commentRefreshTrigger, setCommentRefreshTrigger] = useState(0);
+  const [reviews, setReviews] = useState([]);
+  const [userReview, setUserReview] = useState(null);
+  const [avgRating, setAvgRating] = useState(0);
+  const [reviewCount, setReviewCount] = useState(0);
+  const [ratingInput, setRatingInput] = useState(0);
+  const [commentInput, setCommentInput] = useState("");
+  const [isEditingReview, setIsEditingReview] = useState(false);
+  const [reviewRefreshTrigger, setReviewRefreshTrigger] = useState(0);
+
 
   const token = localStorage.getItem("access-token");
   const isEnrolled = isApproved || isAdmin;
@@ -76,6 +85,41 @@ const CourseDetailsMain = () => {
       .get(`https://bornobyte.vercel.app/comments/${id}`)
       .then((res) => setComments(res.data));
   }, [id, commentRefreshTrigger]);
+
+  useEffect(() => {
+    if (!course?._id) return;
+
+    // Fetch reviews
+    axios
+      .get(`http://localhost:3000/reviews/${course._id}`)
+      .then((res) => {
+        setReviews(res.data);
+        // Find if current user already reviewed
+        if (user?.email) {
+          const existing = res.data.find((r) => r.userEmail === user.email);
+          if (existing) {
+            setUserReview(existing);
+            setRatingInput(existing.rating);
+            setCommentInput(existing.comment);
+          } else {
+            setUserReview(null);
+            setRatingInput(0);
+            setCommentInput("");
+          }
+        }
+      })
+      .catch(console.error);
+
+    // Fetch average rating
+    axios
+      .get(`http://localhost:3000/reviews/${course._id}/average`)
+      .then((res) => {
+        setAvgRating(res.data.avgRating);
+        setReviewCount(res.data.count);
+      })
+      .catch(console.error);
+  }, [course?._id, user?.email, reviewRefreshTrigger]);
+
 
   // eslint-disable-next-line no-unused-vars
   const extractYouTubeID = (url) => {
@@ -146,6 +190,88 @@ const CourseDetailsMain = () => {
     setCommentRefreshTrigger((prev) => prev + 1);
   };
 
+  const handleReviewSubmit = async () => {
+    if (ratingInput === 0) {
+      alert("Please select a rating");
+      return;
+    }
+
+    try {
+      if (userReview) {
+        // Update existing review
+        await axios.patch(
+          `http://localhost:3000/reviews/${userReview._id}`,
+          {
+            rating: ratingInput,
+            comment: commentInput,
+          },
+          { headers: { authorization: `Bearer ${localStorage.getItem("access-token")}` } }
+        );
+      } else {
+        // Create new review
+        await axios.post(
+          `http://localhost:3000/reviews`,
+          {
+            courseId: course._id,
+            rating: ratingInput,
+            comment: commentInput,
+          },
+          { headers: { authorization: `Bearer ${localStorage.getItem("access-token")}` } }
+        );
+      }
+      setIsEditingReview(false);
+      setReviewRefreshTrigger((prev) => prev + 1);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to submit review");
+    }
+  };
+
+  // eslint-disable-next-line no-unused-vars
+  const handleDeleteReview = async (id) => {
+    if (!window.confirm("Are you sure you want to delete your review?")) return;
+
+    try {
+      await axios.delete(`http://localhost:3000/reviews/${id}`, {
+        headers: { authorization: `Bearer ${localStorage.getItem("access-token")}` },
+      });
+      setUserReview(null);
+      setRatingInput(0);
+      setCommentInput("");
+      setReviewRefreshTrigger((prev) => prev + 1);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete review");
+    }
+  };
+
+  const StarRatingInput = ({ rating, setRating }) => {
+    return (
+      <div className="flex space-x-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <svg
+            key={star}
+            onClick={() => setRating(star)}
+            xmlns="http://www.w3.org/2000/svg"
+            fill={star <= rating ? "#f59e0b" : "none"}
+            viewBox="0 0 24 24"
+            stroke="#f59e0b"
+            strokeWidth={2}
+            className="w-6 h-6 cursor-pointer"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.97a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.385 2.455a1 1 0 00-.364 1.118l1.287 3.97c.3.922-.755 1.688-1.54 1.118l-3.385-2.455a1 1 0 00-1.176 0l-3.385 2.455c-.784.57-1.838-.196-1.539-1.118l1.287-3.97a1 1 0 00-.364-1.118L2.03 9.397c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.97z"
+            />
+          </svg>
+        ))}
+      </div>
+    );
+  };
+
+
+
   const grouped =
     course?.videos?.reduce((acc, vid) => {
       acc[vid.chapter] = acc[vid.chapter] || [];
@@ -163,16 +289,6 @@ const CourseDetailsMain = () => {
           <div className="md:col-span-2 space-y-6">
             {isEnrolled && selectedVideo && (
               <div className="w-full aspect-video">
-                <video
-                  controls
-                  controlsList="nodownload"
-                  width="100%"
-                  className="w-full h-full rounded-lg"
-                  src={selectedVideo.url}
-                  title={selectedVideo.title}
-                  preload="metadata"
-                />
-
                 {/* <iframe
                   className="w-full h-full rounded-lg"
                   src={`https://www.youtube.com/embed/${extractYouTubeID(selectedVideo.url)}`}
@@ -180,7 +296,7 @@ const CourseDetailsMain = () => {
                   frameBorder="0"
                   allowFullScreen
                 /> */}
-                {/* <CourseVideo></CourseVideo> */}
+                <CourseVideo></CourseVideo>
               </div>
             )}
 
@@ -192,6 +308,15 @@ const CourseDetailsMain = () => {
             </p>
             <p className="text-sm">Category: {course?.category}</p>
             <p className="text-sm">Duration: {course?.duration}</p>
+            <div className="flex items-center space-x-4 my-2">
+              <div className="flex items-center">
+                <StarRatingInput rating={Math.round(avgRating)} setRating={() => {}} />
+                <span className="ml-2 text-sm text-gray-600">
+                  {avgRating.toFixed(1)} / 5 ({reviewCount} {reviewCount === 1 ? "review" : "reviews"})
+                </span>
+              </div>
+            </div>
+
 
             <div>
               <h3 className="font-semibold">Overview</h3>
@@ -215,6 +340,112 @@ const CourseDetailsMain = () => {
                 ))}
               </ul>
             </div>
+
+              {/* YOUR REVIEW — only for enrolled users */}
+              {isEnrolled && (
+                <div className="mt-6">
+                  <h3 className="text-xl font-bold mb-2">Your Review</h3>
+                  {userReview && !isEditingReview ? (
+                    <div className="bg-base-200 p-4 rounded space-y-2">
+                      <StarRatingInput rating={ratingInput} setRating={() => {}} />
+                      <p>{commentInput}</p>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => setIsEditingReview(true)}
+                          className="btn btn-sm btn-outline"
+                        >
+                          Edit
+                        </button>
+                        {/* <button
+                          onClick={() => handleDeleteReview(userReview._id)}
+                          className="btn btn-sm btn-error"
+                        >
+                          Delete
+                        </button> */}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-base-200 p-4 rounded space-y-2">
+                      <StarRatingInput rating={ratingInput} setRating={setRatingInput} />
+                      <textarea
+                        className="textarea w-full"
+                        placeholder="Write your review here..."
+                        value={commentInput}
+                        onChange={(e) => setCommentInput(e.target.value)}
+                        rows={4}
+                      />
+                      <button onClick={handleReviewSubmit} className="btn btn-primary">
+                        {userReview ? "Update Review" : "Submit Review"}
+                      </button>
+                      {isEditingReview && (
+                        <button
+                          onClick={() => {
+                            setIsEditingReview(false);
+                            setRatingInput(userReview.rating);
+                            setCommentInput(userReview.comment);
+                          }}
+                          className="btn btn-ghost ml-2"
+                        >
+                          Cancel
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ALL REVIEWS — show to everyone */}
+              <div className="mt-6">
+                <h3 className="text-xl font-bold mb-2">All Reviews</h3>
+                <div className="space-y-4">
+                  {reviews.length === 0 && <p>No reviews yet.</p>}
+                  {reviews
+                    .filter((r) => r._id !== userReview?._id) // exclude user’s own review from this list
+                    .map((rev) => (
+                      <div
+                        key={rev._id}
+                        className="bg-base-200 p-4 rounded space-y-1"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <StarRatingInput rating={rev.rating} setRating={() => {}} />
+                          <span className="text-sm font-semibold">{rev.userEmail}</span>
+                        </div>
+                        <p>{rev.comment}</p>
+                        <p className="text-xs text-gray-500">
+                          {new Date(rev.timestamp).toLocaleDateString()}
+                        </p>
+                        {isAdmin && (
+                          <button
+                            onClick={async () => {
+                              if (window.confirm("Delete this review?")) {
+                                try {
+                                  await axios.delete(
+                                    `http://localhost:3000/reviews/${rev._id}`,
+                                    {
+                                      headers: {
+                                        authorization: `Bearer ${localStorage.getItem(
+                                          "access-token"
+                                        )}`,
+                                      },
+                                    }
+                                  );
+                                  setReviewRefreshTrigger((prev) => prev + 1);
+                                } catch {
+                                  alert("Failed to delete review");
+                                }
+                              }
+                            }}
+                            className="btn btn-xs btn-error mt-1"
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              </div>
+
+
 
             {!isEnrolled && (
               <div>

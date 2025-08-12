@@ -13,6 +13,7 @@ const AllCourses = () => {
   const [category, setCategory] = useState("all");
   const [duration, setDuration] = useState("all");
   const [enrolledIds, setEnrolledIds] = useState([]);
+  const [ratingsData, setRatingsData] = useState({}); // ✅ New: Ratings by courseId
 
   // ✅ Fetch approved courses
   useEffect(() => {
@@ -24,6 +25,27 @@ const AllCourses = () => {
       })
       .catch(() => {
         // ❌ 'err' removed because it wasn't used
+      });
+  }, []);
+
+  // ✅ Fetch ratings
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/reviews")
+      .then((res) => {
+        const data = {};
+        res.data.forEach((review) => {
+          const courseId = review.courseId;
+          if (!data[courseId]) {
+            data[courseId] = { total: 0, count: 0 };
+          }
+          data[courseId].total += review.rating;
+          data[courseId].count += 1;
+        });
+        setRatingsData(data);
+      })
+      .catch(() => {
+        // skip error handling here
       });
   }, []);
 
@@ -91,6 +113,11 @@ const AllCourses = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredCourses.map((course) => {
           const isEnrolled = enrolledIds.includes(course._id);
+          const ratingInfo = ratingsData[course._id];
+          const averageRating = ratingInfo
+            ? (ratingInfo.total / ratingInfo.count).toFixed(1)
+            : null;
+          const totalCount = ratingInfo?.count || 0;
 
           return (
             <div key={course._id} className="card bg-base-200 hover:shadow-xl shadow-md transition duration-300 rounded-xl">
@@ -113,7 +140,8 @@ const AllCourses = () => {
                     <FiClock /> {course.duration}
                   </span>
                   <span className="flex items-center gap-1 text-sm text-yellow-500">
-                    <FiStar /> 4.5
+                    <FiStar />
+                    {averageRating ? `${averageRating} (${totalCount})` : "No Rating"}
                   </span>
                 </div>
 

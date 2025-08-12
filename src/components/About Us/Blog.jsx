@@ -72,6 +72,9 @@ const Blog = () => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  // Helper: get token from current Firebase user (fixed)
+  // (Removed unused getAuthToken function)
+
   // Handle blog add or update
   const handleSave = async () => {
     if (!formData.title.trim() || !formData.content.trim()) {
@@ -80,11 +83,9 @@ const Blog = () => {
     }
 
     try {
+      // const token = await getAuthToken();
+
       if (modalMode === "add") {
-        await axios.post("http://localhost:3000/blogs", {
-          ...formData,
-          timestamp: new Date(),
-        });
         await axios.post(
           "http://localhost:3000/blogs",
           {
@@ -98,7 +99,15 @@ const Blog = () => {
           }
         );
       } else if (modalMode === "edit" && selectedBlog) {
-        await axios.patch(`http://localhost:3000/blogs/${selectedBlog._id}`, formData);
+        await axios.patch(
+          `http://localhost:3000/blogs/${selectedBlog._id}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access-token")}`,
+            },
+          }
+        );
       }
       await fetchBlogs();
       closeModal();
@@ -113,7 +122,14 @@ const Blog = () => {
     if (!window.confirm("Are you sure you want to delete this blog?")) return;
 
     try {
-      await axios.delete(`http://localhost:3000/blogs/${blogId}`);
+      // const token = await getAuthToken();
+
+      await axios.delete(`http://localhost:3000/blogs/${blogId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access-token")}`,
+        },
+      });
+
       await fetchBlogs();
     } catch (error) {
       console.error("Failed to delete blog", error);
