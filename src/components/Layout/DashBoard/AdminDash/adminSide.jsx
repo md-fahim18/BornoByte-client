@@ -1,7 +1,7 @@
 // src/components/Layout/DashBoard/AdminDash/AdminSidebar.jsx
 import React from "react";
 import { FiHome, FiUsers, FiSettings } from "react-icons/fi";
-import { MdOutlinePendingActions, MdLibraryAdd, MdManageAccounts } from "react-icons/md";
+import { MdOutlinePendingActions, MdLibraryAdd, MdManageAccounts, MdHowToReg, MdDashboardCustomize } from "react-icons/md";
 
 const AdminSidebar = ({ setAdminTab }) => {
   return (
@@ -72,7 +72,7 @@ const AdminSidebar = ({ setAdminTab }) => {
             onClick={() => setAdminTab("enrollReq")}
             className="flex items-center gap-3 w-full text-left hover:text-orange-500 transition"
           >
-            <FiSettings className="text-lg" /> Enrolement Requests
+            <MdHowToReg className="text-xl" /> Enrollment Requests
           </button>
         </li> 
           <li>
@@ -80,7 +80,7 @@ const AdminSidebar = ({ setAdminTab }) => {
             onClick={() => setAdminTab("homepage-Courses")}
             className="flex items-center gap-3 w-full text-left hover:text-orange-500 transition"
           >
-            <FiSettings className="text-lg" /> HomePage Courses Form
+            <MdDashboardCustomize className="text-xl" /> HomePage Courses Form
           </button>
         </li>
       </ul>
