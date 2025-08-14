@@ -34,8 +34,8 @@ const Dashboard = () => {
   const [isAdmin] = useAdmin();
   const [isTeacher] = useTeacher();
   const [adminTab, setAdminTab] = useState('users'); // default section
-  const [teacherTab, setTeacherTab] = useState('user'); // default section for teacher
-  const [userTab, setUserTab] = useState('user'); // default section
+  const [teacherTab, setTeacherTab] = useState('teacher'); // default section for teacher
+  const [userTab, setUserTab] = useState('default'); // default section
 
 
   // Set layout adjustments if using fixed topbar/sidebar
@@ -72,7 +72,7 @@ const Dashboard = () => {
           {/* Teacher */}
                   {isTeacher && !isAdmin && (
                     <>
-                      {teacherTab === 'default' && <TeacherDashboard />}
+                      {teacherTab === 'teacher' && <TeacherDashboard />}
                       {teacherTab === 'inbox' && <Inbox />}
                       {teacherTab === 'settings' && <Settings />}
                     </>
