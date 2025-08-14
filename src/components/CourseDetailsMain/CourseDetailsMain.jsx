@@ -34,8 +34,6 @@ const CourseDetailsMain = () => {
 
   const [activeTab, setActiveTab] = useState("reviews"); // "reviews" or "comments"
 
-
-
   const token = localStorage.getItem("access-token");
   const isEnrolled = isApproved || isAdmin;
 
@@ -123,7 +121,6 @@ const CourseDetailsMain = () => {
       .catch(console.error);
   }, [course?._id, user?.email, reviewRefreshTrigger]);
 
-
   // eslint-disable-next-line no-unused-vars
   const extractYouTubeID = (url) => {
     try {
@@ -208,7 +205,11 @@ const CourseDetailsMain = () => {
             rating: ratingInput,
             comment: commentInput,
           },
-          { headers: { authorization: `Bearer ${localStorage.getItem("access-token")}` } }
+          {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem("access-token")}`,
+            },
+          }
         );
       } else {
         // Create new review
@@ -219,7 +220,11 @@ const CourseDetailsMain = () => {
             rating: ratingInput,
             comment: commentInput,
           },
-          { headers: { authorization: `Bearer ${localStorage.getItem("access-token")}` } }
+          {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem("access-token")}`,
+            },
+          }
         );
       }
       setIsEditingReview(false);
@@ -230,13 +235,14 @@ const CourseDetailsMain = () => {
     }
   };
 
-   
   const handleDeleteReview = async (id) => {
     if (!window.confirm("Are you sure you want to delete your review?")) return;
 
     try {
       await axios.delete(`http://localhost:3000/reviews/${id}`, {
-        headers: { authorization: `Bearer ${localStorage.getItem("access-token")}` },
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("access-token")}`,
+        },
       });
       setUserReview(null);
       setRatingInput(0);
@@ -269,9 +275,6 @@ const CourseDetailsMain = () => {
     );
   };
 
-
-
-
   const grouped =
     course?.videos?.reduce((acc, vid) => {
       acc[vid.chapter] = acc[vid.chapter] || [];
@@ -296,7 +299,14 @@ const CourseDetailsMain = () => {
                   frameBorder="0"
                   allowFullScreen
                 /> */}
-                <CourseVideo></CourseVideo>
+                {/* // dynamic video render for all lessons // */}
+                <video
+                  className="w-full h-full rounded-lg"
+                  src={selectedVideo.url}
+                  title={selectedVideo.title}
+                  controls
+                  preload="metadata"
+                />
               </div>
             )}
 
@@ -310,13 +320,16 @@ const CourseDetailsMain = () => {
             <p className="text-sm">Duration: {course?.duration}</p>
             <div className="flex items-center space-x-4 my-2">
               <div className="flex items-center">
-                <StarRatingInput rating={Math.round(avgRating)} setRating={() => {}} />
+                <StarRatingInput
+                  rating={Math.round(avgRating)}
+                  setRating={() => {}}
+                />
                 <span className="ml-2 text-sm text-gray-600">
-                  {avgRating.toFixed(1)} / 5 ({reviewCount} {reviewCount === 1 ? "review" : "reviews"})
+                  {avgRating.toFixed(1)} / 5 ({reviewCount}{" "}
+                  {reviewCount === 1 ? "review" : "reviews"})
                 </span>
               </div>
             </div>
-
 
             <div>
               <h3 className="font-semibold">Overview</h3>
@@ -344,137 +357,151 @@ const CourseDetailsMain = () => {
             <div className="flex gap-4 mb-4">
               <button
                 onClick={() => setActiveTab("reviews")}
-                className={`px-4 py-2 rounded-lg ${activeTab === "reviews" ? "bg-amber-500 text-white" : "bg-gray-200 dark:bg-gray-700"}`}
+                className={`px-4 py-2 rounded-lg ${
+                  activeTab === "reviews"
+                    ? "bg-amber-500 text-white"
+                    : "bg-gray-200 dark:bg-gray-700"
+                }`}
               >
                 Reviews
               </button>
               <button
                 onClick={() => setActiveTab("comments")}
-                className={`px-4 py-2 rounded-lg ${activeTab === "comments" ? "bg-amber-500 text-white" : "bg-gray-200 dark:bg-gray-700"}`}
+                className={`px-4 py-2 rounded-lg ${
+                  activeTab === "comments"
+                    ? "bg-amber-500 text-white"
+                    : "bg-gray-200 dark:bg-gray-700"
+                }`}
               >
                 Comments
               </button>
             </div>
 
+            {/* YOUR REVIEW — only for enrolled users */}
 
-              {/* YOUR REVIEW — only for enrolled users */}
-
-              {activeTab === "reviews" && (
-                <>
-
-              {isEnrolled && (
-                <div className="mt-6">
-                  <h3 className="text-xl font-bold mb-2">Your Review</h3>
-                  {userReview && !isEditingReview ? (
-                    <div className="bg-base-200 p-4 rounded space-y-2">
-                      <StarRatingInput rating={ratingInput} setRating={() => {}} />
-                      <p>{commentInput}</p>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => setIsEditingReview(true)}
-                          className="btn btn-sm btn-outline"
-                        >
-                          Edit
-                        </button>
-
-                        {isAdmin && (
+            {activeTab === "reviews" && (
+              <>
+                {isEnrolled && (
+                  <div className="mt-6">
+                    <h3 className="text-xl font-bold mb-2">Your Review</h3>
+                    {userReview && !isEditingReview ? (
+                      <div className="bg-base-200 p-4 rounded space-y-2">
+                        <StarRatingInput
+                          rating={ratingInput}
+                          setRating={() => {}}
+                        />
+                        <p>{commentInput}</p>
+                        <div className="flex gap-2">
                           <button
-                            onClick={() => handleDeleteReview(userReview._id)}
-                            className="btn btn-sm btn-error"
+                            onClick={() => setIsEditingReview(true)}
+                            className="btn btn-sm btn-outline"
                           >
-                            Delete
+                            Edit
                           </button>
-                        )}
-                      </div>
-                    </div>
 
-                  ) : (
-                    <div className="bg-base-200 p-4 rounded space-y-2">
-                      <StarRatingInput rating={ratingInput} setRating={setRatingInput} />
-                      <textarea
-                        className="textarea w-full"
-                        placeholder="Write your review here..."
-                        value={commentInput}
-                        onChange={(e) => setCommentInput(e.target.value)}
-                        rows={4}
-                      />
-                      <button onClick={handleReviewSubmit} className="btn btn-primary">
-                        {userReview ? "Update Review" : "Submit Review"}
-                      </button>
-                      {isEditingReview && (
-                        <button
-                          onClick={() => {
-                            setIsEditingReview(false);
-                            setRatingInput(userReview.rating);
-                            setCommentInput(userReview.comment);
-                          }}
-                          className="btn btn-ghost ml-2"
-                        >
-                          Cancel
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              
-
-              {/* ALL REVIEWS — show to everyone */}
-              <div className="mt-6">
-                <h3 className="text-xl font-bold mb-2">All Reviews</h3>
-                <div className="space-y-4">
-                  {reviews.length === 0 && <p>No reviews yet.</p>}
-                  {reviews
-                    .filter((r) => r._id !== userReview?._id) // exclude user’s own review from this list
-                    .map((rev) => (
-                      <div
-                        key={rev._id}
-                        className="bg-base-200 p-4 rounded space-y-1"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <StarRatingInput rating={rev.rating} setRating={() => {}} />
-                          <span className="text-sm font-semibold">{rev.userEmail}</span>
+                          {isAdmin && (
+                            <button
+                              onClick={() => handleDeleteReview(userReview._id)}
+                              className="btn btn-sm btn-error"
+                            >
+                              Delete
+                            </button>
+                          )}
                         </div>
-                        <p>{rev.comment}</p>
-                        <p className="text-xs text-gray-500">
-                          {new Date(rev.timestamp).toLocaleDateString()}
-                        </p>
-                        {isAdmin && (
+                      </div>
+                    ) : (
+                      <div className="bg-base-200 p-4 rounded space-y-2">
+                        <StarRatingInput
+                          rating={ratingInput}
+                          setRating={setRatingInput}
+                        />
+                        <textarea
+                          className="textarea w-full"
+                          placeholder="Write your review here..."
+                          value={commentInput}
+                          onChange={(e) => setCommentInput(e.target.value)}
+                          rows={4}
+                        />
+                        <button
+                          onClick={handleReviewSubmit}
+                          className="btn btn-primary"
+                        >
+                          {userReview ? "Update Review" : "Submit Review"}
+                        </button>
+                        {isEditingReview && (
                           <button
-                            onClick={async () => {
-                              if (window.confirm("Delete this review?")) {
-                                try {
-                                  await axios.delete(
-                                    `http://localhost:3000/reviews/${rev._id}`,
-                                    {
-                                      headers: {
-                                        authorization: `Bearer ${localStorage.getItem(
-                                          "access-token"
-                                        )}`,
-                                      },
-                                    }
-                                  );
-                                  setReviewRefreshTrigger((prev) => prev + 1);
-                                } catch {
-                                  alert("Failed to delete review");
-                                }
-                              }
+                            onClick={() => {
+                              setIsEditingReview(false);
+                              setRatingInput(userReview.rating);
+                              setCommentInput(userReview.comment);
                             }}
-                            className="btn btn-xs btn-error mt-1"
+                            className="btn btn-ghost ml-2"
                           >
-                            Delete
+                            Cancel
                           </button>
                         )}
                       </div>
-                    ))}
+                    )}
+                  </div>
+                )}
+
+                {/* ALL REVIEWS — show to everyone */}
+                <div className="mt-6">
+                  <h3 className="text-xl font-bold mb-2">All Reviews</h3>
+                  <div className="space-y-4">
+                    {reviews.length === 0 && <p>No reviews yet.</p>}
+                    {reviews
+                      .filter((r) => r._id !== userReview?._id) // exclude user’s own review from this list
+                      .map((rev) => (
+                        <div
+                          key={rev._id}
+                          className="bg-base-200 p-4 rounded space-y-1"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <StarRatingInput
+                              rating={rev.rating}
+                              setRating={() => {}}
+                            />
+                            <span className="text-sm font-semibold">
+                              {rev.userEmail}
+                            </span>
+                          </div>
+                          <p>{rev.comment}</p>
+                          <p className="text-xs text-gray-500">
+                            {new Date(rev.timestamp).toLocaleDateString()}
+                          </p>
+                          {isAdmin && (
+                            <button
+                              onClick={async () => {
+                                if (window.confirm("Delete this review?")) {
+                                  try {
+                                    await axios.delete(
+                                      `http://localhost:3000/reviews/${rev._id}`,
+                                      {
+                                        headers: {
+                                          authorization: `Bearer ${localStorage.getItem(
+                                            "access-token"
+                                          )}`,
+                                        },
+                                      }
+                                    );
+                                    setReviewRefreshTrigger((prev) => prev + 1);
+                                  } catch {
+                                    alert("Failed to delete review");
+                                  }
+                                }
+                              }}
+                              className="btn btn-xs btn-error mt-1"
+                            >
+                              Delete
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                  </div>
                 </div>
-              </div>
-
-                </>
-              )}
-
-
+              </>
+            )}
 
             {!isEnrolled && (
               <div>
@@ -505,88 +532,98 @@ const CourseDetailsMain = () => {
               </div>
             )}
 
-
             {/* COMMENTS SECTION */}
 
             {activeTab === "comments" && (
               <>
-            {isEnrolled && (
-              <div className="mt-6">
-                <h3 className="text-xl font-bold mb-2">Comments</h3>
-                <textarea
-                  className="textarea textarea-bordered w-full"
-                  placeholder="Write a comment..."
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                />
-                <button
-                  onClick={handleCommentSubmit}
-                  className="btn btn-primary mt-2"
-                >
-                  Post
-                </button>
+                {isEnrolled && (
+                  <div className="mt-6">
+                    <h3 className="text-xl font-bold mb-2">Comments</h3>
+                    <textarea
+                      className="textarea textarea-bordered w-full"
+                      placeholder="Write a comment..."
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                    />
+                    <button
+                      onClick={handleCommentSubmit}
+                      className="btn btn-primary mt-2"
+                    >
+                      Post
+                    </button>
 
-                <div className="mt-4 space-y-2">
-                  {comments
-                    .filter((com) => isAdmin || com.userEmail === user.email)
-                    .map((com) => (
-                      <div key={com._id} className="bg-base-200 p-3 rounded">
-                        <p className="font-semibold text-sm">{com.userEmail}</p>
-                        {editingCommentId === com._id ? (
-                          <>
-                            <textarea
-                              className="textarea textarea-sm w-full mb-2"
-                              value={editedText}
-                              onChange={(e) => setEditedText(e.target.value)}
-                            />
-                            <button
-                              onClick={() => handleEditSave(com._id)}
-                              className="btn btn-xs btn-success mr-2"
-                            >
-                              Save
-                            </button>
-                            <button
-                              onClick={() => setEditingCommentId(null)}
-                              className="btn btn-xs btn-ghost"
-                            >
-                              Cancel
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <p>{com.text}</p>
-                            <p className="text-xs text-gray-500">
-                              {com.timestamp
-                                ? new Date(com.timestamp).toLocaleString()
-                                : ""}
+                    <div className="mt-4 space-y-2">
+                      {comments
+                        .filter(
+                          (com) => isAdmin || com.userEmail === user.email
+                        )
+                        .map((com) => (
+                          <div
+                            key={com._id}
+                            className="bg-base-200 p-3 rounded"
+                          >
+                            <p className="font-semibold text-sm">
+                              {com.userEmail}
                             </p>
-                            {(user?.email === com.userEmail || isAdmin) && (
-                              <div className="flex gap-2 mt-1">
+                            {editingCommentId === com._id ? (
+                              <>
+                                <textarea
+                                  className="textarea textarea-sm w-full mb-2"
+                                  value={editedText}
+                                  onChange={(e) =>
+                                    setEditedText(e.target.value)
+                                  }
+                                />
                                 <button
-                                  onClick={() => {
-                                    setEditingCommentId(com._id);
-                                    setEditedText(com.text);
-                                  }}
-                                  className="text-blue-500 text-xs"
+                                  onClick={() => handleEditSave(com._id)}
+                                  className="btn btn-xs btn-success mr-2"
                                 >
-                                  Edit
+                                  Save
                                 </button>
                                 <button
-                                  onClick={() => handleDeleteComment(com._id)}
-                                  className="text-red-500 text-xs"
+                                  onClick={() => setEditingCommentId(null)}
+                                  className="btn btn-xs btn-ghost"
                                 >
-                                  Delete
+                                  Cancel
                                 </button>
-                              </div>
+                              </>
+                            ) : (
+                              <>
+                                <p>{com.text}</p>
+                                <p className="text-xs text-gray-500">
+                                  {com.timestamp
+                                    ? new Date(com.timestamp).toLocaleString()
+                                    : ""}
+                                </p>
+                                {(user?.email === com.userEmail || isAdmin) && (
+                                  <div className="flex gap-2 mt-1">
+                                    <button
+                                      onClick={() => {
+                                        setEditingCommentId(com._id);
+                                        setEditedText(com.text);
+                                      }}
+                                      className="text-blue-500 text-xs"
+                                    >
+                                      Edit
+                                    </button>
+                                    <button
+                                      onClick={() =>
+                                        handleDeleteComment(com._id)
+                                      }
+                                      className="text-red-500 text-xs"
+                                    >
+                                      Delete
+                                    </button>
+                                  </div>
+                                )}
+                              </>
                             )}
-                          </>
-                        )}
-                      </div>
-                    ))}
-                </div>
-              </div>
-            )}
-            </>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
 
