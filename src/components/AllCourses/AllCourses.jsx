@@ -5,6 +5,8 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { FiSearch, FiStar, FiClock } from "react-icons/fi";
 import AuthContext from "../Auth/AuthContext"; // ✅ import context
+import { FaHeart, FaRegHeart } from "react-icons/fa";
+
 
 const AllCourses = () => {
   const { user } = useContext(AuthContext); // ✅ get current user
@@ -14,6 +16,8 @@ const AllCourses = () => {
   const [duration, setDuration] = useState("all");
   const [enrolledIds, setEnrolledIds] = useState([]);
   const [ratingsData, setRatingsData] = useState({}); // ✅ New: Ratings by courseId
+  const [favoriteCourseIds, setFavoriteCourseIds] = useState([]);
+  const [loadingFavorites, setLoadingFavorites] = useState([]);
 
   // ✅ Fetch approved courses
   useEffect(() => {
@@ -29,31 +33,58 @@ const AllCourses = () => {
   }, []);
 
   // ✅ Fetch ratings
-  useEffect(() => {
+    useEffect(() => {
+      if (courses.length === 0) return;
+
+      const fetchAllRatings = async () => {
+        const ratings = {};
+        await Promise.all(
+          courses.map(async (course) => {
+            try {
+              const res = await axios.get(`http://localhost:3000/reviews/${course._id}/average`);
+              ratings[course._id] = {
+                avgRating: res.data.avgRating || 0,
+                count: res.data.count || 0,
+              };
+            } catch {
+              ratings[course._id] = { avgRating: 0, count: 0 };
+            }
+          })
+        );
+        setRatingsData(ratings);
+      };
+
+      fetchAllRatings();
+    }, [courses]);
+
+  // ✅ Fetch user's favorite courses
+    useEffect(() => {
+    if (!user?.email) {
+      setFavoriteCourseIds([]);
+      return;
+    }
+
     axios
-      .get("http://localhost:3000/reviews")
-      .then((res) => {
-        const data = {};
-        res.data.forEach((review) => {
-          const courseId = review.courseId;
-          if (!data[courseId]) {
-            data[courseId] = { total: 0, count: 0 };
-          }
-          data[courseId].total += review.rating;
-          data[courseId].count += 1;
-        });
-        setRatingsData(data);
+      .get("http://localhost:3000/favorites", {
+        headers: { authorization: `Bearer ${localStorage.getItem("access-token")}` },
+      })
+      .then(res => {
+        // res.data = array of favorite objects with courseId
+        const favIds = res.data.map(fav => fav.courseId);
+        setFavoriteCourseIds(favIds);
       })
       .catch(() => {
-        // skip error handling here
+        setFavoriteCourseIds([]);
       });
-  }, []);
+  }, [user?.email]);
+
+
 
   // ✅ Fetch user's enrolled courses
   useEffect(() => {
     if (!user?.email) return;
     axios
-      .get("https://bornobyte.vercel.app/enrollRequests", {
+      .get("http://localhost:3000/enrollRequests", {
         headers: {
           authorization: `Bearer ${localStorage.getItem("access-token")}`,
         },
@@ -68,6 +99,41 @@ const AllCourses = () => {
         setEnrolledIds(approved);
       });
   }, [user?.email]);
+
+  // ✅ Handle favorite toggle
+  const handleAddFavorite = async (courseId) => {
+    if (loadingFavorites.includes(courseId)) return;
+    setLoadingFavorites(prev => [...prev, courseId]);
+    try {
+      await axios.post(
+        "http://localhost:3000/favorites",
+        { courseId },
+        {
+          headers: { authorization: `Bearer ${localStorage.getItem("access-token")}` },
+        }
+      );
+      setFavoriteCourseIds(prev => [...prev, courseId]);
+    } catch (err) {
+      console.error("Failed to add favorite", err);
+    }
+    setLoadingFavorites(prev => prev.filter(id => id !== courseId));
+  };
+
+  const handleRemoveFavorite = async (courseId) => {
+    if (loadingFavorites.includes(courseId)) return;
+    setLoadingFavorites(prev => [...prev, courseId]);
+    try {
+      await axios.delete(`http://localhost:3000/favorites/${courseId}`, {
+        headers: { authorization: `Bearer ${localStorage.getItem("access-token")}` },
+      });
+      setFavoriteCourseIds(prev => prev.filter(id => id !== courseId));
+    } catch (err) {
+      console.error("Failed to remove favorite", err);
+    }
+    setLoadingFavorites(prev => prev.filter(id => id !== courseId));
+  };
+
+
 
   // ✅ Filtering logic
   const filteredCourses = courses.filter((course) => {
@@ -114,10 +180,9 @@ const AllCourses = () => {
         {filteredCourses.map((course) => {
           const isEnrolled = enrolledIds.includes(course._id);
           const ratingInfo = ratingsData[course._id];
-          const averageRating = ratingInfo
-            ? (ratingInfo.total / ratingInfo.count).toFixed(1)
-            : null;
+          const averageRating = ratingInfo ? ratingInfo.avgRating.toFixed(1) : null;
           const totalCount = ratingInfo?.count || 0;
+
 
           return (
             <div key={course._id} className="card bg-base-200 hover:shadow-xl shadow-md transition duration-300 rounded-xl">
@@ -127,6 +192,31 @@ const AllCourses = () => {
                   alt={course.title}
                   className="w-full h-48 object-cover rounded-t-xl"
                 />
+                 <button
+                  onClick={() =>
+                    favoriteCourseIds.includes(course._id)
+                      ? handleRemoveFavorite(course._id)
+                      : handleAddFavorite(course._id)
+                  }
+                  disabled={loadingFavorites.includes(course._id)}
+                  title={
+                    favoriteCourseIds.includes(course._id)
+                      ? "Remove from favorites"
+                      : "Add to favorites"
+                  }
+                  className={`absolute top-2 right-2 p-2 rounded-full shadow-md transition
+                    ${
+                      favoriteCourseIds.includes(course._id)
+                        ? "bg-red-100 text-red-600 hover:bg-red-200"
+                        : "bg-white text-gray-400 hover:text-red-600 hover:bg-red-100"
+                    }`}
+                >
+                  {favoriteCourseIds.includes(course._id) ? (
+                    <FaHeart size={20} />
+                  ) : (
+                    <FaRegHeart size={20} />
+                  )}
+                </button>
               </figure>
               <div className="card-body">
                 <h2 className="card-title text-lg">{course.title}</h2>
@@ -145,23 +235,25 @@ const AllCourses = () => {
                   </span>
                 </div>
 
+                
+
                 <div className="card-actions mt-4 flex flex-col items-start gap-2">
-                  {isEnrolled && (
-                    <p className="text-sm text-green-600 font-semibold">
-                      ✅ You are already enrolled
-                    </p>
-                  )}
-                  <div className="flex gap-2 w-full">
-                    <Link
-                      to={`/courses/${course._id}`}
-                      target="_blank"
-                      className="btn btn-outline btn-sm flex-1"
-                    >
-                      View Details
-                    </Link>
-                    {!isEnrolled && (
-                      <button className="btn btn-primary btn-sm flex-1">Enroll Now</button>
+                    {isEnrolled && (
+                      <p className="text-sm text-green-600 font-semibold">
+                        ✅ You are already enrolled
+                      </p>
                     )}
+                    <div className="flex gap-2 w-full">
+                      <Link
+                        to={`/courses/${course._id}`}
+                        target="_blank"
+                        className={`btn btn-sm flex-1 ${
+                          isEnrolled ? "btn-primary" : "btn-outline btn-amber-600"
+                        }`}
+                      >
+                        {isEnrolled ? "Go to Course" : "View Details"}
+                      </Link>
+                    
                   </div>
                 </div>
               </div>

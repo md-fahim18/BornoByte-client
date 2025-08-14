@@ -1,70 +1,146 @@
-import React, { useRef, useState } from "react";
-import { MdArrowBackIosNew, MdArrowForwardIos, MdAccessTime } from "react-icons/md";
-import { FaHeart, FaRegHeart, FaStar } from "react-icons/fa";
-
-// Course Images
-import sscPhysics from "../../assets/Image/Courses/SSC/physics.jpg";
-import sscChem from "../../assets/Image/Courses/SSC/chemistry.jpg";
-import sscMath from "../../assets/Image/Courses/SSC/math.jpg";
-import sscEng from "../../assets/Image/Courses/SSC/english.jpeg";
-import sscBio from "../../assets/Image/Courses/SSC/biology.jpeg";
-
-import hscPhysics from "../../assets/Image/Courses/HSC/physics.jpg";
-import hscChem from "../../assets/Image/Courses/HSC/chemistry.jpg";
-import hscMath from "../../assets/Image/Courses/HSC/hmath.jpg";
-import hscICT from "../../assets/Image/Courses/HSC/ict.jpg";
-import hscBio from "../../assets/Image/Courses/HSC/biology.jpg";
-
-import ugLinear from "../../assets/Image/Courses/Undergrade/linear.jpeg";
-import ugC from "../../assets/Image/Courses/Undergrade/c.jpg";
-import ugPython from "../../assets/Image/Courses/Undergrade/python.jpeg";
-import ugML from "../../assets/Image/Courses/Undergrade/ml.jpg";
-import ugElectronics from "../../assets/Image/Courses/Undergrade/elec.jpeg";
-
-// Course Data
-const courseData = {
-  SSC: [
-    { name: "Physics", image: sscPhysics, duration: "1.5 hrs", rating: 4.6, reviews: 1287 },
-    { name: "Chemistry", image: sscChem, duration: "2 hrs", rating: 4.7, reviews: 1111 },
-    { name: "Mathematics", image: sscMath, duration: "2.5 hrs", rating: 4.4, reviews: 1030 },
-    { name: "English", image: sscEng, duration: "1.2 hrs", rating: 4.5, reviews: 900 },
-    { name: "Biology", image: sscBio, duration: "1.8 hrs", rating: 4.3, reviews: 840 },
-  ],
-  HSC: [
-    { name: "Physics", image: hscPhysics, duration: "2 hrs", rating: 4.7, reviews: 1021 },
-    { name: "Chemistry", image: hscChem, duration: "2.5 hrs", rating: 4.6, reviews: 1102 },
-    { name: "Higher Math", image: hscMath, duration: "3 hrs", rating: 4.8, reviews: 1221 },
-    { name: "ICT", image: hscICT, duration: "1.5 hrs", rating: 4.5, reviews: 800 },
-    { name: "Biology", image: hscBio, duration: "2.2 hrs", rating: 4.4, reviews: 760 },
-  ],
-  Undergraduate: [
-    { name: "Linear Algebra", image: ugLinear, duration: "4 hrs", rating: 4.9, reviews: 1560 },
-    { name: "C Programming", image: ugC, duration: "5 hrs", rating: 4.8, reviews: 1700 },
-    { name: "Python Programming", image: ugPython, duration: "6 hrs", rating: 4.9, reviews: 1950 },
-    { name: "Machine Learning", image: ugML, duration: "5.5 hrs", rating: 4.7, reviews: 1830 },
-    { name: "Electronics & Circuits", image: ugElectronics, duration: "4.3 hrs", rating: 4.6, reviews: 1500 },
-  ],
-};
+import React, { useState, useEffect, useRef, useContext } from "react";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { FiClock, FiStar } from "react-icons/fi";
+import { MdArrowBackIosNew, MdArrowForwardIos } from "react-icons/md";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import AuthContext from "../Auth/AuthContext";
 
 const CourseSection = () => {
-  const [activeTab, setActiveTab] = useState("HSC");
-  const [favorites, setFavorites] = useState({});
+  const { user } = useContext(AuthContext);
+
+  const [activeTab, setActiveTab] = useState("SSC");
+  const [categories] = useState([
+    "SSC",
+    "HSC",
+    "Undergraduate",
+    "Skill Development",
+  ]);
+
+  const [courses, setCourses] = useState([]);
+  const [ratingsData, setRatingsData] = useState({});
+  const [enrolledIds, setEnrolledIds] = useState([]);
+  const [favoriteCourseIds, setFavoriteCourseIds] = useState([]);
+  const [loadingFavorites, setLoadingFavorites] = useState([]);
+
   const sliderRef = useRef();
 
-  const toggleFavorite = (courseName) => {
-    setFavorites((prev) => ({
-      ...prev,
-      [courseName]: !prev[courseName],
-    }));
+  // Fetch courses from backend
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/videos")
+      .then((res) => setCourses(res.data))
+      .catch((err) => console.error("Failed to fetch courses:", err));
+  }, []);
+
+  // Fetch ratings for all courses
+  useEffect(() => {
+    if (courses.length === 0) return;
+
+    const fetchAllRatings = async () => {
+      const ratings = {};
+      await Promise.all(
+        courses.map(async (course) => {
+          try {
+            const res = await axios.get(
+              `http://localhost:3000/reviews/${course._id}/average`
+            );
+            ratings[course._id] = {
+              avgRating: res.data.avgRating || 0,
+              count: res.data.count || 0,
+            };
+          } catch {
+            ratings[course._id] = { avgRating: 0, count: 0 };
+          }
+        })
+      );
+      setRatingsData(ratings);
+    };
+
+    fetchAllRatings();
+  }, [courses]);
+
+  // Fetch user's favorite courses
+  useEffect(() => {
+    if (!user?.email) {
+      setFavoriteCourseIds([]);
+      return;
+    }
+
+    axios
+      .get("http://localhost:3000/favorites", {
+        headers: { authorization: `Bearer ${localStorage.getItem("access-token")}` },
+      })
+      .then((res) => {
+        const favIds = res.data.map((fav) => fav.courseId);
+        setFavoriteCourseIds(favIds);
+      })
+      .catch(() => {
+        setFavoriteCourseIds([]);
+      });
+  }, [user?.email]);
+
+  // Fetch user's enrolled courses
+  useEffect(() => {
+    if (!user?.email) return;
+    axios
+      .get("http://localhost:3000/enrollRequests", {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("access-token")}`,
+        },
+      })
+      .then((res) => {
+        const approved = res.data
+          .filter(
+            (item) =>
+              item.userEmail === user.email && item.status === "approved"
+          )
+          .map((item) => item.courseId);
+        setEnrolledIds(approved);
+      });
+  }, [user?.email]);
+
+  // Handle favorite toggle
+  const handleAddFavorite = async (courseId) => {
+    if (loadingFavorites.includes(courseId)) return;
+    setLoadingFavorites((prev) => [...prev, courseId]);
+    try {
+      await axios.post(
+        "http://localhost:3000/favorites",
+        { courseId },
+        {
+          headers: { authorization: `Bearer ${localStorage.getItem("access-token")}` },
+        }
+      );
+      setFavoriteCourseIds((prev) => [...prev, courseId]);
+    } catch (err) {
+      console.error("Failed to add favorite", err);
+    }
+    setLoadingFavorites((prev) => prev.filter((id) => id !== courseId));
   };
 
-  const scrollLeft = () => {
+  const handleRemoveFavorite = async (courseId) => {
+    if (loadingFavorites.includes(courseId)) return;
+    setLoadingFavorites((prev) => [...prev, courseId]);
+    try {
+      await axios.delete(`http://localhost:3000/favorites/${courseId}`, {
+        headers: { authorization: `Bearer ${localStorage.getItem("access-token")}` },
+      });
+      setFavoriteCourseIds((prev) => prev.filter((id) => id !== courseId));
+    } catch (err) {
+      console.error("Failed to remove favorite", err);
+    }
+    setLoadingFavorites((prev) => prev.filter((id) => id !== courseId));
+  };
+
+  const scrollLeft = () =>
     sliderRef.current.scrollBy({ left: -400, behavior: "smooth" });
-  };
-
-  const scrollRight = () => {
+  const scrollRight = () =>
     sliderRef.current.scrollBy({ left: 400, behavior: "smooth" });
-  };
+
+  const filteredCourses = courses.filter(
+    (course) => course.category === activeTab && course.status === "approved"
+  );
 
   return (
     <div className="my-12 max-w-7xl mx-auto px-4">
@@ -75,7 +151,7 @@ const CourseSection = () => {
       {/* Tabs */}
       <div className="flex justify-center mb-6">
         <div className="inline-flex gap-4 bg-base-200 p-2 rounded-full">
-          {["SSC", "HSC", "Undergraduate"].map((tab) => (
+          {categories.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -91,9 +167,8 @@ const CourseSection = () => {
         </div>
       </div>
 
-      {/* Arrows + Slider */}
+      {/* Slider with arrows */}
       <div className="relative">
-        {/* Left Arrow */}
         <button
           onClick={scrollLeft}
           className="hidden md:flex absolute -left-6 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow-md
@@ -102,7 +177,6 @@ const CourseSection = () => {
           <MdArrowBackIosNew size={20} className="text-black dark:text-white" />
         </button>
 
-        {/* Right Arrow */}
         <button
           onClick={scrollRight}
           className="hidden md:flex absolute -right-6 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow-md
@@ -111,61 +185,107 @@ const CourseSection = () => {
           <MdArrowForwardIos size={20} className="text-black dark:text-white" />
         </button>
 
-        {/* Course Cards */}
+        {/* Courses */}
         <div
           ref={sliderRef}
-          className="flex gap-6 overflow-x-hidden scroll-smooth px-1"
+          className="flex gap-6 overflow-x-auto scroll-smooth px-1"
         >
-          {courseData[activeTab].map((course, index) => (
-            <div
-              key={index}
-              className="w-[calc(100%/3-1.5rem)] min-w-[320px] bg-base-200 rounded-lg shadow-md overflow-hidden relative hover:-translate-y-1 hover:shadow-lg transition-transform duration-300"
-            >
-              <img
-                src={course.image}
-                alt={course.name}
-                className="h-40 w-full object-cover"
-              />
-              {/* Favorite Button */}
-              <button
-                className="absolute top-2 right-2 text-white bg-black bg-opacity-50 rounded-full p-1"
-                onClick={() => toggleFavorite(course.name)}
+          {filteredCourses.length === 0 && (
+            <p className="text-center text-gray-500">
+              No courses found in this category.
+            </p>
+          )}
+
+          {filteredCourses.map((course) => {
+            const isEnrolled = enrolledIds.includes(course._id);
+            const ratingInfo = ratingsData[course._id];
+            const averageRating = ratingInfo
+              ? ratingInfo.avgRating.toFixed(1)
+              : null;
+            const totalCount = ratingInfo?.count || 0;
+
+            return (
+              <div
+                key={course._id}
+                className="flex-shrink-0 w-[calc(100%-1rem)] sm:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-1.5rem)]
+                  card bg-base-200 shadow-md hover:shadow-xl transition duration-300 rounded-xl relative"
               >
-                {favorites[course.name] ? (
-                  <FaHeart className="text-rose-500" />
-                ) : (
-                  <FaRegHeart />
-                )}
-              </button>
-
-              <div className="p-4">
-                <h3 className="text-lg font-bold text-base-content">
-                  {course.name}
-                </h3>
-                {/* Duration */}
-                <div className="flex items-center gap-1 text-gray-500 text-sm mt-1">
-                  <MdAccessTime size={16} /> <span>{course.duration}</span>
-                </div>
-                {/* Rating */}
-                <div className="text-sm text-gray-500 mt-1">
-                  <span className="flex items-center gap-1">
-                    <FaStar className="text-yellow-400" />
-                    {course.rating} ({course.reviews})
-                  </span>
-                </div>
-
-                {/* Buttons */}
-                <div className="mt-4 flex gap-2 justify-between">
-                  <button className="btn btn-sm btn-outline text-amber-600 border-amber-600 hover:bg-amber-600 hover:text-white">
-                    Learn More
+                <figure className="relative">
+                  <img
+                    src={course.thumbnail}
+                    alt={course.title}
+                    className="w-full h-48 object-cover rounded-t-xl"
+                  />
+                  <button
+                    onClick={() =>
+                      favoriteCourseIds.includes(course._id)
+                        ? handleRemoveFavorite(course._id)
+                        : handleAddFavorite(course._id)
+                    }
+                    disabled={loadingFavorites.includes(course._id)}
+                    title={
+                      favoriteCourseIds.includes(course._id)
+                        ? "Remove from favorites"
+                        : "Add to favorites"
+                    }
+                    className={`absolute top-2 right-2 p-2 rounded-full shadow-md transition
+                      ${
+                        favoriteCourseIds.includes(course._id)
+                          ? "bg-red-100 text-red-600 hover:bg-red-200"
+                          : "bg-white text-gray-400 hover:text-red-600 hover:bg-red-100"
+                      }`}
+                  >
+                    {favoriteCourseIds.includes(course._id) ? (
+                      <FaHeart size={20} />
+                    ) : (
+                      <FaRegHeart size={20} />
+                    )}
                   </button>
-                  <button className="btn btn-sm bg-amber-600 text-white hover:bg-amber-700">
-                    Enroll Now
-                  </button>
+                </figure>
+                <div className="card-body">
+                  <h2 className="card-title text-lg">{course.title}</h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {course.category}
+                  </p>
+                  <p className="text-sm font-medium mt-1">
+                    Teacher:{" "}
+                    <span className="text-orange-500">{course.instructor}</span>
+                  </p>
+
+                  <div className="flex justify-between items-center mt-4">
+                    <span className="flex items-center gap-1 text-sm">
+                      <FiClock /> {course.duration}
+                    </span>
+                    <span className="flex items-center gap-1 text-sm text-yellow-500">
+                      <FiStar />
+                      {averageRating
+                        ? `${averageRating} (${totalCount})`
+                        : "No Rating"}
+                    </span>
+                  </div>
+
+                  <div className="card-actions mt-4 flex flex-col items-start gap-2">
+                    {isEnrolled && (
+                      <p className="text-sm text-green-600 font-semibold">
+                        ✅ You are already enrolled
+                      </p>
+                    )}
+                    <div className="flex gap-2 w-full">
+                      <Link
+                        to={`/courses/${course._id}`}
+                        target="_blank"
+                        className={`btn btn-sm flex-1 ${
+                          isEnrolled ? "btn-primary" : "btn-outline btn-amber-600"
+                        }`}
+                      >
+                        {isEnrolled ? "Go to Course" : "View Details"}
+                      </Link>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

@@ -32,6 +32,9 @@ const CourseDetailsMain = () => {
   const [isEditingReview, setIsEditingReview] = useState(false);
   const [reviewRefreshTrigger, setReviewRefreshTrigger] = useState(0);
 
+  const [activeTab, setActiveTab] = useState("reviews"); // "reviews" or "comments"
+
+
 
   const token = localStorage.getItem("access-token");
   const isEnrolled = isApproved || isAdmin;
@@ -227,7 +230,7 @@ const CourseDetailsMain = () => {
     }
   };
 
-  // eslint-disable-next-line no-unused-vars
+   
   const handleDeleteReview = async (id) => {
     if (!window.confirm("Are you sure you want to delete your review?")) return;
 
@@ -253,22 +256,19 @@ const CourseDetailsMain = () => {
             key={star}
             onClick={() => setRating(star)}
             xmlns="http://www.w3.org/2000/svg"
-            fill={star <= rating ? "#f59e0b" : "none"}
             viewBox="0 0 24 24"
+            fill={star <= rating ? "#f59e0b" : "none"}
             stroke="#f59e0b"
             strokeWidth={2}
-            className="w-6 h-6 cursor-pointer"
+            className="w-6 h-6 cursor-pointer transition-colors duration-200 hover:fill-yellow-400 hover:stroke-yellow-400"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.97a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.385 2.455a1 1 0 00-.364 1.118l1.287 3.97c.3.922-.755 1.688-1.54 1.118l-3.385-2.455a1 1 0 00-1.176 0l-3.385 2.455c-.784.57-1.838-.196-1.539-1.118l1.287-3.97a1 1 0 00-.364-1.118L2.03 9.397c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.97z"
-            />
+            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
           </svg>
         ))}
       </div>
     );
   };
+
 
 
 
@@ -341,7 +341,27 @@ const CourseDetailsMain = () => {
               </ul>
             </div>
 
+            <div className="flex gap-4 mb-4">
+              <button
+                onClick={() => setActiveTab("reviews")}
+                className={`px-4 py-2 rounded-lg ${activeTab === "reviews" ? "bg-amber-500 text-white" : "bg-gray-200 dark:bg-gray-700"}`}
+              >
+                Reviews
+              </button>
+              <button
+                onClick={() => setActiveTab("comments")}
+                className={`px-4 py-2 rounded-lg ${activeTab === "comments" ? "bg-amber-500 text-white" : "bg-gray-200 dark:bg-gray-700"}`}
+              >
+                Comments
+              </button>
+            </div>
+
+
               {/* YOUR REVIEW — only for enrolled users */}
+
+              {activeTab === "reviews" && (
+                <>
+
               {isEnrolled && (
                 <div className="mt-6">
                   <h3 className="text-xl font-bold mb-2">Your Review</h3>
@@ -356,14 +376,18 @@ const CourseDetailsMain = () => {
                         >
                           Edit
                         </button>
-                        {/* <button
-                          onClick={() => handleDeleteReview(userReview._id)}
-                          className="btn btn-sm btn-error"
-                        >
-                          Delete
-                        </button> */}
+
+                        {isAdmin && (
+                          <button
+                            onClick={() => handleDeleteReview(userReview._id)}
+                            className="btn btn-sm btn-error"
+                          >
+                            Delete
+                          </button>
+                        )}
                       </div>
                     </div>
+
                   ) : (
                     <div className="bg-base-200 p-4 rounded space-y-2">
                       <StarRatingInput rating={ratingInput} setRating={setRatingInput} />
@@ -393,6 +417,8 @@ const CourseDetailsMain = () => {
                   )}
                 </div>
               )}
+
+              
 
               {/* ALL REVIEWS — show to everyone */}
               <div className="mt-6">
@@ -445,6 +471,9 @@ const CourseDetailsMain = () => {
                 </div>
               </div>
 
+                </>
+              )}
+
 
 
             {!isEnrolled && (
@@ -476,6 +505,11 @@ const CourseDetailsMain = () => {
               </div>
             )}
 
+
+            {/* COMMENTS SECTION */}
+
+            {activeTab === "comments" && (
+              <>
             {isEnrolled && (
               <div className="mt-6">
                 <h3 className="text-xl font-bold mb-2">Comments</h3>
@@ -551,6 +585,8 @@ const CourseDetailsMain = () => {
                     ))}
                 </div>
               </div>
+            )}
+            </>
             )}
           </div>
 
