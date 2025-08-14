@@ -13,9 +13,12 @@ const UserSidebar = ({ setUserTab }) => {
           </a>
         </li>
         <li>
-          <a href="/courses" className="flex items-center gap-2 hover:text-amber-500">
+          <button
+            onClick={() => setUserTab("default")}
+            className="flex items-center gap-2 hover:text-amber-500"
+          >
             <FiBookOpen /> My Courses
-          </a>
+          </button>
         </li>
         <li>
           <button

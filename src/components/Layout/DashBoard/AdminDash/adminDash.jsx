@@ -63,8 +63,8 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="p-6 pt-24 bg-base-100 min-h-screen text-base-content">
-      <h2 className="text-3xl font-semibold mb-6 text-center">All Registered Users</h2>
+    <div className="p-6 pt-14 bg-base-100 min-h-screen text-base-content">
+      <h2 className="text-3xl font-semibold mb-4 text-center">All Registered Users</h2>
 
           {["admin", "teacher", "student"].map((role) => {
       const usersByRole = users.filter((user) => user.role === role);
