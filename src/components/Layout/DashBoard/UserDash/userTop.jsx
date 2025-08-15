@@ -16,12 +16,12 @@ const UserTopbar = () => {
         <span className="scale-50">
           <ThemeSwitcher />
         </span>
-        <button className="btn btn-ghost btn-circle hover:text-orange-500 transition">
+        {/* <button className="btn btn-ghost btn-circle hover:text-orange-500 transition">
           <FiBell className="text-xl" />
         </button>
         <button className="btn btn-ghost btn-circle hover:text-orange-500 transition">
           <FiUser className="text-xl" />
-        </button>
+        </button> */}
       </div>
 
     </div>

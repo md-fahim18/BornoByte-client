@@ -11,8 +11,8 @@ const TeacherTopbar = () => {
         <span className="scale-50">
           <ThemeSwitcher />
         </span>
-        <FiBell className="text-xl hover:text-orange-500 cursor-pointer" />
-        <FiUser className="text-xl hover:text-orange-500 cursor-pointer" />
+        {/* <FiBell className="text-xl hover:text-orange-500 cursor-pointer" />
+        <FiUser className="text-xl hover:text-orange-500 cursor-pointer" /> */}
       </div>
     </div>
   );
