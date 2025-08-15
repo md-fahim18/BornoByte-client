@@ -1,5 +1,4 @@
 // src/pages/Admin/AdminEnrollRequests.jsx
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -70,9 +69,15 @@ const AdminEnrollRequests = () => {
   };
 
   if (loading) return <p className="text-center py-10">Loading requests...</p>;
-
   if (requests.length === 0)
     return <p className="text-center py-10 text-gray-500">No enrollment requests found.</p>;
+
+  // Group requests by courseTitle
+  const groupedRequests = requests.reduce((acc, req) => {
+    if (!acc[req.courseTitle]) acc[req.courseTitle] = [];
+    acc[req.courseTitle].push(req);
+    return acc;
+  }, {});
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -84,49 +89,72 @@ const AdminEnrollRequests = () => {
             <tr className="bg-base-200 text-base font-semibold">
               <th>#</th>
               <th>User</th>
-              <th>Course</th>
+              <th>Transaction ID</th>
               <th>Status</th>
               <th className="text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {requests.map((req, index) => (
-              <tr key={req._id}>
-                <td>{index + 1}</td>
-                <td>
-                  <div>
-                    <p className="font-medium">{req.userName}</p>
-                    <p className="text-xs text-gray-500">{req.userEmail}</p>
-                  </div>
-                </td>
-                <td>{req.courseTitle}</td>
-                <td>
-                  <span
-                    className={`badge ${
-                      req.status === "approved" ? "badge-success" : "badge-warning"
-                    }`}
-                  >
-                    {req.status}
-                  </span>
-                </td>
-                <td className="text-center space-x-2">
-                  {req.status !== "approved" && (
-                    <button
-                      onClick={() => handleApprove(req._id)}
-                      className="btn btn-sm btn-success"
-                    >
-                      Approve
-                    </button>
-                  )}
-                  <button
-                    onClick={() => handleDelete(req._id)}
-                    className="btn btn-sm btn-error"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {Object.entries(groupedRequests).map(([courseTitle, courseRequests]) => {
+              const pendingCount = courseRequests.filter(r => r.status !== "approved").length;
+              return (
+                <React.Fragment key={courseTitle}>
+                  {/* Group header row */}
+                  <tr className="bg-gray-100 dark:bg-gray-700">
+                    <td colSpan="5" className="font-semibold text-lg py-3">
+                      {courseTitle}{" "}
+                      {pendingCount > 0 && (
+                        <span className="badge badge-error">{pendingCount}</span>
+                      )}
+                    </td>
+                  </tr>
+                  {/* Requests for this course */}
+                  {courseRequests.map((req, index) => (
+                    <tr key={req._id}>
+                      <td>{index + 1}</td>
+                      <td>
+                        <div>
+                          <p className="font-medium">{req.userName}</p>
+                          <p className="text-xs text-gray-500">{req.userEmail}</p>
+                        </div>
+                      </td>
+                      <td>
+                        <span className="text-sm font-mono text-gray-700 dark:text-gray-300">
+                          {req.transactionId || "N/A"}
+                        </span>
+                      </td>
+                      <td>
+                        <span
+                          className={`badge ${
+                            req.status === "approved" ? "badge-success" : "badge-warning"
+                          }`}
+                        >
+                          {req.status}
+                        </span>
+                      </td>
+                      <td style={{ whiteSpace: "nowrap", minWidth: "150px", textAlign: "center" }}>
+                        <div style={{ display: "flex", gap: "8px" }}>
+                          {req.status !== "approved" && (
+                            <button
+                              onClick={() => handleApprove(req._id)}
+                              className="btn btn-sm btn-success"
+                            >
+                              Approve
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleDelete(req._id)}
+                            className="btn btn-sm btn-error"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </React.Fragment>
+              );
+            })}
           </tbody>
         </table>
       </div>

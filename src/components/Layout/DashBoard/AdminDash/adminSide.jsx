@@ -2,8 +2,64 @@
 import React from "react";
 import { FiHome, FiUsers, FiSettings } from "react-icons/fi";
 import { MdOutlinePendingActions, MdLibraryAdd, MdManageAccounts, MdHowToReg, MdDashboardCustomize } from "react-icons/md";
+import { useState, useEffect } from "react";
+import axios from "axios";
+
+
 
 const AdminSidebar = ({ setAdminTab }) => {
+
+   const [pendingCount, setPendingCount] = useState(0);
+   const [pendingCoursesCount, setPendingCoursesCount] = useState(0);
+
+
+  useEffect(() => {
+      const fetchPendingCount = async () => {
+        try {
+          const res = await axios.get("http://localhost:3000/enrollRequests/pending-count", {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access-token")}`,
+            },
+          });
+          setPendingCount(res.data.count);
+        } catch (err) {
+          console.error("Error fetching pending requests count:", err);
+        }
+      };
+
+      fetchPendingCount(); // initial call
+
+      const interval = setInterval(fetchPendingCount, 10000); // every 10s
+      return () => clearInterval(interval); // cleanup on unmount
+    }, []);
+
+    useEffect(() => {
+      const fetchCounts = async () => {
+        try {
+          // Pending enrollment requests
+          const enrollRes = await axios.get("http://localhost:3000/enrollRequests/pending-count", {
+            headers: { Authorization: `Bearer ${localStorage.getItem("access-token")}` },
+          });
+          setPendingCount(enrollRes.data.count);
+
+          // Pending courses
+          const courseRes = await axios.get("http://localhost:3000/videos/pending-count", {
+            headers: { Authorization: `Bearer ${localStorage.getItem("access-token")}` },
+          });
+          setPendingCoursesCount(courseRes.data.count);
+
+        } catch (err) {
+          console.error("Error fetching counts:", err);
+        }
+      };
+
+      fetchCounts();
+      const interval = setInterval(fetchCounts, 10000); // refresh every 10s
+      return () => clearInterval(interval);
+    }, []);
+
+
+
   return (
     <div className="bg-base-200 text-base-content shadow-lg w-64 fixed left-0 top-16 h-[calc(100vh-4rem)] p-4 overflow-y-auto z-40 border-r border-base-300">
       {/* Sidebar Title */}
@@ -33,12 +89,17 @@ const AdminSidebar = ({ setAdminTab }) => {
         </li>
 
         <li>
-          <button
-            onClick={() => setAdminTab("pending")}
-            className="flex items-center gap-3 w-full text-left hover:text-orange-500 transition"
-          >
-            <MdOutlinePendingActions className="text-xl" /> Approval Requests
-          </button>
+            <button
+              onClick={() => setAdminTab("pending")}
+              className="flex items-center gap-3 w-full text-left hover:text-orange-500 transition relative"
+            >
+              <MdOutlinePendingActions className="text-xl" /> Approval Requests
+              {pendingCoursesCount >= 0 && (
+                <span className="ml-auto bg-orange-500 text-white text-xs px-2 py-1 font-bold rounded-full">
+                  {pendingCoursesCount}
+                </span>
+              )}
+            </button>
         </li>
 
         <li>
@@ -70,9 +131,14 @@ const AdminSidebar = ({ setAdminTab }) => {
           <li>
           <button
             onClick={() => setAdminTab("enrollReq")}
-            className="flex items-center gap-3 w-full text-left hover:text-orange-500 transition"
+            className="flex items-center gap-3 w-full text-left hover:text-orange-500 transition relative"
           >
             <MdHowToReg className="text-xl" /> Enrollment Requests
+            {pendingCount > 0 && (
+              <span className="ml-auto bg-orange-500 text-white text-xs px-2 py-1 font-bold rounded-full">
+                {pendingCount}
+              </span>
+            )}
           </button>
         </li> 
           <li>
