@@ -1,5 +1,5 @@
 // src/CourseDetailsMain/CourseDetailsMain.jsx
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import AuthContext from "../Auth/AuthContext";
@@ -33,6 +33,11 @@ const CourseDetailsMain = () => {
   const [reviewRefreshTrigger, setReviewRefreshTrigger] = useState(0);
 
   const [activeTab, setActiveTab] = useState("reviews"); // "reviews" or "comments"
+
+  const videoRef = useRef(null);
+  const [showTick, setShowTick] = useState(false);
+
+  const [watchedLast10Videos, setWatchedLast10Videos] = useState(new Set());
 
   const token = localStorage.getItem("access-token");
   const isEnrolled = isApproved || isAdmin;
@@ -77,9 +82,17 @@ const CourseDetailsMain = () => {
         params: { userEmail: user.email, courseId: id },
         headers: { authorization: `Bearer ${token}` },
       })
-      .then((res) => setProgress(res.data.completedVideos || []))
-      .catch(() => setProgress([]));
-  }, [id, user?.email, token, selectedVideo]);
+      .then((res) => {
+        const completed = res.data.completedVideos || [];
+        setProgress(completed);
+        setWatchedLast10Videos(new Set(completed));
+      })
+      .catch(() => {
+        setProgress([]);
+        setWatchedLast10Videos(new Set());
+      });
+  }, [id, user?.email, token]);
+
 
   useEffect(() => {
     axios
@@ -121,6 +134,49 @@ const CourseDetailsMain = () => {
       .catch(console.error);
   }, [course?._id, user?.email, reviewRefreshTrigger]);
 
+   useEffect(() => {
+  const video = videoRef.current;
+  if (!video || !isEnrolled) return;
+
+  // Reset tick when a new video is selected
+  setShowTick(progress.includes(selectedVideo.url));
+
+  const handleTimeUpdate = async () => {
+    if (!video.duration) return;
+    if (video.currentTime >= video.duration - 10) {
+      if (!progress.includes(selectedVideo.url)) {
+        setShowTick(true);
+        setWatchedLast10Videos((prev) => new Set(prev).add(selectedVideo.url));
+
+        try {
+          await axios.post(
+            `https://bornobyte.vercel.app/progress`,
+            { courseId: id, userEmail: user.email, videoUrl: selectedVideo.url },
+            { headers: { authorization: `Bearer ${token}` } }
+          );
+        } catch (err) {
+          console.error("Failed to save video progress:", err);
+        }
+
+        // Update progress locally without triggering effect again
+        setProgress((prev) => {
+          if (!prev.includes(selectedVideo.url)) return [...prev, selectedVideo.url];
+          return prev;
+        });
+      }
+    }
+  };
+
+  video.addEventListener("timeupdate", handleTimeUpdate);
+
+  return () => {
+    video.removeEventListener("timeupdate", handleTimeUpdate);
+    // Do NOT reset showTick here; we want it to persist
+  };
+}, [selectedVideo, isEnrolled, id, token, user?.email, progress]);
+
+
+
   // eslint-disable-next-line no-unused-vars
   const extractYouTubeID = (url) => {
     try {
@@ -134,25 +190,24 @@ const CourseDetailsMain = () => {
   };
 
   const handleVideoClick = (vid) => {
-    if (!isEnrolled) {
-      document
-        .getElementById("enrollCard")
-        ?.scrollIntoView({ behavior: "smooth" });
-      return;
-    }
+      if (!isEnrolled) {
+        document.getElementById("enrollCard")?.scrollIntoView({ behavior: "smooth" });
+        return;
+      }
 
-    setSelectedVideo(vid);
+      setSelectedVideo(vid);
+      setShowTick(false);
 
-    axios
-      .post(
-        `https://bornobyte.vercel.app/progress`,
-        { courseId: id, userEmail: user.email, videoUrl: vid.url },
-        { headers: { authorization: `Bearer ${token}` } }
-      )
-      .then(() => {
-        setProgress((prev) => [...new Set([...prev, vid.url])]);
-      });
-  };
+      axios
+        .post(
+          `https://bornobyte.vercel.app/progress`,
+          { courseId: id, userEmail: user.email, videoUrl: vid.url },
+          { headers: { authorization: `Bearer ${token}` } }
+        )
+        .then(() => {
+          // setProgress((prev) => [...new Set([...prev, vid.url])]);
+        });
+    };
 
   const handleCommentSubmit = async () => {
     if (!newComment.trim()) return;
@@ -291,7 +346,7 @@ const CourseDetailsMain = () => {
           {/* LEFT MAIN */}
           <div className="md:col-span-2 space-y-6">
             {isEnrolled && selectedVideo && (
-              <div className="w-full aspect-video">
+              <div className="w-full aspect-video relative">
                 {/* <iframe
                   className="w-full h-full rounded-lg"
                   src={`https://www.youtube.com/embed/${extractYouTubeID(selectedVideo.url)}`}
@@ -301,12 +356,20 @@ const CourseDetailsMain = () => {
                 /> */}
                 {/* // dynamic video render for all lessons // */}
                 <video
+                  ref={videoRef}
+                  width={"100%"}
                   className="w-full h-full rounded-lg"
                   src={selectedVideo.url}
                   title={selectedVideo.title}
                   controls
+                  controlsList="nodownload"
                   preload="metadata"
                 />
+                {showTick && (
+                  <div className="absolute top-2 right-2 text-green-500 text-2xl font-bold select-none z-10">
+                    ✅
+                  </div>
+                )}
               </div>
             )}
 
@@ -666,7 +729,7 @@ const CourseDetailsMain = () => {
                             }`}
                             onClick={() => handleVideoClick(vid)}
                           >
-                            {progress.includes(vid.url) && (
+                            {watchedLast10Videos.has(vid.url) && (
                               <span className="text-green-500">✔</span>
                             )}
                             {vid.title}
