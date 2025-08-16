@@ -100,26 +100,29 @@ const AdminEnrollRequests = () => {
               return (
                 <React.Fragment key={courseTitle}>
                   {/* Group header row */}
-                  <tr className="bg-gray-100 dark:bg-gray-700">
+                  <tr className="bg-base-300 dark:bg-base-200">
                     <td colSpan="5" className="font-semibold text-lg py-3">
                       {courseTitle}{" "}
                       {pendingCount > 0 && (
-                        <span className="badge badge-error">{pendingCount}</span>
+                        <span className="badge rounded-full font-semibold badge-error ml-2">{pendingCount}</span>
                       )}
                     </td>
                   </tr>
+
                   {/* Requests for this course */}
                   {courseRequests.map((req, index) => (
-                    <tr key={req._id}>
+                    <tr key={req._id} className="hover">
                       <td>{index + 1}</td>
                       <td>
                         <div>
                           <p className="font-medium">{req.userName}</p>
-                          <p className="text-xs text-gray-500">{req.userEmail}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {req.userEmail}
+                          </p>
                         </div>
                       </td>
                       <td>
-                        <span className="text-sm font-mono text-gray-700 dark:text-gray-300">
+                        <span className="text-sm font-mono">
                           {req.transactionId || "N/A"}
                         </span>
                       </td>
@@ -132,8 +135,8 @@ const AdminEnrollRequests = () => {
                           {req.status}
                         </span>
                       </td>
-                      <td style={{ whiteSpace: "nowrap", minWidth: "150px", textAlign: "center" }}>
-                        <div style={{ display: "flex", gap: "8px" }}>
+                      <td className="text-center">
+                        <div className="flex justify-center gap-2">
                           {req.status !== "approved" && (
                             <button
                               onClick={() => handleApprove(req._id)}
@@ -152,6 +155,7 @@ const AdminEnrollRequests = () => {
                       </td>
                     </tr>
                   ))}
+
                 </React.Fragment>
               );
             })}

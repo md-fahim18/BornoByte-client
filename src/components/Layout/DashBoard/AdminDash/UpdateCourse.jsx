@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";  // make sure you have this
+import { FiArrowLeft } from "react-icons/fi"; // add at top
+
 
 const UpdateCourse = () => {
   const { id } = useParams();
@@ -9,6 +12,7 @@ const UpdateCourse = () => {
   const [thumbnailFile, setThumbnailFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const imgbbApiKey = import.meta.env.VITE_Image_hosting_key;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -146,7 +150,19 @@ const UpdateCourse = () => {
   if (!formData) return <p className="text-center mt-20">Loading course data...</p>;
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
+    <>
+
+  <div>
+      {/* Back button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="btn btn-outline btn-md border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white top-10 left-4 fixed z-50"
+      >
+        <FiArrowLeft className="text-lg" />  Back to Dashboard
+      </button>
+  </div>
+
+    <div className="p-6 pt-16 max-w-2xl mx-auto">
       <h2 className="text-2xl font-bold mb-4">Update Course</h2>
       <form onSubmit={handleSubmit} className="grid gap-4">
         <input
@@ -293,6 +309,8 @@ const UpdateCourse = () => {
         </button>
       </form>
     </div>
+
+    </>
   );
 };
 

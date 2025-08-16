@@ -544,7 +544,7 @@ const UpdateProfilePicture = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+    <div className="max-w-md mx-auto p-6 rounded-lg bg-base-100 text-base-content shadow-2xl">
       <h2 className="text-2xl font-bold mb-6 text-center">Update Profile</h2>
 
       {/* Profile Update Form */}
@@ -557,9 +557,9 @@ const UpdateProfilePicture = () => {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className={`w-full p-2 border rounded ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
+            className={`input input-bordered w-full ${errors.name ? 'input-error' : ''}`}
           />
-          {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+          {errors.name && <p className="text-error text-xs mt-1">{errors.name}</p>}
         </div>
 
         {/* Email */}
@@ -570,9 +570,9 @@ const UpdateProfilePicture = () => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className={`w-full p-2 border rounded ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+            className={`input input-bordered w-full ${errors.email ? 'input-error' : ''}`}
           />
-          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+          {errors.email && <p className="text-error text-xs mt-1">{errors.email}</p>}
         </div>
 
         {/* Profile Picture */}
@@ -582,9 +582,11 @@ const UpdateProfilePicture = () => {
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            className="w-full file-input file-input-bordered"
+            className="file-input file-input-bordered w-full"
           />
-          <p className="text-xs text-gray-500 mt-1">Leave empty to keep current photo</p>
+          <p className="text-sm text-base-content mt-1">
+            Leave empty to keep current photo
+          </p>
         </div>
 
         {/* Current Photo */}
@@ -613,7 +615,7 @@ const UpdateProfilePicture = () => {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition disabled:opacity-50"
+          className="btn btn-primary w-full"
           disabled={uploading}
         >
           {uploading ? "Updating Profile..." : "Update Profile"}
@@ -621,7 +623,7 @@ const UpdateProfilePicture = () => {
       </form>
 
       {/* Change Password */}
-      <div className="border-t pt-6">
+      <div className="border-t border-base-300 pt-6">
         <h3 className="text-xl font-semibold mb-4">Change Password</h3>
         <form onSubmit={handlePasswordSubmit} className="space-y-4">
           {/* Current Password */}
@@ -632,9 +634,11 @@ const UpdateProfilePicture = () => {
               name="currentPassword"
               value={passwordData.currentPassword}
               onChange={handlePasswordChange}
-              className={`w-full p-2 border rounded ${passwordErrors.currentPassword ? 'border-red-500' : 'border-gray-300'}`}
+              className={`input input-bordered w-full ${passwordErrors.currentPassword ? 'input-error' : ''}`}
             />
-            {passwordErrors.currentPassword && <p className="text-red-500 text-xs mt-1">{passwordErrors.currentPassword}</p>}
+            {passwordErrors.currentPassword && (
+              <p className="text-error text-xs mt-1">{passwordErrors.currentPassword}</p>
+            )}
           </div>
 
           {/* New Password */}
@@ -645,9 +649,11 @@ const UpdateProfilePicture = () => {
               name="newPassword"
               value={passwordData.newPassword}
               onChange={handlePasswordChange}
-              className={`w-full p-2 border rounded ${passwordErrors.newPassword ? 'border-red-500' : 'border-gray-300'}`}
+              className={`input input-bordered w-full ${passwordErrors.newPassword ? 'input-error' : ''}`}
             />
-            {passwordErrors.newPassword && <p className="text-red-500 text-xs mt-1">{passwordErrors.newPassword}</p>}
+            {passwordErrors.newPassword && (
+              <p className="text-error text-xs mt-1">{passwordErrors.newPassword}</p>
+            )}
           </div>
 
           {/* Confirm Password */}
@@ -658,14 +664,16 @@ const UpdateProfilePicture = () => {
               name="confirmPassword"
               value={passwordData.confirmPassword}
               onChange={handlePasswordChange}
-              className={`w-full p-2 border rounded ${passwordErrors.confirmPassword ? 'border-red-500' : 'border-gray-300'}`}
+              className={`input input-bordered w-full ${passwordErrors.confirmPassword ? 'input-error' : ''}`}
             />
-            {passwordErrors.confirmPassword && <p className="text-red-500 text-xs mt-1">{passwordErrors.confirmPassword}</p>}
+            {passwordErrors.confirmPassword && (
+              <p className="text-error text-xs mt-1">{passwordErrors.confirmPassword}</p>
+            )}
           </div>
 
           <button
             type="submit"
-            className="w-full bg-amber-600 text-white py-2 rounded hover:bg-amber-700 transition disabled:opacity-50"
+            className="btn bg-amber-500 dark:bg-amber-600 w-full"
             disabled={changingPassword}
           >
             {changingPassword ? "Changing Password..." : "Change Password"}
@@ -674,6 +682,7 @@ const UpdateProfilePicture = () => {
       </div>
     </div>
   );
+
 };
 
 export default UpdateProfilePicture;

@@ -2,10 +2,13 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import AuthContext from "../../../Auth/AuthContext";
+import { useNavigate } from "react-router-dom";  // make sure you have this
+import { FiArrowLeft } from "react-icons/fi"; // add at top
 
 const EnrollForm = () => {
   const { id: courseId } = useParams();
   const { user, loading } = useContext(AuthContext);
+  const navigate = useNavigate(); // useNavigate hook for navigation
 
   const [formData, setFormData] = useState({
     phone: "",
@@ -67,6 +70,7 @@ const EnrollForm = () => {
     }
   };
 
+  // eslint-disable-next-line no-unused-vars
   const handleSSLCSubmit = async () => {
     const token = localStorage.getItem("access-token");
 
@@ -97,82 +101,89 @@ const EnrollForm = () => {
     }
   };
 
-  return (
-    <div className="max-w-md mx-auto p-6 rounded-2xl bg-white dark:bg-gray-900 shadow-md mt-6 text-gray-900 dark:text-gray-100">
-      <h2 className="text-2xl font-bold mb-4 text-amber-500">Enroll in Course</h2>
+return (
 
-      <div className="flex justify-center gap-4 mb-6">
-        <button
-          onClick={() => setSelectedOption("manual")}
-          className={`btn ${selectedOption === "manual" ? "bg-amber-500 text-white" : "btn-outline border-amber-500 text-amber-500"}`}
-        >
-          Manual
-        </button>
-        <button
-          onClick={() => setSelectedOption("sslcommerz")}
-          className={`btn ${selectedOption === "sslcommerz" ? "bg-amber-500 text-white" : "btn-outline border-amber-500 text-amber-500"}`}
-        >
-          SSLCommerz
-        </button>
-      </div>
+  <>
+  <div>
 
-      {selectedOption === "manual" && (
-        <form onSubmit={handleManualSubmit} className="space-y-4">
-          <p>Email: {user.email}</p>
-          <input
-            type="text"
-            name="phone"
-            placeholder="Phone number"
-            value={formData.phone}
-            onChange={(e) =>
-              setFormData({ ...formData, phone: e.target.value })
-            }
-            className="input input-bordered w-full dark:bg-gray-800"
-            required
-          />
-          <input
-            type="text"
-            name="transactionId"
-            placeholder="Transaction ID"
-            value={formData.transactionId}
-            onChange={(e) =>
-              setFormData({ ...formData, transactionId: e.target.value })
-            }
-            className="input input-bordered w-full dark:bg-gray-800"
-            required
-          />
-          <button className="btn bg-amber-500 text-white w-full hover:bg-amber-600">
-            Submit Manual Request
-          </button>
-        </form>
-      )}
+         {/* Back button */}
+    <button
+      onClick={() => navigate(-1)}
+      className="btn btn-outline btn-md border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white top-10 left-4 fixed z-50"
+    >
+      <FiArrowLeft className="text-lg" />  Back to Course Details
+    </button>
+    
+  </div>
 
-      {selectedOption === "sslcommerz" && (
-        <div className="space-y-4">
-          <p>Email: {user.email}</p>
-          <input
-            type="text"
-            name="phone"
-            placeholder="Phone number"
-            value={formData.phone}
-            onChange={(e) =>
-              setFormData({ ...formData, phone: e.target.value })
-            }
-            className="input input-bordered w-full dark:bg-gray-800"
-            required
-          />
-          <button
-            onClick={handleSSLCSubmit}
-            className="btn bg-amber-500 text-white w-full hover:bg-amber-600"
-          >
-            Pay with SSLCommerz
-          </button>
-        </div>
-      )}
+  <div className="max-w-md mx-auto p-6 rounded-2xl bg-base-100 text-base-content shadow-2xl mt-6">
+    <h2 className="text-2xl font-bold mb-4 text-amber-500">Enroll in Course</h2>
 
-      {message && <p className="mt-4 text-center text-green-500">{message}</p>}
+
+
+    {/* Option Buttons */}
+    <div className="flex justify-center gap-4 mb-6">
+      <button
+        onClick={() => setSelectedOption("manual")}
+        className={`btn ${
+          selectedOption === "manual"
+            ? "bg-amber-500 text-white hover:bg-amber-600"
+            : "btn-outline border-amber-500 text-amber-500"
+        }`}
+      >
+        Manual
+      </button>
+
+      <button
+        onClick={() =>
+          setMessage("⚠️ SSLCommerz payment option is unavailable for now.")
+        }
+        className="btn btn-outline border-amber-500 text-amber-500"
+      >
+        SSLCommerz
+      </button>
     </div>
-  );
+
+    {/* Manual Payment Form */}
+    {selectedOption === "manual" && (
+      <form onSubmit={handleManualSubmit} className="space-y-4">
+        <p>Email: {user.email}</p>
+        <input
+          type="text"
+          name="phone"
+          placeholder="Phone number"
+          value={formData.phone}
+          onChange={(e) =>
+            setFormData({ ...formData, phone: e.target.value })
+          }
+          className="input input-bordered w-full"
+          required
+        />
+        <input
+          type="text"
+          name="transactionId"
+          placeholder="Transaction ID"
+          value={formData.transactionId}
+          onChange={(e) =>
+            setFormData({ ...formData, transactionId: e.target.value })
+          }
+          className="input input-bordered w-full"
+          required
+        />
+        <button className="btn bg-amber-500 text-white w-full hover:bg-amber-600">
+          Submit Manual Request
+        </button>
+      </form>
+    )}
+
+    {/* Message */}
+    {message && (
+      <p className="mt-4 text-center text-error">{message}</p>
+    )}
+  </div>
+  </>
+);
+
 };
 
 export default EnrollForm;
