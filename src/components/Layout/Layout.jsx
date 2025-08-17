@@ -1,9 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-import { Outlet } from "react-router";
+import { Outlet, useLocation, useNavigation } from "react-router";
 import Navbar from "../shared/Navbar";
 import Footer from "../shared/Footer";
+import Loader from "../shared/Loader";
 const MainLayout = () => {
+   const location = useLocation();
+  const [loading, setLoading] = useState(false);
+
+  
+  useEffect(() => {
+    setLoading(true);
+
+    // ছোট delay দিলে smooth effect হয়
+    const timer = setTimeout(() => setLoading(false), 400);
+
+    return () => clearTimeout(timer);
+  }, [location]);
   return (
     <div
       className="w-full px-4 mx-auto 
@@ -14,7 +27,7 @@ const MainLayout = () => {
                "
     >
       <Navbar />
-      <Outlet></Outlet>
+      {loading ? <Loader /> : <Outlet />}
      <Footer></Footer>
     </div>
   );
