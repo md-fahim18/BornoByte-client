@@ -1,6 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Fallback for important-text color switching */
+[data-theme="dark"] .text-important-text {
+  color: #f59e0b !important;
+}
+
+/* Fallback for primary color switching */
+[data-theme="dark"] .bg-primary {
+  background-color: #f59e0b !important;
+}
+
+/* Fallback for hover color switching */
+[data-theme="dark"] .hover\:bg-indigo-300:hover {
+  background-color: #ec8d00b0 !important; /* Amber-300 equivalent */
+}
+
 /* Default styles for all devices (mobile-first) */
 .container {
   padding-left: 1rem;
@@ -64,7 +80,6 @@ section {
   }
 }
 
-
 /* Hide scrollbars */
 .no-scrollbar {
   scrollbar-width: none;
@@ -73,7 +88,6 @@ section {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
-
 
 @font-face {
   font-family: 'Berlin Sans FB Demi';
