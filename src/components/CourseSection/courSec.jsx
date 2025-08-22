@@ -144,21 +144,21 @@ const CourseSection = () => {
 
   return (
     <div className="my-12 max-w-7xl mx-auto px-4">
-      <h2 className="text-3xl font-bold text-center text-base-content mb-6">
+      <h2 className="text-3xl font-bold text-center text-important-text dark:text-important-text-dark mb-6">
         Explore Our Courses by Category
       </h2>
 
       {/* Tabs */}
       <div className="flex justify-center mb-6">
-        <div className="inline-flex gap-4 bg-base-200 p-2 rounded-full">
+        <div className="inline-flex gap-2 bg-base-200 p-1 rounded-full overflow-x-auto no-scrollbar w-full sm:w-auto">
           {categories.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-6 py-2 rounded-full font-semibold transition ${
+              className={`flex-shrink-0 px-3 py-1 sm:px-6 sm:py-2 rounded-full font-semibold transition text-sm sm:text-base ${
                 activeTab === tab
-                  ? "bg-amber-500 text-white"
-                  : "text-base-content hover:bg-amber-100 dark:hover:bg-amber-300"
+                  ? "bg-primary text-base-100 dark:bg-primary dark:text-base-100"
+                  : "text-base-content hover:bg-indigo-300 dark:hover:bg-amber-300"
               }`}
             >
               {tab}
@@ -172,7 +172,7 @@ const CourseSection = () => {
         <button
           onClick={scrollLeft}
           className="hidden md:flex absolute -left-6 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow-md
-            bg-gray-400/60 dark:bg-gray-600/60 hover:bg-orange-300 transition-colors"
+            bg-gray-400/60 dark:bg-gray-600/60 hover:bg-indigo-300 dark:bg-indigo-300 transition-colors"
         >
           <MdArrowBackIosNew size={20} className="text-black dark:text-white" />
         </button>
@@ -180,7 +180,7 @@ const CourseSection = () => {
         <button
           onClick={scrollRight}
           className="hidden md:flex absolute -right-6 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full shadow-md
-            bg-gray-400/60 dark:bg-gray-600/60 hover:bg-orange-300 transition-colors"
+            bg-gray-400/60 dark:bg-gray-600/60 hover:bg-indigo-300 dark:bg-indigo-300 transition-colors"
         >
           <MdArrowForwardIos size={20} className="text-black dark:text-white" />
         </button>
@@ -249,14 +249,14 @@ const CourseSection = () => {
                   </p>
                   <p className="text-sm font-medium mt-1">
                     Teacher:{" "}
-                    <span className="text-orange-500">{course.instructor}</span>
+                    <span className="text-important-text dark:text-important-text-dark">{course.instructor}</span>
                   </p>
 
                   <div className="flex justify-between items-center mt-4">
                     <span className="flex items-center gap-1 text-sm">
                       <FiClock /> {course.duration}
                     </span>
-                    <span className="flex items-center gap-1 text-sm text-yellow-500">
+                    <span className="flex items-center gap-1 text-sm text-important-text dark:text-important-text-dark">
                       <FiStar />
                       {averageRating
                         ? `${averageRating} (${totalCount})`
