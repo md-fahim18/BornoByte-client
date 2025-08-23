@@ -163,16 +163,16 @@ const TeacherCard = () => {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <h2 className="text-3xl font-bold text-center text-base-content mb-6">
+    <div className="p-2 sm:p-6 max-w-7xl mx-auto">
+      <h2 className="text-2xl sm:text-3xl font-bold text-important-text dark:text-important-text-dark text-center text-base-content mb-2 sm:mb-6">
         Meet Our Teachers
       </h2>
 
       {currentUser?.role === "admin" && (
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-end mb-2 sm:mb-4">
           <button
             onClick={() => handleOpen()}
-            className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded flex items-center gap-2"
+            className="bg-primary dark:bg-primary hover:scale-105 text-white px-2 sm:px-4 py-1 sm:py-2 rounded flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
           >
             <FaPlus /> Add Teacher
           </button>
@@ -180,42 +180,42 @@ const TeacherCard = () => {
       )}
 
       {teachers.length === 0 ? (
-        <p className="text-center text-gray-500 dark:text-gray-400">
+        <p className="text-center text-gray-500 dark:text-gray-400 text-sm sm:text-base">
           No teachers found.
         </p>
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:md:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-6">
           {teachers.map((teacher) => (
             <div
               key={teacher._id}
-              className="bg-base-100 text-base-content shadow-xl rounded-3xl hover:drop-shadow-xl overflow-hidden relative group transition"
+              className="bg-base-200 text-base-content shadow-md sm:shadow-xl rounded-xl sm:rounded-3xl hover:drop-shadow-md sm:hover:drop-shadow-xl overflow-hidden relative group transition"
             >
-              <div className="p-6 flex flex-col items-center gap-2">
-                <div className="w-28 h-28 bg-amber-100 rounded-full overflow-hidden border-4 border-amber-500 shadow-lg">
+              <div className="p-2 sm:p-6 flex flex-col items-center gap-1 sm:gap-2">
+                <div className="w-20 sm:w-28 h-20 sm:h-28 bg-amber-100 rounded-full overflow-hidden border-2 sm:border-4 border-primary dark:border-primary shadow-md sm:shadow-lg">
                   <img
                     src={teacher.image}
                     alt={teacher.name}
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <h3 className="text-xl font-bold text-center">
+                <h3 className="text-lg sm:text-xl font-bold text-center">
                   {teacher.name}
                 </h3>
-                <p className="text-amber-600 dark:text-amber-500 font-semibold text-lg text-center">
+                <p className="text-important-text dark:text-important-text-dark font-semibold text-sm sm:text-lg text-center">
                   {teacher.designation}
                 </p>
 
                 {teacher.education && (
-                  <p className="text-sm text-left w-full mt-2 flex items-center gap-2">
-                    <AcademicCapIcon className="w-5 h-5 text-amber-500" />
+                  <p className="text-xs sm:text-sm text-left w-full mt-1 sm:mt-2 flex items-center gap-1 sm:gap-2">
+                    <AcademicCapIcon className="w-4 sm:w-5 h-4 sm:h-5 text-important-text dark:text-important-text-dark" />
                     <span className="font-semibold">Education:</span>{" "}
                     {teacher.education}
                   </p>
                 )}
 
                 {teacher.fieldOfInterest && (
-                  <p className="text-sm text-left w-full flex items-center gap-2">
-                    <SparklesIcon className="w-5 h-5 text-amber-500" />
+                  <p className="text-xs sm:text-sm text-left w-full flex items-center gap-1 sm:gap-2">
+                    <SparklesIcon className="w-4 sm:w-5 h-4 sm:h-5 text-important-text dark:text-important-text-dark" />
                     <span className="font-semibold">
                       Field of Interest:
                     </span>{" "}
@@ -225,24 +225,25 @@ const TeacherCard = () => {
 
                 <button
                   onClick={() => handleView(teacher)}
-                  className="mt-3 px-28 py-1 rounded border border-amber-600 text-amber-700 dark:text-amber-600 bg-white dark:bg-transparent hover:bg-amber-600 hover:text-white transition"
+                  className="mt-1 sm:mt-3 px-4 sm:px-28 py-1 rounded border btn btn-outline text-important-text dark:text-important-text-dark 
+                  font-semibold hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white text-xs sm:text-base"
                 >
                   View Profile
                 </button>
               </div>
 
               {currentUser?.role === "admin" && (
-                <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition">
+                <div className="absolute top-1 sm:top-2 right-1 sm:right-2 flex gap-1 sm:gap-2 opacity-0 group-hover:opacity-100 transition">
                   <button
                     onClick={() => handleOpen(teacher)}
-                    className="p-2 bg-amber-600 text-white rounded-full hover:bg-amber-700"
+                    className="p-1 sm:p-2 bg-primary dark:bg-primary text-white dark:text-white rounded-full hover:scale-105"
                     aria-label="Edit Teacher"
                   >
                     <FaEdit />
                   </button>
                   <button
                     onClick={() => handleDelete(teacher._id)}
-                    className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600"
+                    className="p-1 sm:p-2 bg-red-500 text-white rounded-full hover:scale-105"
                     aria-label="Delete Teacher"
                   >
                     <FaTrash />
@@ -256,20 +257,24 @@ const TeacherCard = () => {
 
       <Dialog open={isOpen} onClose={handleClose} className="relative z-50">
         <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-        <div className="fixed inset-0 flex items-center justify-center p-4 overflow-auto">
-          <Dialog.Panel className="bg-base-100 text-base-content rounded-xl p-4 w-full max-w-4xl max-h-[calc(100vh-10rem)]">
+        <div className="fixed inset-0 flex items-center justify-center p-2 sm:p-4 overflow-auto">
+          <Dialog.Panel className="bg-base-200 text-base-content rounded-lg sm:rounded-xl p-2 sm:p-4 w-full max-w-4xl min-h-0 overflow-y-auto relative">
+            <button
+              onClick={handleClose}
+              className="absolute top-2 right-4 text-important-text dark:text-important-text-dark text-2xl font-bold hover:scale-105"
+              aria-label="Close Modal"
+            >
+              ×
+            </button>
             {viewingTeacher ? (
               <>
-                {/* Title on top-left */}
-                <h2 className="text-2xl font-bold text-amber-600 mb-3">
+                <h2 className="text-xl sm:text-2xl font-bold text-important-text dark:text-important-text-dark mb-2 sm:mb-3">
                   Teacher Profile
                 </h2>
 
-                {/* Flex container: image + info */}
-                <div className="flex flex-col md:flex-row gap-5 h-[calc(100vh-20rem)]">
-                  {/* Left: Image */}
+                <div className="flex flex-col sm:md:flex-row gap-2 sm:gap-5">
                   <div className="flex-shrink-0">
-                    <div className="w-60 h-60 bg-white border-4 border-amber-400 shadow-lg rounded-full overflow-hidden">
+                    <div className="w-40 sm:w-60 h-40 sm:h-60 bg-white border-2 sm:border-4 border-primary dark:border-primary shadow-md sm:shadow-lg rounded-full overflow-hidden">
                       <img
                         src={viewingTeacher.image}
                         alt={viewingTeacher.name}
@@ -278,24 +283,23 @@ const TeacherCard = () => {
                     </div>
                   </div>
 
-                  {/* Right: Info */}
-                  <div className="flex-1 min-w-0 overflow-y-auto pr-0 max-w-[calc(100%-20rem)] text-left space-y-3">
-                    <h3 className="text-xl font-bold">{viewingTeacher.name}</h3>
-                    <p className="text-amber-500 text-lg font-semibold">
+                  <div className="flex-1 min-w-0 overflow-y-auto pr-0 max-w-full sm:max-w-[calc(100%-20rem)] text-left space-y-1 sm:space-y-3">
+                    <h3 className="text-lg sm:text-xl font-bold">{viewingTeacher.name}</h3>
+                    <p className="text-important-text dark:text-important-text-dark text-base sm:text-lg font-semibold">
                       {viewingTeacher.designation}
                     </p>
 
                     {viewingTeacher.education && (
-                      <div className="flex items-start gap-2">
-                        <AcademicCapIcon className="w-5 h-5 text-amber-500 mt-1" />
+                      <div className="flex items-start gap-1 sm:gap-2">
+                        <AcademicCapIcon className="w-4 sm:w-5 h-4 sm:h-5 text-important-text dark:text-important-text-dark mt-0.5 sm:mt-1" />
                         <p>
                           <strong>Education:</strong> {viewingTeacher.education}
                         </p>
                       </div>
                     )}
                     {viewingTeacher.experience && (
-                      <div className="flex items-start gap-2">
-                        <BriefcaseIcon className="w-5 h-5 text-amber-500 mt-1" />
+                      <div className="flex items-start gap-1 sm:gap-2">
+                        <BriefcaseIcon className="w-4 sm:w-5 h-4 sm:h-5 text-important-text dark:text-important-text-dark mt-0.5 sm:mt-1" />
                         <p>
                           <strong>Experience:</strong>{" "}
                           {viewingTeacher.experience}
@@ -303,8 +307,8 @@ const TeacherCard = () => {
                       </div>
                     )}
                     {viewingTeacher.fieldOfInterest && (
-                      <div className="flex items-start gap-2">
-                        <SparklesIcon className="w-5 h-5 text-amber-500 mt-1" />
+                      <div className="flex items-start gap-1 sm:gap-2">
+                        <SparklesIcon className="w-4 sm:w-5 h-4 sm:h-5 text-important-text dark:text-important-text-dark mt-0.5 sm:mt-1" />
                         <p>
                           <strong>Field of Interest:</strong>{" "}
                           {viewingTeacher.fieldOfInterest}
@@ -312,13 +316,13 @@ const TeacherCard = () => {
                       </div>
                     )}
                     {viewingTeacher.email && (
-                      <div className="flex items-start gap-2">
-                        <EnvelopeIcon className="w-5 h-5 text-amber-500 mt-1" />
+                      <div className="flex items-start gap-1 sm:gap-2">
+                        <EnvelopeIcon className="w-4 sm:w-5 h-4 sm:h-5 text-important-text dark:text-important-text-dark mt-0.5 sm:mt-1" />
                         <p>
                           <strong>Email:</strong>{" "}
                           <a
                             href={`mailto:${viewingTeacher.email}`}
-                            className="text-blue-700 no-underline"
+                            className="text-important-text dark:text-important-text-dark hover:underline no-underline"
                           >
                             {viewingTeacher.email}
                           </a>
@@ -326,15 +330,15 @@ const TeacherCard = () => {
                       </div>
                     )}
                     {viewingTeacher.linkedin && (
-                      <div className="flex items-start gap-2">
-                        <FaLinkedin className="w-5 h-5 text-amber-500 mt-1" />
+                      <div className="flex items-start gap-1 sm:gap-2">
+                        <FaLinkedin className="w-4 sm:w-5 h-4 sm:h-5 text-important-text dark:text-important-text-dark mt-0.5 sm:mt-1" />
                         <p>
                           <strong>LinkedIn:</strong>{" "}
                           <a
                             href={viewingTeacher.linkedin}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-blue-700 no-underline"
+                            className="text-important-text dark:text-important-text-dark hover:underline no-underline"
                           >
                             {viewingTeacher.linkedin}
                           </a>
@@ -344,10 +348,10 @@ const TeacherCard = () => {
                     {viewingTeacher.courses?.length > 0 && (
                       <div>
                         <p>
-                          <BookOpenIcon className="w-5 h-5 text-amber-500 inline-block mr-1" />
+                          <BookOpenIcon className="w-4 sm:w-5 h-4 sm:h-5 text-important-text dark:text-important-text-dark inline-block mr-1" />
                           <strong>Courses:</strong>
                         </p>
-                        <ul className="list-disc list-inside text-sm text-blue-700 dark:text-blue-600">
+                        <ul className="list-disc list-inside text-xs sm:text-sm text-important-text dark:text-important-text-dark hover:underline">
                           {viewingTeacher.courses.map((id) => {
                             const course = videos.find((v) => v._id === id);
                             return course ? (
@@ -367,7 +371,7 @@ const TeacherCard = () => {
                     {viewingTeacher.description && (
                       <div>
                         <p className="font-bold">
-                          <UserCircleIcon className="w-5 h-5 text-amber-500 inline-block mr-1" />
+                          <UserCircleIcon className="w-4 sm:w-5 h-4 sm:h-5 text-important-text dark:text-important-text-dark inline-block mr-1" />
                           Bio:
                         </p>
                         <p>{viewingTeacher.description}</p>
@@ -375,21 +379,10 @@ const TeacherCard = () => {
                     )}
                   </div>
                 </div>
-
-                {/* Close Button - Properly placed inside bottom right */}
-                <div className="flex justify-end mt-4">
-                  <button
-                    onClick={handleClose}
-                    className="bg-amber-500 text-white px-4 py-2 rounded hover:bg-amber-600"
-                  >
-                    Close
-                  </button>
-                </div>
               </>
             ) : (
               <>
-                {/* Add/Edit Form - untouched */}
-                <Dialog.Title className="text-lg font-bold">
+                <Dialog.Title className="text-lg sm:text-xl font-bold">
                   {editingTeacher ? "Edit Teacher" : "Add New Teacher"}
                 </Dialog.Title>
                 {[
@@ -409,7 +402,7 @@ const TeacherCard = () => {
                     placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
                     value={formData[field]}
                     onChange={handleChange}
-                    className="w-full border p-2 rounded bg-base-200 text-base-content"
+                    className="w-full border p-1 sm:p-2 rounded bg-base-200 text-base-content text-sm sm:text-base"
                   />
                 ))}
                 <textarea
@@ -417,34 +410,34 @@ const TeacherCard = () => {
                   placeholder="Short description"
                   value={formData.description}
                   onChange={handleChange}
-                  className="w-full border p-2 rounded bg-base-200 text-base-content"
+                  className="w-full border p-1 sm:p-2 rounded bg-base-200 text-base-content text-sm sm:text-base"
                 />
                 <div>
-                  <p className="font-medium mb-1">Select Courses:</p>
-                  <div className="max-h-40 overflow-y-auto border p-2 rounded bg-base-200">
+                  <p className="font-medium mb-1 text-sm sm:text-base">Select Courses:</p>
+                  <div className="max-h-20 sm:max-h-40 overflow-y-auto border p-1 sm:p-2 rounded bg-base-200">
                     {videos.map((video) => (
-                      <label key={video._id} className="block">
+                      <label key={video._id} className="block text-sm sm:text-base">
                         <input
                           type="checkbox"
                           checked={formData.courses.includes(video._id)}
                           onChange={() => handleCourseSelect(video._id)}
-                          className="mr-2"
+                          className="mr-1 sm:mr-2"
                         />
                         {video.title}
                       </label>
                     ))}
                   </div>
                 </div>
-                <div className="flex justify-end gap-3 mt-4">
+                <div className="flex justify-end gap-2 mt-2 sm:mt-4">
                   <button
                     onClick={handleClose}
-                    className="bg-base-300 px-4 py-2 rounded hover:bg-base-200"
+                    className="bg-base-300 px-2 sm:px-4 py-1 sm:py-2 rounded hover:bg-base-200 text-sm sm:text-base"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSave}
-                    className="bg-amber-600 px-4 py-2 text-white rounded hover:bg-amber-700"
+                    className="bg-primary dark:bg-primary px-2 sm:px-4 py-1 sm:py-2 text-white dark:text-white rounded hover:scale-105 text-sm sm:text-base"
                   >
                     Save
                   </button>

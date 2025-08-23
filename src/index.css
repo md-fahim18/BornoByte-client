@@ -1,6 +1,75 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Fallback for important-text color switching */
+[data-theme="dark"] .text-important-text {
+  color: #ffbf00 !important;
+}
+
+/* Fallback for primary color switching */
+[data-theme="dark"] .bg-primary {
+  background-color: #ffbf00 !important;
+}
+
+/* Fallback for hover color switching */
+[data-theme="dark"] .hover\:bg-indigo-300:hover {
+  background-color: #ffae00b3 !important; /* Amber-300 equivalent */
+}
+
+/* Fallback for hover background color switching */
+[data-theme="dark"] .hover\:bg-primary:hover {
+  background-color: #ffbf00 !important; /* Amber-300 equivalent */
+}
+
+/* Fallback for text hover switching */
+[data-theme="dark"] .hover\:text-primary:hover {
+  color: #ffbf00 !important; /* Amber-300 equivalent */
+}
+
+/* Fallback for progress bar color switching */
+[data-theme="dark"] .progress-primary {
+  color: #ffbf00 !important; /* Amber-300 equivalent */
+}
+
+/* Fallback for hover text color switching */
+[data-theme="dark"] .hover\:text-white:hover {
+  color: #000000 !important; /* Black color */
+}
+
+/* Fallback for button text color switching */
+[data-theme="dark"] .text-white {
+  color: #000000 !important; /* Black color */
+}
+
+/* Fallback for border color switching */
+[data-theme="dark"] .border-primary {
+  border-color: #ffbf00 !important; /* Darker gray for dark mode */
+}
+
+/* Adjust gradient for dark mode */
+[data-theme="dark"] .bg-gradient-to-r.from-indigo-700.to-blue-700 {
+  background: linear-gradient(to right, #f59e0b, #f97316); /* amber-500 to orange-500 */
+}
+
+[data-theme="dark"] .bg-gradient-to-r.from-blue-700.to-indigo-700 {
+  background: linear-gradient(to right, #f97316, #f59e0b); /* orange-500 to amber-500 for hover */
+}
+
+
+
+
+
+
+
+[data-theme] .text-secondary {
+  color: #14b8a6 !important;
+}
+[data-theme] .bg-secondary {
+  background-color: #14b8a6 !important;
+}
+
+
 /* Default styles for all devices (mobile-first) */
 .container {
   padding-left: 1rem;
@@ -64,7 +133,6 @@ section {
   }
 }
 
-
 /* Hide scrollbars */
 .no-scrollbar {
   scrollbar-width: none;
@@ -73,7 +141,6 @@ section {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
-
 
 @font-face {
   font-family: 'Berlin Sans FB Demi';

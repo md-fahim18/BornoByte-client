@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 const ChooseUs = () => {
   return (
     <section className="bg-base-100 py-16 px-4 max-w-[1280px] mx-auto transition-colors duration-300">
-      <h2 className="text-4xl font-bold text-center text-base-content mb-12 leading-tight">
+      <h2 className="text-4xl font-bold text-center text-important-text dark:text-important-text-dark text-base-content mb-12 leading-tight">
         Why We're the Best Choice
       </h2>
 
@@ -66,9 +66,10 @@ const ChooseUs = () => {
       {/* CTA Button */}
       <div className="mt-12 text-center">
         <Link to="/courses">
-        <button className="px-8 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-full text-lg font-medium transition">
-          Explore All Courses
-        </button>
+          <button className="px-8 py-3 bg-gradient-to-r from-indigo-700 to-blue-700 dark:from-indigo-700 dark:to-blue-700 hover:scale-105
+           hover:to-indigo-700 hover:from-blue-700 dark:hover:to-indigo-700 dark:hover:from-blue-700 text-white rounded-full text-lg font-medium transition">
+            Explore All Courses
+          </button>
         </Link>
       </div>
     </section>

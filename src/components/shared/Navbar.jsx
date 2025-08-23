@@ -66,12 +66,12 @@ const Navbar = () => {
 
   const links = (
     <>
-      <li><Link to="/" className="mx-2">Home</Link></li>
-      <li><Link to="/courses" className="mx-2">Courses</Link></li>
-      <li><Link to="/about" className="mx-2">About us</Link></li>
-      <li><Link to="/contactUs" className="mx-2">Contact Us</Link></li>
-      {user && <li><Link to="/dashboard" className="mx-2">Dashboard</Link></li>}
-      <li><ThemeSwitcher /></li>
+      <li><Link to="/" className="mx-2 font-semibold text-base text-important-text dark:text-important-text-dark">Home</Link></li>
+      <li><Link to="/courses" className="mx-2 font-semibold text-base text-important-text dark:text-important-text-dark">Courses</Link></li>
+      <li><Link to="/about" className="mx-2 font-semibold text-base text-important-text dark:text-important-text-dark">About us</Link></li>
+      <li><Link to="/contactUs" className="mx-2 font-semibold text-base text-important-text dark:text-important-text-dark">Contact Us</Link></li>
+      {user && <li><Link to="/dashboard" className="mx-2 font-semibold text-base text-important-text dark:text-important-text-dark">Dashboard</Link></li>}
+      <li><ThemeSwitcher className="text-important-text dark:text-important-text-dark" /></li>
     </>
   );
 
@@ -80,7 +80,7 @@ const Navbar = () => {
       <div className="navbar-start">
         {/* Mobile Dropdown */}
         <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+          <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden text-base-content">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none"
               viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
@@ -96,7 +96,7 @@ const Navbar = () => {
         {/* Logo + Name */}
         <div className="flex items-center gap-3">
           <img src="https://i.imgur.com/UyHx6HZ.png" alt="BornoByte Logo" className="w-10 h-10 sm:w-12 sm:h-12" />
-          <span className="text-2xl sm:text-3xl font-berlin text-amber-500">BornoByte</span>
+          <span className="text-2xl sm:text-3xl font-berlin text-important-text dark:text-important-text-dark">BornoByte</span>
         </div>
       </div>
 
@@ -107,7 +107,7 @@ const Navbar = () => {
       <div className="navbar-end gap-2">
         {user && (
           <div className="dropdown dropdown-end">
-            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle relative">
+            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle relative text-base-content ">
               <FaBell className="text-xl" />
               {unreadCount > 0 && (
                 <span className="badge badge-sm bg-red-500 text-white absolute -top-1 -right-1">
@@ -116,14 +116,14 @@ const Navbar = () => {
               )}
             </div>
             <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] shadow bg-base-100 rounded-box w-80 max-h-96 overflow-auto">
-              <li className="font-semibold px-3 py-2">Notifications</li>
+              <li className="font-semibold px-3 py-2 text-important-text dark:text-important-text-dark">Notifications</li>
               {notifications.length === 0 ? (
-                <li className="text-center text-sm p-2 text-gray-400">No notifications</li>
+                <li className="text-center text-sm p-2 text-base-content">No notifications</li>
               ) : (
                 notifications.map((notification, idx) => (
                   <li
                     key={notification._id || idx}
-                    className={notification.read ? "text-sm px-2 py-1" : "text-sm px-2 py-1 font-bold"}
+                    className={notification.read ? "text-sm px-2 py-1 text-base-content" : "text-sm px-2 py-1 font-bold text-important-text dark:text-important-text-dark"}
                   >
                     <Link
                       to={notification.link || "#"}
@@ -133,7 +133,7 @@ const Navbar = () => {
                     >
                       {notification.message}
                       <br />
-                      <small className="text-gray-400">{new Date(notification.timestamp).toLocaleString()}</small>
+                      <small className="text-base-content">{new Date(notification.timestamp).toLocaleString()}</small>
                     </Link>
                   </li>
                 ))
@@ -144,7 +144,7 @@ const Navbar = () => {
 
         {user ? (
           <div className="dropdown dropdown-end">
-            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
+            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar text-base-content">
               <div className="w-10 h-10 rounded-full overflow-hidden border">
                 <img
                   alt="User Profile"
@@ -154,30 +154,28 @@ const Navbar = () => {
               </div>
             </div>
             <ul tabIndex={0} className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-              <li className="text-sm font-bold">{user.displayName || user.email}</li>
-
-              {isAdmin && <li><Link to="/dashboard">Settings</Link></li>}
+              <li className="text-sm font-bold text-important-text dark:text-important-text-dark">{user.displayName || user.email}</li>
+              {isAdmin && <li><Link to="/dashboard" className="text-base-content">Settings</Link></li>}
               {isTeacher && (
                 <>
-                  <li><Link to="/dashboard">Inbox</Link></li>
-                  <li><Link to="/dashboard">Settings</Link></li>
+                  <li><Link to="/dashboard" className="text-base-content">Inbox</Link></li>
+                  <li><Link to="/dashboard" className="text-base-content">Settings</Link></li>
                 </>
               )}
               {!isAdmin && !isTeacher && (
                 <>
-                  <li><Link to="/dashboard">Inbox</Link></li>
-                  <li><Link to="/dashboard">Settings</Link></li>
-                  <li><Link to="/dashboard">Achievement</Link></li>
+                  <li><Link to="/dashboard" className="text-base-content">Inbox</Link></li>
+                  <li><Link to="/dashboard" className="text-base-content">Settings</Link></li>
+                  <li><Link to="/dashboard" className="text-base-content">Achievement</Link></li>
                 </>
               )}
-
-              <li><button onClick={handleLogOut}>Logout</button></li>
+              <li><button onClick={handleLogOut} className="text-base-content">Logout</button></li>
             </ul>
           </div>
         ) : (
           <>
-            <Link to="/login" className="btn">Login</Link>
-            <Link to="/register" className="btn">Register</Link>
+            <Link to="/login" className="btn btn-primary">Login</Link>
+            <Link to="/register" className="btn btn-primary">Register</Link>
           </>
         )}
       </div>
