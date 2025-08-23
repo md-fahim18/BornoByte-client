@@ -146,7 +146,7 @@ const AllCourses = () => {
   return (
     <div className="p-6 min-h-screen bg-base-100 text-base-content">
       {/* Title and Filters */}
-      <h2 className="text-3xl font-bold mb-6 text-center text-orange-500">All Courses</h2>
+      <h2 className="text-3xl font-bold mb-6 text-center text-important-text dark:text-important-text-dark">All Courses</h2>
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-2 w-full md:w-1/2">
           <FiSearch className="text-lg" />
@@ -222,14 +222,14 @@ const AllCourses = () => {
                 <h2 className="card-title text-lg">{course.title}</h2>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{course.category}</p>
                 <p className="text-sm font-medium mt-1">
-                  Teacher: <span className="text-orange-500">{course.instructor}</span>
+                  Teacher: <span className="text-important-text dark:text-important-text-dark">{course.instructor}</span>
                 </p>
 
                 <div className="flex justify-between items-center mt-4">
                   <span className="flex items-center gap-1 text-sm">
                     <FiClock /> {course.duration}
                   </span>
-                  <span className="flex items-center gap-1 text-sm text-yellow-500">
+                  <span className="flex items-center gap-1 text-sm text-important-text dark:text-important-text-dark">
                     <FiStar />
                     {averageRating ? `${averageRating} (${totalCount})` : "No Rating"}
                   </span>
@@ -248,7 +248,9 @@ const AllCourses = () => {
                         to={`/courses/${course._id}`}
                         target="_blank"
                         className={`btn btn-sm flex-1 ${
-                          isEnrolled ? "btn-primary" : "btn-outline btn-amber-600"
+                          isEnrolled ? "btn btn-md font-semibold hover:shadow-2xl bg-primary dark:bg-primary text-white dark:text-white" 
+                          : 
+                          "btn-outline btn-md text-important-text dark:text-important-text-dark hover:bg-primary dark:bg-primary hover:text-white dark:hover:text-white"
                         }`}
                       >
                         {isEnrolled ? "Go to Course" : "View Details"}
