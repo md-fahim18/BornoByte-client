@@ -15,7 +15,7 @@ export default {
       colors: {
         'important-text': {
           DEFAULT: '#4f46e5', // Indigo-600 in light mode
-          dark: '#f59e0b', // Amber-500 in dark mode
+          dark: '#ffa600', // Amber-500 in dark mode
         },
       },
     },
@@ -38,7 +38,7 @@ export default {
           "--rounded-btn": "0.2rem",
         },
         dark: {
-          primary: "#f59e0b", // Amber-500 for buttons, etc.
+          primary: "#ffa600", // Amber-500 for buttons, etc.
           "base-content": "#ffffff", // White for normal text
           secondary: "#14b8a6",
           accent: "#4f46e5",

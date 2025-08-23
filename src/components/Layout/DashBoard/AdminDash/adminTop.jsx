@@ -15,7 +15,7 @@ const AdminTopbar = () => {
       </div>
 
       {/* Right Icon Buttons */}
-      <div className="ml-auto flex gap-4 items-center">
+      {/* <div className="ml-auto flex gap-4 items-center">
         <span className="scale-50">
           <ThemeSwitcher />
         </span>
@@ -25,7 +25,7 @@ const AdminTopbar = () => {
         <button className="btn btn-ghost btn-circle hover:text-orange-500 transition">
           <FiUser className="text-xl" />
         </button> */}
-      </div>
+      {/* </div> */}
     </div>
   );
 };
