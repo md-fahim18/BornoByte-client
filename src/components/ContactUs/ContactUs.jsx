@@ -21,7 +21,7 @@ const ContactUs = () => {
           {/* optional: redirect after submit */}
           {/* <input type="hidden" name="_next" value="https://yourwebsite.com/thank-you" /> */}
 
-          <h2 className="text-3xl font-bold text-center text-primary">
+          <h2 className="text-3xl font-bold text-center text-important-text dark:text-important-text-dark">
             Contact Us
           </h2>
 
@@ -55,7 +55,7 @@ const ContactUs = () => {
             ></textarea>
           </div>
 
-          <button type="submit" className="btn btn-primary w-full">
+          <button type="submit" className="btn bg-primary dark:bg-primary text-white dark:text-white w-full hover:scale-105 hover:shadow-2xl">
             Send Message
           </button>
         </form>

@@ -4,32 +4,32 @@
 
 /* Fallback for important-text color switching */
 [data-theme="dark"] .text-important-text {
-  color: #ffbf00 !important;
+  color: #ffa600 !important;
 }
 
 /* Fallback for primary color switching */
 [data-theme="dark"] .bg-primary {
-  background-color: #ffbf00 !important;
+  background-color: #ffa600 !important;
 }
 
 /* Fallback for hover color switching */
 [data-theme="dark"] .hover\:bg-indigo-300:hover {
-  background-color: #ffae00b3 !important; /* Amber-300 equivalent */
+  background-color: #ffbf004c !important; /* Amber-300 equivalent */
 }
 
 /* Fallback for hover background color switching */
 [data-theme="dark"] .hover\:bg-primary:hover {
-  background-color: #ffbf00 !important; /* Amber-300 equivalent */
+  background-color: #ffa600 !important; /* Amber-300 equivalent */
 }
 
 /* Fallback for text hover switching */
 [data-theme="dark"] .hover\:text-primary:hover {
-  color: #ffbf00 !important; /* Amber-300 equivalent */
+  color: #ffa600 !important; /* Amber-300 equivalent */
 }
 
 /* Fallback for progress bar color switching */
 [data-theme="dark"] .progress-primary {
-  color: #ffbf00 !important; /* Amber-300 equivalent */
+  color: #ffa600 !important; /* Amber-300 equivalent */
 }
 
 /* Fallback for hover text color switching */
@@ -44,7 +44,7 @@
 
 /* Fallback for border color switching */
 [data-theme="dark"] .border-primary {
-  border-color: #ffbf00 !important; /* Darker gray for dark mode */
+  border-color: #ffa600 !important; /* Darker gray for dark mode */
 }
 
 /* Adjust gradient for dark mode */
