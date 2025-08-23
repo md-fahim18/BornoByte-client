@@ -139,11 +139,11 @@ const Blog = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-8 bg-base-100 text-base-content">
-      <h1 className="text-3xl font-bold text-amber-500 mb-6">bornoByte Blog</h1>
+      <h1 className="text-3xl font-bold text-important-text dark:text-important-text-dark mb-6">bornoByte Blog</h1>
       {isAdmin && (
         <button
           onClick={openAddModal}
-          className="btn bg-amber-500 hover:bg-amber-600 text-white mb-6 flex items-center gap-2"
+          className="btn bg-primary dark:bg-primary hover:scale-105 text-white dark:text-white mb-6 flex items-center gap-2"
         >
           <FaPlus /> Add Blog
         </button>
@@ -169,7 +169,7 @@ const Blog = () => {
             </p>
             <div className="flex justify-between items-center mt-4">
               <button
-                className="btn btn-sm btn-info"
+                className="btn btn-sm bg-cyan-600 hover:scale-105 text-white"
                 onClick={() => openViewModal(blog)}
               >
                 See More
@@ -178,14 +178,14 @@ const Blog = () => {
               {isAdmin && (
                 <div className="flex gap-2">
                   <button
-                    className="btn btn-sm btn-warning"
+                    className="btn btn-sm bg-primary dark:bg-primary hover:scale-105 text-white dark:text-white"
                     onClick={() => openEditModal(blog)}
                     aria-label="Edit Blog"
                   >
                     <FaEdit />
                   </button>
                   <button
-                    className="btn btn-sm btn-error"
+                    className="btn btn-sm bg-red-600 hover:scale-105 text-white dark:text-white"
                     onClick={() => handleDelete(blog._id)}
                     aria-label="Delete Blog"
                   >
@@ -204,7 +204,7 @@ const Blog = () => {
           <div className="bg-base-100 rounded-lg max-w-3xl w-full max-h-[90vh] overflow-auto p-6 relative">
             <button
               onClick={closeModal}
-              className="absolute top-3 right-3 text-xl font-bold btn btn-ghost"
+              className="absolute top-3 right-3 text-xl font-bold btn btn-ghost text-important-text dark:text-important-text-dark"
               aria-label="Close Modal"
             >
               ✕

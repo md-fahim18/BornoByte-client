@@ -3,7 +3,7 @@ import React from "react";
 const GetStarted = () => {
   return (
     <div className="bg-base-100 text-base-content p-8 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold text-orange-500 mb-6">How to Get Started</h1>
+      <h1 className="text-3xl font-bold text-important-text dark:text-important-text-dark mb-6">How to Get Started</h1>
       <p className="text-lg mb-4">
         Welcome to bornoByte! Getting started is easy. Here's how:
       </p>
