@@ -27,7 +27,7 @@ export default {
         light: {
           primary: "#4f46e5", // Indigo-600 for buttons, etc.
           "base-content": "#000000", // Black for normal text
-          secondary: "#6b7280",
+          secondary: "#14b8a6",
           accent: "#f59e0b",
           neutral: "#374151",
           "base-100": "#ffffff",
@@ -40,7 +40,7 @@ export default {
         dark: {
           primary: "#f59e0b", // Amber-500 for buttons, etc.
           "base-content": "#ffffff", // White for normal text
-          secondary: "#9ca3af",
+          secondary: "#14b8a6",
           accent: "#4f46e5",
           neutral: "#1f2937",
           "base-100": "#1f2937",

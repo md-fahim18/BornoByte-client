@@ -130,14 +130,14 @@ const HomepageCourses = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      <h2 className="text-3xl font-bold mb-6 text-base-content">Our Courses</h2>
+      <h2 className="text-3xl font-bold mb-6 text-important-text dark:text-important-text-dark">Our Courses</h2>
 
       {/* Courses Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {courses.map((course) => (
           <div
             key={course._id}
-            className="card bg-base-100 w-96 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-base-300 rounded-lg"
+            className="card bg-base-200 w-96 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-base-300 rounded-lg"
           >
             <figure>
               <img
@@ -163,7 +163,8 @@ const HomepageCourses = () => {
               <div className="card-actions justify-end mt-3">
                 <button
                   onClick={() => setSelectedCourse(course)}
-                  className="btn border-orange-700 text-orange-500 hover:bg-amber-500 hover:text-white btn-md dark:border-amber-600 dark:text-amber-600 btn-outline btn-primary"
+                  className="btn btn-outline btn-md font-semibold text-important-text dark:text-important-text-dark
+                   hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white"
                 >
                   View Details
                 </button>
@@ -243,7 +244,7 @@ const HomepageCourses = () => {
                     <li key={index}>
                       <Link
                         to={`/courses/${module._id}`}
-                        className="text-primary hover:underline"
+                        className="text-important-text dark:text-important-text-dark hover:underline"
                       >
                         {module.title}
                       </Link>
@@ -259,7 +260,7 @@ const HomepageCourses = () => {
             <div className="modal-action mt-6">
               <form method="dialog">
                 <button
-                  className="btn btn-sm btn-primary"
+                  className="btn btn-md bg-primary text-white hover:bg-primary dark:bg-primary dark:text-white font-semibold"
                   onClick={() => setSelectedCourse(null)}
                 >
                   Close

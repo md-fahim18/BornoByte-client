@@ -15,7 +15,7 @@ const FeaturedCourses = () => {
   }, []);
 
   return (
-    <section className="mt-10 px-4 md:px-8">
+    <section className=" my-2 px-4 md:px-8">
       <h2 className="text-3xl font-bold text-center text-important-text dark:text-important-text-dark">
         🌟 Featured Courses
       </h2>
@@ -23,9 +23,9 @@ const FeaturedCourses = () => {
       {featuredCourses.length === 0 ? (
         <p className="text-center text-gray-500">No featured courses available.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {featuredCourses.map((course) => (
-            <div key={course._id} className="card bg-base-200 shadow-md hover:shadow-lg transition duration-300 rounded-xl">
+            <div key={course._id} className="card bg-base-200 shadow-md hover:shadow-2xl transition duration-300 rounded-xl">
               <figure>
                 <img
                   src={course.thumbnail}
@@ -39,7 +39,8 @@ const FeaturedCourses = () => {
                 <p className="text-sm font-medium mt-1">
                   By: <span className="text-important-text dark:text-important-text-dark">{course.instructor}</span>
                 </p>
-                <Link to={`/courses/${course._id}`} className="btn btn-outline btn-sm mt-3">
+                <Link to={`/courses/${course._id}`} className="btn btn-outline btn-md mt-3 font-semibold text-important-text dark:text-important-text-dark
+                 hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white">
                   View Details
                 </Link>
               </div>
