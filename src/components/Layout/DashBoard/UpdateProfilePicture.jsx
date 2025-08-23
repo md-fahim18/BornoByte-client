@@ -2,12 +2,22 @@
 
 
 // import React, { useContext, useState, useEffect } from 'react';
-// import { updateProfile, updateEmail, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from "firebase/auth";
+// import {
+//   updateProfile,
+//   updateEmail,
+//   reauthenticateWithCredential,
+//   EmailAuthProvider,
+//   updatePassword,
+//   getAuth
+// } from "firebase/auth";
 // import useAxiosSecure from '../../Auth/useAxiosSecure';
 // import AuthContext from '../../Auth/AuthContext';
 
 // const UpdateProfilePicture = () => {
-//   const { user } = useContext(AuthContext);
+//   const { user: appUser } = useContext(AuthContext); // your app's user info
+//   const auth = getAuth();
+//   const firebaseUser = auth.currentUser; // actual Firebase user object
+
 //   const [axiosSecure] = useAxiosSecure();
 //   const [imageFile, setImageFile] = useState(null);
 //   const [formData, setFormData] = useState({
@@ -24,40 +34,28 @@
 //   const [errors, setErrors] = useState({});
 //   const [passwordErrors, setPasswordErrors] = useState({});
 
-//   // Initialize form with user data
+//   // Initialize form with appUser data
 //   useEffect(() => {
-//     if (user) {
+//     if (appUser) {
 //       setFormData({
-//         name: user.displayName || '',
-//         email: user.email || '',
+//         name: appUser.displayName || '',
+//         email: appUser.email || '',
 //       });
 //     }
-//   }, [user]);
+//   }, [appUser]);
 
 //   const imgbbApiKey = import.meta.env.VITE_Image_hosting_key;
 
 //   const handleChange = (e) => {
 //     const { name, value } = e.target;
-//     setFormData(prev => ({
-//       ...prev,
-//       [name]: value
-//     }));
-    
-//     if (errors[name]) {
-//       setErrors(prev => ({ ...prev, [name]: '' }));
-//     }
+//     setFormData(prev => ({ ...prev, [name]: value }));
+//     if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
 //   };
 
 //   const handlePasswordChange = (e) => {
 //     const { name, value } = e.target;
-//     setPasswordData(prev => ({
-//       ...prev,
-//       [name]: value
-//     }));
-    
-//     if (passwordErrors[name]) {
-//       setPasswordErrors(prev => ({ ...prev, [name]: '' }));
-//     }
+//     setPasswordData(prev => ({ ...prev, [name]: value }));
+//     if (passwordErrors[name]) setPasswordErrors(prev => ({ ...prev, [name]: '' }));
 //   };
 
 //   const handleImageChange = (e) => {
@@ -72,28 +70,23 @@
 //     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
 //       newErrors.email = 'Invalid email format';
 //     }
-    
 //     setErrors(newErrors);
 //     return Object.keys(newErrors).length === 0;
 //   };
 
 //   const validatePasswordForm = () => {
 //     const newErrors = {};
-    
 //     if (!passwordData.currentPassword) {
 //       newErrors.currentPassword = 'Current password is required';
 //     }
-    
 //     if (!passwordData.newPassword) {
 //       newErrors.newPassword = 'New password is required';
 //     } else if (passwordData.newPassword.length < 6) {
 //       newErrors.newPassword = 'Password must be at least 6 characters';
 //     }
-    
 //     if (passwordData.newPassword !== passwordData.confirmPassword) {
 //       newErrors.confirmPassword = 'Passwords do not match';
 //     }
-    
 //     setPasswordErrors(newErrors);
 //     return Object.keys(newErrors).length === 0;
 //   };
@@ -101,63 +94,61 @@
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
 //     if (!validateForm()) return;
-//     if (!user) return;
-    
+//     if (!firebaseUser) return;
+
 //     setUploading(true);
 
 //     try {
-//       const oldEmail = user.email; // Store original email
-//       let photoURL = user.photoURL;
-      
-//       // 1. Upload new image if provided
+//       const oldEmail = firebaseUser.email;
+//       let photoURL = firebaseUser.photoURL;
+
+//       // Upload image if provided
 //       if (imageFile) {
-//         const formData = new FormData();
-//         formData.append("image", imageFile);
+//         const imgForm = new FormData();
+//         imgForm.append("image", imageFile);
 
 //         const res = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbApiKey}`, {
 //           method: 'POST',
-//           body: formData,
+//           body: imgForm,
 //         });
 //         const data = await res.json();
 //         photoURL = data.data.url;
 //       }
 
-//       // 2. Prepare Firebase updates
+//       // Prepare updates
 //       const updates = {};
-//       if (formData.name !== user.displayName) updates.displayName = formData.name;
-//       if (photoURL !== user.photoURL) updates.photoURL = photoURL;
-      
-//       // 3. Update Firebase profile
+//       if (formData.name !== firebaseUser.displayName) updates.displayName = formData.name;
+//       if (photoURL !== firebaseUser.photoURL) updates.photoURL = photoURL;
+
+//       // Update Firebase profile
 //       if (Object.keys(updates).length > 0) {
-//         await updateProfile(user, updates);
+//         await updateProfile(firebaseUser, updates);
 //       }
 
-//       // 4. Update email if changed
-//       if (formData.email !== user.email) {
-//         await updateEmail(user, formData.email);
+//       // Update email if changed
+//       if (formData.email !== firebaseUser.email) {
+//         await updateEmail(firebaseUser, formData.email);
 //       }
 
-//       // 5. Update MongoDB - use original email for lookup
+//       // Update MongoDB
 //       await axiosSecure.patch(`/users/${oldEmail}`, {
 //         name: formData.name,
 //         email: formData.email,
 //         photo: photoURL
 //       });
 
-//       // 6. Reload user using Firebase method
-//       await user.reload();
-      
+//       // Reload Firebase user
+//       await firebaseUser.reload();
+
 //       alert("Profile updated successfully!");
 //     } catch (error) {
 //       console.error("Profile update failed:", error);
 //       let errorMsg = error.message;
-      
 //       if (error.code === 'auth/requires-recent-login') {
 //         errorMsg = 'Security sensitive operation - please reauthenticate';
 //       } else if (error.code === 'auth/email-already-in-use') {
 //         errorMsg = 'Email already in use by another account';
 //       }
-      
 //       alert(`Profile update failed: ${errorMsg}`);
 //     } finally {
 //       setUploading(false);
@@ -167,34 +158,28 @@
 //   const handlePasswordSubmit = async (e) => {
 //     e.preventDefault();
 //     if (!validatePasswordForm()) return;
-//     if (!user) return;
-    
+//     if (!firebaseUser) return;
+
 //     setChangingPassword(true);
 
 //     try {
-//       // Reauthenticate user
 //       const credential = EmailAuthProvider.credential(
-//         user.email, 
+//         firebaseUser.email,
 //         passwordData.currentPassword
 //       );
-      
-//       await reauthenticateWithCredential(user, credential);
-      
-//       // Update password
-//       await updatePassword(user, passwordData.newPassword);
-      
-//       // Clear password form
+//       await reauthenticateWithCredential(firebaseUser, credential);
+//       await updatePassword(firebaseUser, passwordData.newPassword);
+
 //       setPasswordData({
 //         currentPassword: '',
 //         newPassword: '',
 //         confirmPassword: ''
 //       });
-      
+
 //       alert("Password changed successfully!");
 //     } catch (error) {
 //       console.error("Password change failed:", error);
 //       let errorMsg = error.message;
-      
 //       if (error.code === 'auth/wrong-password') {
 //         errorMsg = 'Current password is incorrect';
 //       } else if (error.code === 'auth/requires-recent-login') {
@@ -202,7 +187,6 @@
 //       } else if (error.code === 'auth/weak-password') {
 //         errorMsg = 'Password should be at least 6 characters';
 //       }
-      
 //       alert(`Password change failed: ${errorMsg}`);
 //     } finally {
 //       setChangingPassword(false);
@@ -210,12 +194,12 @@
 //   };
 
 //   return (
-//     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+//     <div className="max-w-md mx-auto p-6 rounded-lg bg-base-100 text-base-content shadow-2xl">
 //       <h2 className="text-2xl font-bold mb-6 text-center">Update Profile</h2>
-      
+
 //       {/* Profile Update Form */}
 //       <form onSubmit={handleSubmit} className="space-y-4 mb-8">
-//         {/* Name Field */}
+//         {/* Name */}
 //         <div>
 //           <label className="block text-sm font-medium mb-1">Full Name</label>
 //           <input
@@ -223,12 +207,12 @@
 //             name="name"
 //             value={formData.name}
 //             onChange={handleChange}
-//             className={`w-full p-2 border rounded ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
+//             className={`input input-bordered w-full ${errors.name ? 'input-error' : ''}`}
 //           />
-//           {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+//           {errors.name && <p className="text-error text-xs mt-1">{errors.name}</p>}
 //         </div>
 
-//         {/* Email Field */}
+//         {/* Email */}
 //         <div>
 //           <label className="block text-sm font-medium mb-1">Email</label>
 //           <input
@@ -236,9 +220,9 @@
 //             name="email"
 //             value={formData.email}
 //             onChange={handleChange}
-//             className={`w-full p-2 border rounded ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+//             className={`input input-bordered w-full ${errors.email ? 'input-error' : ''}`}
 //           />
-//           {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+//           {errors.email && <p className="text-error text-xs mt-1">{errors.email}</p>}
 //         </div>
 
 //         {/* Profile Picture */}
@@ -248,20 +232,20 @@
 //             type="file"
 //             accept="image/*"
 //             onChange={handleImageChange}
-//             className="w-full file-input file-input-bordered"
+//             className="file-input file-input-bordered w-full"
 //           />
-//           <p className="text-xs text-gray-500 mt-1">
+//           <p className="text-sm text-base-content mt-1">
 //             Leave empty to keep current photo
 //           </p>
 //         </div>
 
-//         {/* Current Photo Preview */}
-//         {user?.photoURL && !imageFile && (
+//         {/* Current Photo */}
+//         {firebaseUser?.photoURL && !imageFile && (
 //           <div className="flex items-center space-x-4">
 //             <span className="text-sm">Current Photo:</span>
-//             <img 
-//               src={user.photoURL} 
-//               alt="Current profile" 
+//             <img
+//               src={firebaseUser.photoURL}
+//               alt="Current profile"
 //               className="w-12 h-12 rounded-full object-cover"
 //             />
 //           </div>
@@ -271,9 +255,9 @@
 //         {imageFile && (
 //           <div className="flex items-center space-x-4">
 //             <span className="text-sm">New Photo:</span>
-//             <img 
-//               src={URL.createObjectURL(imageFile)} 
-//               alt="Preview" 
+//             <img
+//               src={URL.createObjectURL(imageFile)}
+//               alt="Preview"
 //               className="w-12 h-12 rounded-full object-cover"
 //             />
 //           </div>
@@ -281,15 +265,15 @@
 
 //         <button
 //           type="submit"
-//           className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition disabled:opacity-50"
+//           className="btn btn-primary w-full"
 //           disabled={uploading}
 //         >
 //           {uploading ? "Updating Profile..." : "Update Profile"}
 //         </button>
 //       </form>
-      
-//       {/* Password Change Form */}
-//       <div className="border-t pt-6">
+
+//       {/* Change Password */}
+//       <div className="border-t border-base-300 pt-6">
 //         <h3 className="text-xl font-semibold mb-4">Change Password</h3>
 //         <form onSubmit={handlePasswordSubmit} className="space-y-4">
 //           {/* Current Password */}
@@ -300,13 +284,13 @@
 //               name="currentPassword"
 //               value={passwordData.currentPassword}
 //               onChange={handlePasswordChange}
-//               className={`w-full p-2 border rounded ${passwordErrors.currentPassword ? 'border-red-500' : 'border-gray-300'}`}
+//               className={`input input-bordered w-full ${passwordErrors.currentPassword ? 'input-error' : ''}`}
 //             />
 //             {passwordErrors.currentPassword && (
-//               <p className="text-red-500 text-xs mt-1">{passwordErrors.currentPassword}</p>
+//               <p className="text-error text-xs mt-1">{passwordErrors.currentPassword}</p>
 //             )}
 //           </div>
-          
+
 //           {/* New Password */}
 //           <div>
 //             <label className="block text-sm font-medium mb-1">New Password</label>
@@ -315,13 +299,13 @@
 //               name="newPassword"
 //               value={passwordData.newPassword}
 //               onChange={handlePasswordChange}
-//               className={`w-full p-2 border rounded ${passwordErrors.newPassword ? 'border-red-500' : 'border-gray-300'}`}
+//               className={`input input-bordered w-full ${passwordErrors.newPassword ? 'input-error' : ''}`}
 //             />
 //             {passwordErrors.newPassword && (
-//               <p className="text-red-500 text-xs mt-1">{passwordErrors.newPassword}</p>
+//               <p className="text-error text-xs mt-1">{passwordErrors.newPassword}</p>
 //             )}
 //           </div>
-          
+
 //           {/* Confirm Password */}
 //           <div>
 //             <label className="block text-sm font-medium mb-1">Confirm New Password</label>
@@ -330,16 +314,16 @@
 //               name="confirmPassword"
 //               value={passwordData.confirmPassword}
 //               onChange={handlePasswordChange}
-//               className={`w-full p-2 border rounded ${passwordErrors.confirmPassword ? 'border-red-500' : 'border-gray-300'}`}
+//               className={`input input-bordered w-full ${passwordErrors.confirmPassword ? 'input-error' : ''}`}
 //             />
 //             {passwordErrors.confirmPassword && (
-//               <p className="text-red-500 text-xs mt-1">{passwordErrors.confirmPassword}</p>
+//               <p className="text-error text-xs mt-1">{passwordErrors.confirmPassword}</p>
 //             )}
 //           </div>
-          
+
 //           <button
 //             type="submit"
-//             className="w-full bg-amber-600 text-white py-2 rounded hover:bg-amber-700 transition disabled:opacity-50"
+//             className="btn bg-amber-500 dark:bg-amber-600 w-full"
 //             disabled={changingPassword}
 //           >
 //             {changingPassword ? "Changing Password..." : "Change Password"}
@@ -348,25 +332,26 @@
 //       </div>
 //     </div>
 //   );
+
 // };
 
-// export default UpdateProfilePicture; v
+// export default UpdateProfilePicture;
 import React, { useContext, useState, useEffect } from 'react';
 import {
   updateProfile,
-  updateEmail,
   reauthenticateWithCredential,
   EmailAuthProvider,
   updatePassword,
-  getAuth
+  getAuth,
+  verifyBeforeUpdateEmail
 } from "firebase/auth";
 import useAxiosSecure from '../../Auth/useAxiosSecure';
 import AuthContext from '../../Auth/AuthContext';
 
 const UpdateProfilePicture = () => {
-  const { user: appUser } = useContext(AuthContext); // your app's user info
+  const { user: appUser } = useContext(AuthContext); 
   const auth = getAuth();
-  const firebaseUser = auth.currentUser; // actual Firebase user object
+  const firebaseUser = auth.currentUser; 
 
   const [axiosSecure] = useAxiosSecure();
   const [imageFile, setImageFile] = useState(null);
@@ -384,7 +369,7 @@ const UpdateProfilePicture = () => {
   const [errors, setErrors] = useState({});
   const [passwordErrors, setPasswordErrors] = useState({});
 
-  // Initialize form with appUser data
+  // Initialize form
   useEffect(() => {
     if (appUser) {
       setFormData({
@@ -452,7 +437,7 @@ const UpdateProfilePicture = () => {
       const oldEmail = firebaseUser.email;
       let photoURL = firebaseUser.photoURL;
 
-      // Upload image if provided
+      // upload image
       if (imageFile) {
         const imgForm = new FormData();
         imgForm.append("image", imageFile);
@@ -465,29 +450,31 @@ const UpdateProfilePicture = () => {
         photoURL = data.data.url;
       }
 
-      // Prepare updates
+      // prepare profile updates
       const updates = {};
       if (formData.name !== firebaseUser.displayName) updates.displayName = formData.name;
       if (photoURL !== firebaseUser.photoURL) updates.photoURL = photoURL;
 
-      // Update Firebase profile
+      // update Firebase profile
       if (Object.keys(updates).length > 0) {
         await updateProfile(firebaseUser, updates);
       }
 
-      // Update email if changed
-      if (formData.email !== firebaseUser.email) {
-        await updateEmail(firebaseUser, formData.email);
-      }
+      // // email change -> send verification
+      // if (formData.email !== firebaseUser.email) {
+      //   await verifyBeforeUpdateEmail(firebaseUser, formData.email);
+      //   alert("We sent a verification link to your new email. Please verify it to complete update.");
+      //   setUploading(false);
+      //   return; // stop here until email verified
+      // }
 
-      // Update MongoDB
+      // update MongoDB
       await axiosSecure.patch(`/users/${oldEmail}`, {
         name: formData.name,
         email: formData.email,
         photo: photoURL
       });
 
-      // Reload Firebase user
       await firebaseUser.reload();
 
       alert("Profile updated successfully!");
@@ -547,9 +534,8 @@ const UpdateProfilePicture = () => {
     <div className="max-w-md mx-auto p-6 rounded-lg bg-base-100 text-base-content shadow-2xl">
       <h2 className="text-2xl font-bold mb-6 text-center">Update Profile</h2>
 
-      {/* Profile Update Form */}
       <form onSubmit={handleSubmit} className="space-y-4 mb-8">
-        {/* Name */}
+        {/* name */}
         <div>
           <label className="block text-sm font-medium mb-1">Full Name</label>
           <input
@@ -562,8 +548,8 @@ const UpdateProfilePicture = () => {
           {errors.name && <p className="text-error text-xs mt-1">{errors.name}</p>}
         </div>
 
-        {/* Email */}
-        <div>
+        {/* email */}
+        {/* <div>
           <label className="block text-sm font-medium mb-1">Email</label>
           <input
             type="email"
@@ -573,9 +559,9 @@ const UpdateProfilePicture = () => {
             className={`input input-bordered w-full ${errors.email ? 'input-error' : ''}`}
           />
           {errors.email && <p className="text-error text-xs mt-1">{errors.email}</p>}
-        </div>
+        </div> */}
 
-        {/* Profile Picture */}
+        {/* profile picture */}
         <div>
           <label className="block text-sm font-medium mb-1">Profile Picture</label>
           <input
@@ -589,7 +575,6 @@ const UpdateProfilePicture = () => {
           </p>
         </div>
 
-        {/* Current Photo */}
         {firebaseUser?.photoURL && !imageFile && (
           <div className="flex items-center space-x-4">
             <span className="text-sm">Current Photo:</span>
@@ -601,7 +586,6 @@ const UpdateProfilePicture = () => {
           </div>
         )}
 
-        {/* New Photo Preview */}
         {imageFile && (
           <div className="flex items-center space-x-4">
             <span className="text-sm">New Photo:</span>
@@ -622,11 +606,10 @@ const UpdateProfilePicture = () => {
         </button>
       </form>
 
-      {/* Change Password */}
+      {/* password change */}
       <div className="border-t border-base-300 pt-6">
         <h3 className="text-xl font-semibold mb-4">Change Password</h3>
         <form onSubmit={handlePasswordSubmit} className="space-y-4">
-          {/* Current Password */}
           <div>
             <label className="block text-sm font-medium mb-1">Current Password</label>
             <input
@@ -641,7 +624,6 @@ const UpdateProfilePicture = () => {
             )}
           </div>
 
-          {/* New Password */}
           <div>
             <label className="block text-sm font-medium mb-1">New Password</label>
             <input
@@ -656,7 +638,6 @@ const UpdateProfilePicture = () => {
             )}
           </div>
 
-          {/* Confirm Password */}
           <div>
             <label className="block text-sm font-medium mb-1">Confirm New Password</label>
             <input
@@ -682,7 +663,6 @@ const UpdateProfilePicture = () => {
       </div>
     </div>
   );
-
 };
 
 export default UpdateProfilePicture;

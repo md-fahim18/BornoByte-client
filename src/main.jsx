@@ -1,4 +1,4 @@
-import { StrictMode } from 'react'
+import { StrictMode, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import { ToastContainer } from 'react-toastify';
@@ -17,6 +17,7 @@ import {
 } from '@tanstack/react-query'
 import router from './components/router/router';
 const queryClient = new QueryClient()
+
 createRoot(document.getElementById('root')).render(
    <StrictMode>
     <AuthProvider>
