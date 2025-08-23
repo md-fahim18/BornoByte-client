@@ -9,7 +9,7 @@ const team = [
 const Leadership = () => {
   return (
     <div className="bg-base-100 text-base-content p-8 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold text-orange-500 mb-6">Meet Our Leadership</h1>
+      <h1 className="text-3xl font-bold text-important-text dark:text-important-text-dark mb-6">Meet Our Leadership</h1>
       <p className="mb-8 text-lg">
         Our leadership is made of passionate educators, technologists, and creators driving change in education.
       </p>
@@ -19,10 +19,10 @@ const Leadership = () => {
             <img
               src={leader.img}
               alt={leader.name}
-              className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-orange-300"
+              className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-primary dark:border-primary object-cover"
             />
             <h3 className="text-xl font-semibold">{leader.name}</h3>
-            <p className="text-sm text-orange-500">{leader.role}</p>
+            <p className="text-sm font-medium text-important-text dark:text-important-text-dark">{leader.role}</p>
           </div>
         ))}
       </div>
