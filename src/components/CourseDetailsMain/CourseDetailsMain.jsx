@@ -1,4 +1,3 @@
-// src/CourseDetailsMain/CourseDetailsMain.jsx
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
@@ -45,9 +44,7 @@ const CourseDetailsMain = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(
-          `https://bornobyte.vercel.app/videos/${id}`
-        );
+        const res = await axios.get(`https://bornobyte.vercel.app/videos/${id}`);
         setCourse(res.data);
         setSelectedVideo(res.data.videos?.[0] || null);
       } catch (err) {
@@ -85,14 +82,13 @@ const CourseDetailsMain = () => {
       .then((res) => {
         const completed = res.data.completedVideos || [];
         setProgress(completed);
-        setWatchedLast10Videos(new Set(completed));
+        setWatchedLast10Videos(new Set(completed)); // Initialize with completed videos
       })
       .catch(() => {
         setProgress([]);
         setWatchedLast10Videos(new Set());
       });
   }, [id, user?.email, token]);
-
 
   useEffect(() => {
     axios
@@ -134,48 +130,53 @@ const CourseDetailsMain = () => {
       .catch(console.error);
   }, [course?._id, user?.email, reviewRefreshTrigger]);
 
-   useEffect(() => {
-  const video = videoRef.current;
-  if (!video || !isEnrolled) return;
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !isEnrolled) return;
 
-  // Reset tick when a new video is selected
-  setShowTick(progress.includes(selectedVideo.url));
+    // Reset tick when a new video is selected
+    setShowTick(progress.includes(selectedVideo?.url || ""));
 
-  const handleTimeUpdate = async () => {
-    if (!video.duration) return;
-    if (video.currentTime >= video.duration - 10) {
-      if (!progress.includes(selectedVideo.url)) {
-        setShowTick(true);
-        setWatchedLast10Videos((prev) => new Set(prev).add(selectedVideo.url));
+    const handleTimeUpdate = async () => {
+      if (!video.duration) return;
+      if (video.currentTime >= video.duration - 10) {
+        if (!progress.includes(selectedVideo?.url || "")) {
+          setShowTick(true);
+          setWatchedLast10Videos((prev) => {
+            const newSet = new Set(prev);
+            newSet.add(selectedVideo.url);
+            return newSet;
+          });
 
-        try {
-          await axios.post(
-            `https://bornobyte.vercel.app/progress`,
-            { courseId: id, userEmail: user.email, videoUrl: selectedVideo.url },
-            { headers: { authorization: `Bearer ${token}` } }
-          );
-        } catch (err) {
-          console.error("Failed to save video progress:", err);
+          try {
+            await axios.post(
+              `https://bornobyte.vercel.app/progress`,
+              {
+                courseId: id,
+                userEmail: user.email,
+                videoUrl: selectedVideo.url,
+              },
+              { headers: { authorization: `Bearer ${token}` } }
+            );
+          } catch (err) {
+            console.error("Failed to save video progress:", err);
+          }
+
+          // Update progress locally without triggering effect again
+          setProgress((prev) => {
+            if (!prev.includes(selectedVideo.url)) return [...prev, selectedVideo.url];
+            return prev;
+          });
         }
-
-        // Update progress locally without triggering effect again
-        setProgress((prev) => {
-          if (!prev.includes(selectedVideo.url)) return [...prev, selectedVideo.url];
-          return prev;
-        });
       }
-    }
-  };
+    };
 
-  video.addEventListener("timeupdate", handleTimeUpdate);
+    video.addEventListener("timeupdate", handleTimeUpdate);
 
-  return () => {
-    video.removeEventListener("timeupdate", handleTimeUpdate);
-    // Do NOT reset showTick here; we want it to persist
-  };
-}, [selectedVideo, isEnrolled, id, token, user?.email, progress]);
-
-
+    return () => {
+      video.removeEventListener("timeupdate", handleTimeUpdate);
+    };
+  }, [selectedVideo, isEnrolled, id, token, user?.email, progress]);
 
   // eslint-disable-next-line no-unused-vars
   const extractYouTubeID = (url) => {
@@ -190,24 +191,25 @@ const CourseDetailsMain = () => {
   };
 
   const handleVideoClick = (vid) => {
-      if (!isEnrolled) {
-        document.getElementById("enrollCard")?.scrollIntoView({ behavior: "smooth" });
-        return;
-      }
+    if (!isEnrolled) {
+      document.getElementById("enrollCard")?.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
 
-      setSelectedVideo(vid);
-      setShowTick(false);
+    setSelectedVideo(vid);
+    setShowTick(false); // Reset tick on new video selection
 
-      axios
-        .post(
-          `https://bornobyte.vercel.app/progress`,
-          { courseId: id, userEmail: user.email, videoUrl: vid.url },
-          { headers: { authorization: `Bearer ${token}` } }
-        )
-        .then(() => {
-          // setProgress((prev) => [...new Set([...prev, vid.url])]);
-        });
-    };
+    axios
+      .post(
+        `https://bornobyte.vercel.app/progress`,
+        { courseId: id, userEmail: user.email, videoUrl: vid.url },
+        { headers: { authorization: `Bearer ${token}` } }
+      )
+      .then(() => {
+        // Update progress locally (commented out to avoid infinite loop)
+        // setProgress((prev) => [...new Set([...prev, vid.url])]);
+      });
+  };
 
   const handleCommentSubmit = async () => {
     if (!newComment.trim()) return;
@@ -253,7 +255,6 @@ const CourseDetailsMain = () => {
 
     try {
       if (userReview) {
-        // Update existing review
         await axios.patch(
           `http://localhost:3000/reviews/${userReview._id}`,
           {
@@ -267,7 +268,6 @@ const CourseDetailsMain = () => {
           }
         );
       } else {
-        // Create new review
         await axios.post(
           `http://localhost:3000/reviews`,
           {
@@ -347,14 +347,6 @@ const CourseDetailsMain = () => {
           <div className="md:col-span-2 space-y-6">
             {isEnrolled && selectedVideo && (
               <div className="w-full aspect-video relative">
-                {/* <iframe
-                  className="w-full h-full rounded-lg"
-                  src={`https://www.youtube.com/embed/${extractYouTubeID(selectedVideo.url)}`}
-                  title={selectedVideo.title}
-                  frameBorder="0"
-                  allowFullScreen
-                /> */}
-                {/* // dynamic video render for all lessons // */}
                 <video
                   ref={videoRef}
                   width={"100%"}
@@ -373,20 +365,15 @@ const CourseDetailsMain = () => {
               </div>
             )}
 
-            <h1 className="text-3xl font-bold text-orange-500">
+            <h1 className="text-3xl font-bold text-important-text dark:text-important-text-dark">
               {course?.title}
             </h1>
-            <p className="text-sm text-gray-500">
-              Instructor: {course?.instructor}
-            </p>
+            <p className="text-sm text-gray-500">Instructor: {course?.instructor}</p>
             <p className="text-sm">Category: {course?.category}</p>
             <p className="text-sm">Duration: {course?.duration}</p>
             <div className="flex items-center space-x-4 my-2">
               <div className="flex items-center">
-                <StarRatingInput
-                  rating={Math.round(avgRating)}
-                  setRating={() => {}}
-                />
+                <StarRatingInput rating={Math.round(avgRating)} setRating={() => {}} />
                 <span className="ml-2 text-sm text-gray-600">
                   {avgRating.toFixed(1)} / 5 ({reviewCount}{" "}
                   {reviewCount === 1 ? "review" : "reviews"})
@@ -417,13 +404,13 @@ const CourseDetailsMain = () => {
               </ul>
             </div>
 
-            <div className="flex gap-4 mb-4">
+            <div className="flex gap-4 mb-4 text-base-content">
               <button
                 onClick={() => setActiveTab("reviews")}
                 className={`px-4 py-2 rounded-lg ${
                   activeTab === "reviews"
-                    ? "bg-amber-500 text-white"
-                    : "bg-gray-200 dark:bg-gray-700"
+                    ? "bg-primary dark:bg-primary text-white dark:text-white"
+                    : "bg-base-300 text-base-content"
                 }`}
               >
                 Reviews
@@ -432,8 +419,8 @@ const CourseDetailsMain = () => {
                 onClick={() => setActiveTab("comments")}
                 className={`px-4 py-2 rounded-lg ${
                   activeTab === "comments"
-                    ? "bg-amber-500 text-white"
-                    : "bg-gray-200 dark:bg-gray-700"
+                    ? "bg-primary dark:bg-primary text-white dark:text-white"
+                    : "bg-base-300"
                 }`}
               >
                 Comments
@@ -441,7 +428,6 @@ const CourseDetailsMain = () => {
             </div>
 
             {/* YOUR REVIEW — only for enrolled users */}
-
             {activeTab === "reviews" && (
               <>
                 {isEnrolled && (
@@ -449,19 +435,16 @@ const CourseDetailsMain = () => {
                     <h3 className="text-xl font-bold mb-2">Your Review</h3>
                     {userReview && !isEditingReview ? (
                       <div className="bg-base-200 p-4 rounded space-y-2">
-                        <StarRatingInput
-                          rating={ratingInput}
-                          setRating={() => {}}
-                        />
+                        <StarRatingInput rating={ratingInput} setRating={() => {}} />
                         <p>{commentInput}</p>
                         <div className="flex gap-2">
                           <button
                             onClick={() => setIsEditingReview(true)}
-                            className="btn btn-sm btn-outline"
+                            className="btn btn-sm btn-outline text-important-text dark:text-important-text-dark 
+                            hover:bg-primary dark:hover:bg-primary hover:text-white dark:hover:text-white"
                           >
                             Edit
                           </button>
-
                           {isAdmin && (
                             <button
                               onClick={() => handleDeleteReview(userReview._id)}
@@ -474,10 +457,7 @@ const CourseDetailsMain = () => {
                       </div>
                     ) : (
                       <div className="bg-base-200 p-4 rounded space-y-2">
-                        <StarRatingInput
-                          rating={ratingInput}
-                          setRating={setRatingInput}
-                        />
+                        <StarRatingInput rating={ratingInput} setRating={setRatingInput} />
                         <textarea
                           className="textarea w-full"
                           placeholder="Write your review here..."
@@ -487,7 +467,7 @@ const CourseDetailsMain = () => {
                         />
                         <button
                           onClick={handleReviewSubmit}
-                          className="btn btn-primary"
+                          className="btn bg-primary dark:bg-primary text-white dark:text-white"
                         >
                           {userReview ? "Update Review" : "Submit Review"}
                         </button>
@@ -498,7 +478,7 @@ const CourseDetailsMain = () => {
                               setRatingInput(userReview.rating);
                               setCommentInput(userReview.comment);
                             }}
-                            className="btn btn-ghost ml-2"
+                            className="btn btn-ghost ml-2 text-important-text dark:text-important-text-dark"
                           >
                             Cancel
                           </button>
@@ -516,18 +496,10 @@ const CourseDetailsMain = () => {
                     {reviews
                       .filter((r) => r._id !== userReview?._id) // exclude user’s own review from this list
                       .map((rev) => (
-                        <div
-                          key={rev._id}
-                          className="bg-base-200 p-4 rounded space-y-1"
-                        >
+                        <div key={rev._id} className="bg-base-200 p-4 rounded space-y-1">
                           <div className="flex items-center space-x-2">
-                            <StarRatingInput
-                              rating={rev.rating}
-                              setRating={() => {}}
-                            />
-                            <span className="text-sm font-semibold">
-                              {rev.userEmail}
-                            </span>
+                            <StarRatingInput rating={rev.rating} setRating={() => {}} />
+                            <span className="text-sm font-semibold">{rev.userEmail}</span>
                           </div>
                           <p>{rev.comment}</p>
                           <p className="text-xs text-gray-500">
@@ -542,9 +514,7 @@ const CourseDetailsMain = () => {
                                       `http://localhost:3000/reviews/${rev._id}`,
                                       {
                                         headers: {
-                                          authorization: `Bearer ${localStorage.getItem(
-                                            "access-token"
-                                          )}`,
+                                          authorization: `Bearer ${localStorage.getItem("access-token")}`,
                                         },
                                       }
                                     );
@@ -554,7 +524,7 @@ const CourseDetailsMain = () => {
                                   }
                                 }
                               }}
-                              className="btn btn-xs btn-error mt-1"
+                              className="btn btn-sm btn-error mt-1"
                             >
                               Delete
                             </button>
@@ -570,20 +540,15 @@ const CourseDetailsMain = () => {
               <div>
                 <h3 className="text-xl font-bold mt-6 mb-3">Course Contents</h3>
                 {Object.entries(grouped).map(([chapter, vids]) => (
-                  <details
-                    key={chapter}
-                    className="collapse collapse-arrow bg-base-200 mb-2"
-                  >
-                    <summary className="collapse-title font-semibold">
-                      {chapter}
-                    </summary>
+                  <details key={chapter} className="collapse collapse-arrow bg-base-200 mb-2">
+                    <summary className="collapse-title font-semibold">{chapter}</summary>
                     <div className="collapse-content px-4">
                       <ul>
                         {vids.map((vid, idx) => (
                           <li
                             key={idx}
                             onClick={() => handleVideoClick(vid)}
-                            className="hover:text-amber-500 text-gray-400 cursor-pointer"
+                            className="hover:text-primary dark:hover:text-primary text-gray-400 cursor-pointer"
                           >
                             • {vid.title}
                           </li>
@@ -596,7 +561,6 @@ const CourseDetailsMain = () => {
             )}
 
             {/* COMMENTS SECTION */}
-
             {activeTab === "comments" && (
               <>
                 {isEnrolled && (
@@ -610,42 +574,33 @@ const CourseDetailsMain = () => {
                     />
                     <button
                       onClick={handleCommentSubmit}
-                      className="btn btn-primary mt-2"
+                      className="btn bg-primary dark:bg-primary mt-2 text-white dark:text-white"
                     >
                       Post
                     </button>
 
                     <div className="mt-4 space-y-2">
                       {comments
-                        .filter(
-                          (com) => isAdmin || com.userEmail === user.email
-                        )
+                        .filter((com) => isAdmin || com.userEmail === user.email)
                         .map((com) => (
-                          <div
-                            key={com._id}
-                            className="bg-base-200 p-3 rounded"
-                          >
-                            <p className="font-semibold text-sm">
-                              {com.userEmail}
-                            </p>
+                          <div key={com._id} className="bg-base-200 p-3 rounded">
+                            <p className="font-semibold text-sm">{com.userEmail}</p>
                             {editingCommentId === com._id ? (
                               <>
                                 <textarea
                                   className="textarea textarea-sm w-full mb-2"
                                   value={editedText}
-                                  onChange={(e) =>
-                                    setEditedText(e.target.value)
-                                  }
+                                  onChange={(e) => setEditedText(e.target.value)}
                                 />
                                 <button
                                   onClick={() => handleEditSave(com._id)}
-                                  className="btn btn-xs btn-success mr-2"
+                                  className="btn btn-sm btn-success mr-2"
                                 >
                                   Save
                                 </button>
                                 <button
                                   onClick={() => setEditingCommentId(null)}
-                                  className="btn btn-xs btn-ghost"
+                                  className="btn btn-sm btn-ghost text-important-text dark:text-important-text-dark"
                                 >
                                   Cancel
                                 </button>
@@ -670,9 +625,7 @@ const CourseDetailsMain = () => {
                                       Edit
                                     </button>
                                     <button
-                                      onClick={() =>
-                                        handleDeleteComment(com._id)
-                                      }
+                                      onClick={() => handleDeleteComment(com._id)}
                                       className="text-red-500 text-xs"
                                     >
                                       Delete
@@ -700,7 +653,7 @@ const CourseDetailsMain = () => {
                     completed
                   </div>
                   <progress
-                    className="progress progress-warning w-full"
+                    className="progress progress-primary w-full"
                     value={progress.length}
                     max={course?.videos?.length || 1}
                   />
@@ -722,15 +675,36 @@ const CourseDetailsMain = () => {
                         {vids.map((vid, idx) => (
                           <li
                             key={idx}
-                            className={`cursor-pointer flex items-center gap-2 hover:text-amber-500 ${
+                            className={`cursor-pointer flex items-center gap-2 hover:text-primary dark:hover:text-primary ${
                               selectedVideo?.url === vid.url
-                                ? "text-orange-500"
+                                ? "text-important-text dark:text-important-text-dark font-semibold"
                                 : ""
                             }`}
                             onClick={() => handleVideoClick(vid)}
                           >
-                            {watchedLast10Videos.has(vid.url) && (
-                              <span className="text-green-500">✔</span>
+                            {watchedLast10Videos.has(vid.url) && progress.includes(vid.url) ? (
+                              <svg
+                                className="h-5 w-5 text-important-text dark:text-important-text"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            ) : (
+                              <svg
+                                className="h-5 w-5 text-important-text dark:text-important-text"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <circle cx="12" cy="12" r="10" strokeWidth="2" />
+                              </svg>
                             )}
                             {vid.title}
                           </li>

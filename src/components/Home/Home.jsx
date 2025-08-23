@@ -22,9 +22,9 @@ const Home = () => {
       <FeaturedCourses></FeaturedCourses> {/* Featured Courses Section */}
       {/* <Courses></Courses> */}
       <HomepageCourses></HomepageCourses>
-      <Teachers></Teachers>
+      {/* <Teachers></Teachers> */}
       <TeacherCard></TeacherCard>
-      <Reviews></Reviews>
+      {/* <Reviews></Reviews> */}
       <ChooseUs></ChooseUs>
       <Faq></Faq>
     </div>
