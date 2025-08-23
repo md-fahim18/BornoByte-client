@@ -71,7 +71,7 @@ const Navbar = () => {
       <li><Link to="/about" className="mx-2 font-semibold text-base text-important-text dark:text-important-text-dark">About us</Link></li>
       <li><Link to="/contactUs" className="mx-2 font-semibold text-base text-important-text dark:text-important-text-dark">Contact Us</Link></li>
       {user && <li><Link to="/dashboard" className="mx-2 font-semibold text-base text-important-text dark:text-important-text-dark">Dashboard</Link></li>}
-      <li><ThemeSwitcher className="text-important-text dark:text-important-text-dark" /></li>
+      {/* <li><ThemeSwitcher className="text-important-text dark:text-important-text-dark" /></li> */}
     </>
   );
 
