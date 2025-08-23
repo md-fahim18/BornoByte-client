@@ -107,7 +107,7 @@ const Navbar = () => {
       <div className="navbar-end gap-2">
         {user && (
           <div className="dropdown dropdown-end">
-            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle relative text-base-content">
+            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle relative text-base-content ">
               <FaBell className="text-xl" />
               {unreadCount > 0 && (
                 <span className="badge badge-sm bg-red-500 text-white absolute -top-1 -right-1">

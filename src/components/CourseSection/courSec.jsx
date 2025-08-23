@@ -208,7 +208,7 @@ const CourseSection = () => {
               <div
                 key={course._id}
                 className="flex-shrink-0 w-[calc(100%-1rem)] sm:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-1.5rem)]
-                  card bg-base-200 shadow-md hover:shadow-xl transition duration-300 rounded-xl relative"
+                  card bg-base-200 shadow-md hover:shadow-2xl transition duration-300 rounded-xl relative"
               >
                 <figure className="relative">
                   <img
@@ -274,8 +274,10 @@ const CourseSection = () => {
                       <Link
                         to={`/courses/${course._id}`}
                         target="_blank"
-                        className={`btn btn-sm flex-1 ${
-                          isEnrolled ? "btn-primary" : "btn-outline btn-amber-600"
+                        className={`btn btn-md font-semibold flex-1 ${
+                          isEnrolled ? "btn font-semibold bg-primary dark:bg-primary text-white dark:text-white" 
+                          : 
+                          "btn-outline btn-md text-important-text dark:text-important-text-dark hover:bg-primary dark:bg-primary hover:text-white dark:hover:text-white"
                         }`}
                       >
                         {isEnrolled ? "Go to Course" : "View Details"}
