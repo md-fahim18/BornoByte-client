@@ -61,9 +61,9 @@ const AdminSidebar = ({ setAdminTab }) => {
 
 
   return (
-    <div className="bg-base-200 text-base-content shadow-lg w-64 fixed left-0 top-16 h-[calc(100vh-4rem)] p-4 overflow-y-auto z-40 border-r border-base-300">
+    <div className="bg-base-200 text-base-content shadow-lg w-72 fixed left-0 top-16 h-[calc(100vh-4rem)] p-4 overflow-y-auto z-40 border-r border-base-300">
       {/* Sidebar Title */}
-      <h2 className="text-2xl font-bold mb-8 text-orange-500 text-center mt-4">
+      <h2 className="text-2xl font-bold mb-8 text-important-text dark:text-important-text-dark text-center mt-4">
         Admin Panel
       </h2>
 
@@ -72,7 +72,7 @@ const AdminSidebar = ({ setAdminTab }) => {
         <li>
           <a
             href="/"
-            className="flex items-center gap-3 w-full text-left hover:text-orange-500 transition"
+            className="flex items-center gap-3 w-full text-left hover:text-primary dark:hover:text-primary transition"
           >
             <FiHome className="text-lg" /> Home
           </a>
@@ -82,7 +82,7 @@ const AdminSidebar = ({ setAdminTab }) => {
         <li>
           <button
             onClick={() => setAdminTab("users")}
-            className="flex items-center gap-3 w-full text-left hover:text-orange-500 transition"
+            className="flex items-center gap-3 w-full text-left hover:text-primary dark:hover:text-primary transition"
           >
             <FiUsers className="text-lg" /> All Users
           </button>
@@ -91,11 +91,11 @@ const AdminSidebar = ({ setAdminTab }) => {
         <li>
             <button
               onClick={() => setAdminTab("pending")}
-              className="flex items-center gap-3 w-full text-left hover:text-orange-500 transition relative"
+              className="flex items-center gap-3 w-full text-left hover:text-primary dark:hover:text-primary transition relative"
             >
               <MdOutlinePendingActions className="text-xl" /> Approval Requests
               {pendingCoursesCount >= 0 && (
-                <span className="ml-auto bg-orange-500 text-white text-xs px-2 py-1 font-bold rounded-full">
+                <span className="ml-auto bg-teal-500 text-white px-2 py-0.5 text-sm font-bold rounded-full">
                   {pendingCoursesCount}
                 </span>
               )}
@@ -105,7 +105,7 @@ const AdminSidebar = ({ setAdminTab }) => {
         <li>
           <button
             onClick={() => setAdminTab("add-course")}
-            className="flex items-center gap-3 w-full text-left hover:text-orange-500 transition"
+            className="flex items-center gap-3 w-full text-left hover:text-primary dark:hover:text-primary transition"
           >
             <MdLibraryAdd className="text-xl" /> Add Course
           </button>
@@ -114,7 +114,7 @@ const AdminSidebar = ({ setAdminTab }) => {
         <li>
           <button
             onClick={() => setAdminTab("manage")}
-            className="flex items-center gap-3 w-full text-left hover:text-orange-500 transition"
+            className="flex items-center gap-3 w-full text-left hover:text-primary dark:hover:text-primary transition"
           >
             <MdManageAccounts className="text-xl" /> Manage Courses
           </button>
@@ -123,7 +123,7 @@ const AdminSidebar = ({ setAdminTab }) => {
         <li>
           <button
             onClick={() => setAdminTab("settings")}
-            className="flex items-center gap-3 w-full text-left hover:text-orange-500 transition"
+            className="flex items-center gap-3 w-full text-left hover:text-primary dark:hover:text-primary transition"
           >
             <FiSettings className="text-lg" /> Settings
           </button>
@@ -131,11 +131,11 @@ const AdminSidebar = ({ setAdminTab }) => {
           <li>
           <button
             onClick={() => setAdminTab("enrollReq")}
-            className="flex items-center gap-3 w-full text-left hover:text-orange-500 transition relative"
+            className="flex items-center gap-3 w-full text-left hover:text-primary dark:hover:text-primary transition relative"
           >
             <MdHowToReg className="text-xl" /> Enrollment Requests
             {pendingCount > 0 && (
-              <span className="ml-auto bg-orange-500 text-white text-xs px-2 py-1 font-bold rounded-full">
+              <span className="ml-auto bg-rose-500 text-white text-sm px-2 py-0.5 font-bold rounded-full">
                 {pendingCount}
               </span>
             )}
@@ -144,7 +144,7 @@ const AdminSidebar = ({ setAdminTab }) => {
           <li>
           <button
             onClick={() => setAdminTab("homepage-Courses")}
-            className="flex items-center gap-3 w-full text-left hover:text-orange-500 transition"
+            className="flex items-center gap-3 w-full text-left hover:text-primary dark:hover:text-primary transition"
           >
             <MdDashboardCustomize className="text-xl" /> HomePage Courses Form
           </button>
