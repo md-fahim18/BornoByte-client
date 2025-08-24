@@ -7,7 +7,8 @@ const UserTopbar = () => {
     <div className="fixed top-0 left-0 w-full navbar bg-base-100 shadow-md text-base-content z-50">
       
       {/* Centered Title */}
-      <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 font-berlin text-2xl md:text-3xl font-bold text-amber-500">
+      <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 font-berlin 
+      text-2xl md:text-3xl font-bold text-important-text dark:text-important-text-dark">
         BornoByte User Panel
       </div>
 

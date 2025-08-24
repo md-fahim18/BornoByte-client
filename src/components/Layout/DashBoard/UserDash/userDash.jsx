@@ -120,7 +120,7 @@ const UserDashboard = () => {
             <h2 className="card-title text-lg">{course.title}</h2>
             <p className="text-sm text-gray-500 dark:text-gray-400">{course.category}</p>
             <p className="text-sm font-medium mt-1">
-              Teacher: <span className="text-orange-500">{course.instructor}</span>
+              Teacher: <span className="text-important-text dark:text-important-text-dark">{course.instructor}</span>
             </p>
             <div className="flex justify-between items-center mt-4 text-sm text-gray-600">
               <span className="flex items-center gap-1">
@@ -136,11 +136,15 @@ const UserDashboard = () => {
 
             <div className="card-actions mt-4 w-full">
               <Link
-                to={`/courses/${course._id}`}
-                target="_blank"
-                className="btn btn-sm btn-primary w-full"
-              >
-                Go to Course
+               to={`/courses/${course._id}`}
+               target="_blank"
+              className={`btn btn-sm flex-1 ${
+                        isEnrolled ? "btn btn-md font-semibold hover:shadow-2xl bg-primary dark:bg-primary text-white dark:text-white" 
+                         : 
+                         "btn-outline btn-md text-important-text dark:text-important-text-dark hover:bg-primary dark:bg-primary hover:text-white dark:hover:text-white"
+                          }`}
+                        >
+                       {isEnrolled ? "Go to Course" : "View Details"}
               </Link>
             </div>
           </div>
@@ -155,7 +159,7 @@ const UserDashboard = () => {
 
   return (
     <div className="p-6 pt-10 bg-base-100 min-h-screen text-base-content">
-      <h1 className="text-3xl font-bold mb-8 text-center text-orange-500">
+      <h1 className="text-3xl font-bold mb-8 text-center text-important-text dark:text-important-text-dark">
         Welcome to your Dashboard!
       </h1>
 

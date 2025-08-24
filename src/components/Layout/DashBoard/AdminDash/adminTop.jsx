@@ -9,7 +9,7 @@ const AdminTopbar = () => {
     <div className="fixed top-0 left-0 w-full z-50 navbar bg-base-100 text-base-content shadow-md px-4 h-20">
       {/* Centered Title */}
       <div className="absolute left-1/2 transform -translate-x-1/2">
-        <h1 className="text-3xl font-bold text-orange-500 font-berlin whitespace-nowrap">
+        <h1 className="text-3xl font-bold text-important-text dark:text-important-text-dark font-berlin whitespace-nowrap">
           BornoByte Control Panel
         </h1>
       </div>
