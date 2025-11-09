@@ -22,7 +22,7 @@ import EnrollForm from "../Layout/DashBoard/AdminDash/EnrollForm";
 import Settings from "../Layout/DashBoard/settings";
 import Inbox from "../Layout/DashBoard/inbox";
 import Achievements from "../Layout/DashBoard/achievement";
-import TermsOfUse from "../shared/FooterComponents/termsOfUse";
+import TermsOfUse from "../shared/FooterComponents/TermsOfUse";
 import PrivacyPolicy from "../shared/FooterComponents/PrivacyPolicy";
 import CookiePolicy from "../shared/FooterComponents/CookiePolicy";
 import PasswordReset from "../Auth/PasswordReset";
@@ -32,7 +32,7 @@ import GetStarted from "../About Us/GetStarted"; // ✅ updated import
 import Leadership from "../About Us/Leadership";
 
 import PaymentSuccess from "../Payments/paymentSuccess"; // ✅ updated import
-import PaymentFailed from "../Payments/paymentFail";  // ✅ updated import
+import PaymentFailed from "../Payments/paymentFail"; // ✅ updated import
 
 const router = createBrowserRouter([
   {
@@ -55,19 +55,19 @@ const router = createBrowserRouter([
       },
       {
         path: "/payment-success",
-        element: <PaymentSuccess />, // ✅ updated import 
+        element: <PaymentSuccess />, // ✅ updated import
       },
       {
         path: "/payment-failed",
-        element: <PaymentFailed />, // ✅ updated import  
+        element: <PaymentFailed />, // ✅ updated import
       },
       {
         path: "/get-started",
-        element: <GetStarted />, // ✅ updated import 
+        element: <GetStarted />, // ✅ updated import
       },
       {
         path: "/join-team",
-        element: <JoinTeam />, // ✅ updated import   
+        element: <JoinTeam />, // ✅ updated import
       },
       {
         path: "/leadership",
@@ -75,9 +75,8 @@ const router = createBrowserRouter([
       },
       {
         path: "blog",
-        element: <Blog />, // ✅ updated import 
+        element: <Blog />, // ✅ updated import
       },
-
     ],
   },
   {
@@ -150,11 +149,9 @@ const router = createBrowserRouter([
     element: <CookiePolicy></CookiePolicy>,
   },
   {
-  path: "/password-reset",
-  element: <PasswordReset />,
+    path: "/password-reset",
+    element: <PasswordReset />,
   },
-
-
 ]);
 
 export default router;
