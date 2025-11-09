@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 import useAdmin from "../../RoleHooks/useAdmin";
 import useTeacher from "../../RoleHooks/useTeacher";
 
-import Sidebar from "./Sidebar";
+// import Sidebar from "./Sidebar";
 import AdminDashboard from "./AdminDash/adminDash";
 import AdminSidebar from "./AdminDash/adminSide";
 import AdminTopbar from "./AdminDash/adminTop";
