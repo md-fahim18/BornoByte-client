@@ -69,7 +69,9 @@ const CourseSection = () => {
 
     axios
       .get("http://localhost:3000/favorites", {
-        headers: { authorization: `Bearer ${localStorage.getItem("access-token")}` },
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("access-token")}`,
+        },
       })
       .then((res) => {
         const favIds = res.data.map((fav) => fav.courseId);
@@ -109,7 +111,9 @@ const CourseSection = () => {
         "http://localhost:3000/favorites",
         { courseId },
         {
-          headers: { authorization: `Bearer ${localStorage.getItem("access-token")}` },
+          headers: {
+            authorization: `Bearer ${localStorage.getItem("access-token")}`,
+          },
         }
       );
       setFavoriteCourseIds((prev) => [...prev, courseId]);
@@ -124,7 +128,9 @@ const CourseSection = () => {
     setLoadingFavorites((prev) => [...prev, courseId]);
     try {
       await axios.delete(`http://localhost:3000/favorites/${courseId}`, {
-        headers: { authorization: `Bearer ${localStorage.getItem("access-token")}` },
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("access-token")}`,
+        },
       });
       setFavoriteCourseIds((prev) => prev.filter((id) => id !== courseId));
     } catch (err) {
@@ -143,7 +149,7 @@ const CourseSection = () => {
   );
 
   return (
-    <div className="my-12 max-w-7xl mx-auto px-4">
+    <div className="max-w-7xl mx-auto px-4">
       <h2 className="text-3xl font-bold text-center text-important-text dark:text-important-text-dark mb-6">
         Explore Our Courses by Category
       </h2>
@@ -249,7 +255,9 @@ const CourseSection = () => {
                   </p>
                   <p className="text-sm font-medium mt-1">
                     Teacher:{" "}
-                    <span className="text-important-text dark:text-important-text-dark">{course.instructor}</span>
+                    <span className="text-important-text dark:text-important-text-dark">
+                      {course.instructor}
+                    </span>
                   </p>
 
                   <div className="flex justify-between items-center mt-4">
@@ -275,9 +283,9 @@ const CourseSection = () => {
                         to={`/courses/${course._id}`}
                         target="_blank"
                         className={`btn btn-md font-semibold flex-1 ${
-                          isEnrolled ? "btn font-semibold bg-primary dark:bg-primary text-white dark:text-white" 
-                          : 
-                          "btn-outline btn-md text-important-text dark:text-important-text-dark hover:bg-primary dark:bg-primary hover:text-white dark:hover:text-white"
+                          isEnrolled
+                            ? "btn font-semibold bg-primary dark:bg-primary text-white dark:text-white"
+                            : "btn-outline btn-md text-important-text dark:text-important-text-dark hover:bg-primary dark:bg-primary hover:text-white dark:hover:text-white"
                         }`}
                       >
                         {isEnrolled ? "Go to Course" : "View Details"}
